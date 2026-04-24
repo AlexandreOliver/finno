@@ -41,4 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 Finno-db.sql
-*.yaml
+pnpm-lock.yaml
