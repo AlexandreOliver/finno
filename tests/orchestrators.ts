@@ -1,16 +1,37 @@
 import db from "@/infra/database";
 import { sql } from "drizzle-orm";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
+import retry from "async-retry";
 
-async function cleanDatabase() {
+async function clearDatabase() {
   await db.execute(sql`drop schema public cascade; create schema public`);
 }
 
-async function runMigrations() {
-  await migrate(db, { migrationsFolder: "infra/database/migrations" });
+async function waitForAllServices() {
+  await waitForWeb();
 }
 
-export const orchestrator = {
-  cleanDatabase,
+async function waitForWeb() {
+  return retry(fetchAPI, { retries: 20 });
+
+  async function fetchAPI() {
+    const response = await fetch("http://localhost:3000/api");
+
+    if (response.status != 200) throw Error();
+  }
+}
+
+async function runMigrations() {
+  await migrate(db, {
+    migrationsFolder: "infra/database/migrations",
+    migrationsSchema: "public",
+  });
+}
+
+const orchestrator = {
+  clearDatabase,
   runMigrations,
+  waitForAllServices,
 };
+
+export default orchestrator;

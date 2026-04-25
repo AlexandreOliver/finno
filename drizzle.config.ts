@@ -9,4 +9,5 @@ export default defineConfig({
     ssl: process.env.NODE_ENV === "production",
   },
   casing: "snake_case",
+  migrations: { schema: "public" },
 });
