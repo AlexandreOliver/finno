@@ -6,15 +6,18 @@
     "url": "git@github.com:AlexandreOliver/finno.git"
   },
   "scripts": {
-    "dev": "pnpm service:database:up && next dev",
+    "dev": "pnpm service:db:up && pnpm run db:migrate && next dev",
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watch",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "service:database:up": "docker compose -f infra/compose.yaml up -d",
-    "service:database:down": "docker compose -f infra/compose.yaml down",
-    "database:generate": "drizzle-kit generate",
-    "database:migrate": "drizzle-kit migrate",
-    "database:studio": "pnpm service:database:up && drizzle-kit studio"
+    "service:db:up": "docker compose -f infra/compose.yaml up -d",
+    "service:db:down": "docker compose -f infra/compose.yaml down",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "pnpm service:db:up && drizzle-kit studio",
+    "db:seed": "node -r esbuild-register infra/database/seed.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -34,13 +37,17 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@jest/globals": "^30.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
+    "esbuild-register": "^3.6.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "jest": "^30.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
