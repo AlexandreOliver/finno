@@ -1,12 +1,5 @@
 import { sql } from "drizzle-orm";
-import {
-  index,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { uuidv7 } from "uuidv7";
 
 export const users = pgTable(
