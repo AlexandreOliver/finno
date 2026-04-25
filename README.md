@@ -1,36 +1,71 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Visão Geral
 
-First, run the development server:
+Esse projeto tem como objetivo, ser uma ferrementa útil para aqueles que gostariam de controlar seus gastos financeiros, de um forma mais segura e inteligente.
+
+Sinta-se a vontade para contribuir com o Desenvolvimento dela
+
+## Para executar localmente:
+
+1. Faça o clone do repositório
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone git@github.com:AlexandreOliver/finno.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instale as dependências usando pnpm
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm i
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Execute
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Entao acesse [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+pnpm \<comand>
 
-## Deploy on Vercel
+- dev: Inicia o Banco de Dados local, roda as migrações e inicia a aplicação
+- test: Inicia o Banco de Dados Local e roda a bateria de testes
+- test:watch: Roda os testes para desenvolvimento assistido,
+- build: Gera o código para a Produção,
+- lint: Verifica a estilização do código,
+- service:db:up: Sobe o Banco de dados em container docker,
+- service:db:down: Para e apaga o banco de dados,
+- db:generate: Analisa as modificações no schema e gera as migrações,
+- db:migrate: Aplica as migrações - Exige service:db:up,
+- db:studio: Cria uma interface web para visualizar o Banco de dados - Exige service:db:up
+- db:seed: Popula o Banco com dados - Exige service:db:up
+- wait-for-database: Script que espera até que o banco de dados esteja Online
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Esquema do Banco de Dados
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![Schema do banco de dados](Finno-db.png)
+
+### Tabelas
+
+- users - Dedicada a registrar todos os usuarios cadastrados no sistema.
+- in progress...
+
+## Regras de Negócios
+
+- in progress...
+
+## Tecnologias
+
+- NextJs
+- Drizzle ORM
+- Docker
+
+## Caracteristicas
+
+- [ ] Contará com logica de autenicação baseada em sessão
+- [ ] Contará com lógica de autorização baseada em Atributos (ABAC)
+- in progress..
