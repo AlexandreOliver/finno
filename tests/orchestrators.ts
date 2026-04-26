@@ -1,6 +1,5 @@
-import db from "@/infra/database";
+import db, { runMigrations } from "@/infra/database";
 import { sql } from "drizzle-orm";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
 import retry from "async-retry";
 
 async function clearDatabase() {
@@ -21,17 +20,15 @@ async function waitForWeb() {
   }
 }
 
-async function runMigrations() {
-  await migrate(db, {
-    migrationsFolder: "infra/database/migrations",
-    migrationsSchema: "public",
-  });
+async function runPendingMigrations() {
+  await runMigrations();
 }
 
 const orchestrator = {
   clearDatabase,
   runMigrations,
   waitForAllServices,
+  runPendingMigrations,
 };
 
 export default orchestrator;
