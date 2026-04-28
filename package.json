@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:migrate && next dev",
+    "dev:web": "next dev",
     "test": " pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
     "test:watch": "jest --runInBand --watch",
     "build": "next build",
