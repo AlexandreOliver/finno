@@ -1,13 +1,8 @@
-import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { lusitana } from "@/components/ui/font";
-import { Coins } from "lucide-react";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
+import type { Metadata } from "next";
+import { SourceCodePro } from "@/components/ui/font";
+import { Coins } from "lucide-react";
 
 // const geistMono = Geist_Mono({
 //   variable: "--font-geist-mono",
@@ -25,12 +20,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html id="root" lang="pt-BR" className={`${lusitana} antialiased`}>
+    <html
+      id="root"
+      lang="pt-BR"
+      className={`${SourceCodePro.className} antialiased`}
+    >
       <body className=" w-full">
-        <header className="h-15 m-4 transition">
+        <header className="h-25 m-4 transition">
           <div className="h-full gap-3 rounded-xl border border-border-default p-4 items-end flex shrink-0 text-background">
             <Coins size="50" className="text-deep-navy" />
-            <h1 className="text-display-large text-5xl font-light text-deep-navy leading-tight-large tracking-tight-large font-sohne">
+            <h1 className="text-display-large text-5xl font-light text-deep-navy leading-tight-large tracking-tight-large">
               Finno
             </h1>
           </div>
