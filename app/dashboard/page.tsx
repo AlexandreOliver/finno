@@ -1,4 +1,5 @@
 import { CardsKpis } from "./_components/CardsKpis";
+import { ChartTransactions } from "./_components/ChartTransactions";
 import { DetalhamentoReceita } from "./_components/DetalhamentoReceita";
 
 export default function Page() {
@@ -11,6 +12,9 @@ export default function Page() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-2">
         <div>
           <DetalhamentoReceita />
+        </div>
+        <div className="col-span-2">
+          <ChartTransactions />
         </div>
       </div>
     </section>
