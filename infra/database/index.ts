@@ -35,3 +35,9 @@ const database = drizzle({
 });
 
 export default database;
+
+process.on("SIGTERM", async () => {
+  console.log("Encerrando conexões...");
+  await database.$client.end();
+  process.exit(0);
+});

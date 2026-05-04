@@ -5,9 +5,17 @@ import zod from "zod";
 import passwordModel from "./password";
 import { eq } from "drizzle-orm";
 
-const userSchema = createInsertSchema(users);
+const userSchema = createInsertSchema(users, {
+  firstName: (schema) => schema.max(30).toLowerCase(),
+  lastName: (schema) => schema.max(50).toLowerCase(),
+  email: () => zod.email(),
+  password: (schema) => schema.min(6),
+});
 
-type IUserCreate = zod.infer<typeof userSchema>;
+type IUserCreate = Omit<
+  zod.infer<typeof userSchema>,
+  "id" | "createdAt" | "updatedAt"
+>;
 
 async function getAll() {
   const result = await db.select().from(users);
@@ -48,10 +56,17 @@ async function findByEmail(email: string) {
   return userInDb[0];
 }
 
+async function findById(id: string) {
+  const userInDb = await db.select().from(users).where(eq(users.id, id));
+
+  return userInDb[0];
+}
+
 const userModel = {
   getAll,
   create,
   findByEmail,
+  findById,
 };
 
 export default userModel;

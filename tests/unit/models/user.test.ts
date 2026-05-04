@@ -38,7 +38,7 @@ describe("Model user", () => {
 
     expect(result).toHaveProperty("id");
 
-    expect(user.create(userDuplicado)).rejects.toThrow(
+    await expect(user.create(userDuplicado)).rejects.toThrow(
       "Esse usuario ja existe",
     );
   });
