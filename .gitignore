@@ -43,3 +43,4 @@ next-env.d.ts
 Finno-db.sql
 pnpm-lock.yaml
 .swc/
+DESIGN.md
