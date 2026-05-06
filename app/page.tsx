@@ -22,7 +22,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-5 justify-center">
               <Link
-                href="/login"
+                href="/auth/signin"
                 className="bg-[#533afd] hover:bg-[#4434d4] text-white px-6 py-3 rounded-sm font-normal text-button transition-colors inline-flex items-center justify-center gap-2"
               >
                 Começar agora

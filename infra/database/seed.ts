@@ -9,7 +9,7 @@ async function main() {
     firstName: "sysgod",
     lastName: "onipotent",
     email: "sys@test.com",
-    password: await passwordModel.passwordHashed("teste"),
+    password: await passwordModel.passwordHashed("teste123"),
   });
 }
 main();
