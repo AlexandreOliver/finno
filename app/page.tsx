@@ -1,4 +1,4 @@
-import { HeaderHome } from "./_components/HeaderHome";
+import { HeaderHome } from "@/features/home/components/HeaderHome";
 import { Wallet, TrendingUp, Shield, BarChart3, Coins } from "lucide-react";
 import Link from "next/link";
 

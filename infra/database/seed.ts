@@ -1,6 +1,6 @@
 import { schemas } from "./schemas";
 import db from "./index";
-import passwordModel from "@/models/password";
+import passwordModel from "@/features/models/password";
 
 async function main() {
   console.log("Iniciando seeding...");

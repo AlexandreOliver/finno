@@ -44,3 +44,4 @@ Finno-db.sql
 pnpm-lock.yaml
 .swc/
 DESIGN.md
+infra/database/migrations/

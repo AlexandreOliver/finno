@@ -1,4 +1,4 @@
-import user from "@/models/user";
+import user from "@/features/models/user";
 
 export async function GET() {
   const s = user.getAll();
