@@ -1,3 +1,4 @@
+import "server-only";
 import db from "@/infra/database";
 import { users } from "@/infra/database/schemas/users";
 import { createInsertSchema } from "drizzle-zod";
@@ -5,11 +6,18 @@ import zod from "zod";
 import passwordModel from "./password";
 import { eq } from "drizzle-orm";
 
-const userSchema = createInsertSchema(users, {
-  firstName: (schema) => schema.max(30).toLowerCase(),
-  lastName: (schema) => schema.max(50).toLowerCase(),
+export const userSchema = createInsertSchema(users, {
+  firstName: (schema) =>
+    schema
+      .max(30, { error: "O nome excede o limite de 30 caracteres" })
+      .toLowerCase(),
+  lastName: (schema) =>
+    schema
+      .max(50, { error: "O sobrenome excede o limite de 50 caracteres" })
+      .toLowerCase(),
   email: () => zod.email(),
-  password: (schema) => schema.min(6),
+  password: (schema) =>
+    schema.min(6, { error: "A senha precisa ter mais que 6 digitos" }),
 });
 
 type IUserCreate = Omit<
@@ -47,13 +55,23 @@ async function create(dataReceived: IUserCreate) {
 }
 
 async function findByEmail(email: string) {
-  const userInDb = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  try {
+    const userInDb = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
-  return userInDb[0];
+    return userInDb[0];
+  } catch (err) {
+    const error = err as Error;
+    if (error.cause.code === "ECONNREFUSED") {
+      throw new Error("ServiceError: Banco de dados esta offline", {
+        cause: err,
+      });
+    }
+    throw err;
+  }
 }
 
 async function findById(id: string) {

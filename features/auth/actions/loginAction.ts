@@ -27,7 +27,6 @@ export async function loginAction(
     password: formData.get("password"),
     email: formData.get("email"),
   });
-  console.log(dataValidated);
 
   if (!dataValidated.success) {
     return {
@@ -38,25 +37,21 @@ export async function loginAction(
 
   // 1 - Verifica email e senha
   const userInDb = await user.findByEmail(dataValidated.data.email);
-  if (!userInDb) redirect("/register");
-  console.log(userInDb);
+  if (!userInDb) redirect("/auth/register");
 
   const passwordMatch = await passwordModel.compareHash(
     userInDb.password,
     dataValidated.data.password,
   );
   if (!passwordMatch) return { message: "Email ou Senha Inválida" };
-  console.log(passwordMatch);
 
-  // 2 - Resgata sessão ou cria caso nao exista
-  const sessionToken = await session.getSession(userInDb.id);
-  console.log(sessionToken);
-  // 3 - Verifica ou cria o cookie
-  const existsCookie = cookieJar.has("session_token");
+  // 2 - Cria a sessão
+  const sessionToken = await session.create(userInDb.id);
 
+  // 3 - Cria o cookie
   cookieJar.set({
     name: "session_token",
-    value: sessionToken,
+    value: sessionToken.token,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

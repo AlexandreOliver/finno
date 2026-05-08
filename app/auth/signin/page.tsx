@@ -28,7 +28,7 @@ export default function Page() {
         </Link>
         <span className="font-medium text-sm text-center">
           Não tem uma conta?{" "}
-          <Link href="/register" className="text-sky-500">
+          <Link href="/auth/register" className="text-sky-500">
             Crie
           </Link>
         </span>

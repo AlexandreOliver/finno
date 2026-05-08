@@ -1,3 +1,4 @@
+import "server-only";
 import bcrypt from "bcrypt";
 
 async function passwordHashed(passwordInText: string) {

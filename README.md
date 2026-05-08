@@ -33,6 +33,7 @@ Entao acesse [http://localhost:3000](http://localhost:3000)
 pnpm \<comand>
 
 - dev: Inicia o Banco de Dados local, roda as migrações e inicia a aplicação
+- dev:web - Inicia somente a aplicação web
 - test: Inicia o Banco de Dados Local e roda a bateria de testes
 - test:watch: Roda os testes para desenvolvimento assistido,
 - build: Gera o código para a Produção,
@@ -66,6 +67,6 @@ pnpm \<comand>
 
 ## Caracteristicas
 
-- [ ] Contará com logica de autenicação baseada em sessão
+- [x] Contará com logica de autenicação baseada em sessão
 - [ ] Contará com lógica de autorização baseada em Atributos (ABAC)
 - in progress..
