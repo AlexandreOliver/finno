@@ -1,15 +1,21 @@
+"use server";
+
 import { schemas } from "./schemas";
 import db from "./index";
-import passwordModel from "@/models/password";
+import passwordModel from "@/features/models/password";
 
-async function main() {
+export async function sedding() {
   console.log("Iniciando seeding...");
 
-  await db.insert(schemas.users).values({
-    firstName: "sysgod",
-    lastName: "onipotent",
-    email: "sys@test.com",
-    password: await passwordModel.passwordHashed("teste"),
-  });
+  try {
+    await db.insert(schemas.users).values({
+      firstName: "Odisseu",
+      lastName: "Filho de Laertes",
+      email: "coroa@itaca.net",
+      password: await passwordModel.passwordHashed("rei-de-itaca"),
+    });
+  } catch (err) {
+    const erro = err as Error;
+    console.log(erro.cause);
+  }
 }
-main();

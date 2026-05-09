@@ -1,6 +1,6 @@
 import orchestrator from "@/tests/orchestrators";
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
-import user from "@/models/user";
+import user from "@/features/models/user";
 import { version as uuidVersion } from "uuid";
 
 beforeAll(async () => {

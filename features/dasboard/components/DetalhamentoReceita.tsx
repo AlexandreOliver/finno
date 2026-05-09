@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Label, Pie, PieChart, Sector } from "recharts";
 import type { PieSectorShapeProps } from "recharts/types/polar/Pie";
-import { DateRangeComponent } from "../DateRange/DateRangeComponent";
+import { DateRangeComponent } from "@/features/dasboard/components/DateRangeComponent";
 import { type DateRange } from "react-day-picker";
 
 import {

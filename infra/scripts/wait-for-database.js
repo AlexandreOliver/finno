@@ -11,7 +11,7 @@ function checkPostgres() {
             return;
         }
 
-        console.log(">{ ONLINE }")
+        console.log("> { ONLINE }")
     }
 }
 

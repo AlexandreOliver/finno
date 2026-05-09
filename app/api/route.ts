@@ -1,8 +1,8 @@
-import user from "@/models/user";
+import user from "@/features/models/user";
+import { sedding } from "@/infra/database/seed";
 
 export async function GET() {
-  const s = user.getAll();
-  return new Response((await s).toString(), {
-    status: 200,
-  });
+  await sedding();
+  const s = await user.getAll();
+  return new Response(JSON.stringify(s), { status: 200 });
 }

@@ -32,18 +32,21 @@ Entao acesse [http://localhost:3000](http://localhost:3000)
 
 pnpm \<comand>
 
-- dev: Inicia o Banco de Dados local, roda as migrações e inicia a aplicação
-- test: Inicia o Banco de Dados Local e roda a bateria de testes
-- test:watch: Roda os testes para desenvolvimento assistido,
-- build: Gera o código para a Produção,
-- lint: Verifica a estilização do código,
-- service:db:up: Sobe o Banco de dados em container docker,
-- service:db:down: Para e apaga o banco de dados,
-- db:generate: Analisa as modificações no schema e gera as migrações,
-- db:migrate: Aplica as migrações - Exige service:db:up,
-- db:studio: Cria uma interface web para visualizar o Banco de dados - Exige service:db:up
-- db:seed: Popula o Banco com dados - Exige service:db:up
-- wait-for-database: Script que espera até que o banco de dados esteja Online
+- dev - Inicia o Banco de Dados local, roda as migrações e inicia a aplicação
+- dev:web - Inicia somente a aplicação web
+- test - Inicia o Banco de Dados Local e roda a bateria de testes
+- test:watch - Roda os testes para desenvolvimento assistido,
+- build - Gera o código para a Produção,
+- lint - Verifica a estilização do código,
+- service:db:up - Sobe o Banco de dados em container docker,
+- service:db:down - Para e apaga o banco de dados,
+- db:generate - Analisa as modificações no schema e gera as migrações,
+- db:migrate - Aplica as migrações - Exige service:db:up,
+- db:studio - Cria uma interface web para interagir com o Banco de dados - Exige service:db:up
+- db:seed - Popula o Banco com dados - Exige service:db:up
+- db:view - Gera uma vizualização do banco de dados
+- db:push - Envia diretamente ao banco de dados todas os schemas
+- wait-for-database - Script que espera até que o banco de dados esteja Online
 
 ## Esquema do Banco de Dados
 
@@ -52,10 +55,12 @@ pnpm \<comand>
 ### Tabelas
 
 - users - Dedicada a registrar todos os usuarios cadastrados no sistema.
+- sessions - Dedicada a regitrar todas as sessões ativas e inativas
 - in progress...
 
 ## Regras de Negócios
 
+- Um usuario poderá ter múltiplas contas, mas cada conta terá apenas um dono
 - in progress...
 
 ## Tecnologias
@@ -63,9 +68,10 @@ pnpm \<comand>
 - NextJs
 - Drizzle ORM
 - Docker
+- Zod
 
 ## Caracteristicas
 
-- [ ] Contará com logica de autenicação baseada em sessão
+- [x] Contará com logica de autenicação baseada em sessão
 - [ ] Contará com lógica de autorização baseada em Atributos (ABAC)
 - in progress..

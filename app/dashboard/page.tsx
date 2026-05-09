@@ -1,6 +1,8 @@
-import { CardsKpis } from "./_components/CardsKpis";
-import { ChartTransactions } from "./_components/ChartTransactions";
-import { DetalhamentoReceita } from "./_components/DetalhamentoReceita";
+import {
+  CardsKpis,
+  ChartTransactions,
+  DetalhamentoReceita,
+} from "@/features/dasboard/components";
 
 export default function Page() {
   return (
