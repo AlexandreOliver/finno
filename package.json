@@ -6,7 +6,7 @@
     "url": "git@github.com:AlexandreOliver/finno.git"
   },
   "scripts": {
-    "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:migrate && next dev",
+    "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:push && next dev",
     "dev:web": "next dev",
     "test": " pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
     "test:watch": "jest --runInBand --watch",
@@ -16,8 +16,10 @@
     "service:db:down": "docker compose -f infra/compose.yaml down",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
     "db:studio": "pnpm service:db:up && drizzle-kit studio",
     "db:seed": "node -r esbuild-register infra/database/seed.ts",
+    "db:view": "drizzle-lab visualizer",
     "wait-for-database": "node infra/scripts/wait-for-database.js"
   },
   "dependencies": {
@@ -61,6 +63,7 @@
     "@types/react-dom": "^19",
     "concurrently": "^9.2.1",
     "dotenv": "^17.4.2",
+    "drizzle-lab": "^0.11.0",
     "esbuild-register": "^3.6.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
