@@ -2,32 +2,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+const card_Patrimonio = {
+  totalPatrimonio: 34343.0,
+  diff_lastMonth: "9.8K",
+  percent_diff: 8.4,
+};
+
+const card_Disponivel = {
+  total: 34343.1,
+  diff_lastMonth: 123,
+  percent_diff: 1.2,
+};
+
+const card_GastosMensais = {
+  totalCurrent: 343.02,
+  totalLastMonth: 121.0,
+  diff_lastMonth: 123,
+  percent_diff: 0.2,
+};
+
+const card_Economia = {
+  taxaEconomia: 0.234,
+};
+
 export function CardsKpis() {
-  const card_Patrimonio = {
-    totalPatrimonio: 34343.0,
-    diff_lastMonth: "9.8K",
-    percent_diff: 8.4,
-  };
-
-  const card_Disponivel = {
-    total: 34343.1,
-    diff_lastMonth: 123,
-    percent_diff: 1.2,
-  };
-
-  const card_GastosMensais = {
-    totalCurrent: 343.02,
-    totalLastMonth: 121.0,
-    diff_lastMonth: 123,
-    percent_diff: 0.2,
-  };
-
-  const card_Economia = {
-    taxaEconomia: 0.234,
-  };
   return (
-    <div className=" flex flex-col w-full xl:flex-row gap-2">
-      <Card className="rounded-xl w-full xl:w-1/4">
+    <div className=" flex flex-col w-full xl:flex-row">
+      <Card className="rounded-none w-full xl:w-1/4">
         <CardHeader>
           <CardTitle>Patrimônio Líquido</CardTitle>
         </CardHeader>
@@ -56,7 +57,7 @@ export function CardsKpis() {
           </Badge>
         </CardContent>
       </Card>
-      <Card className="rounded-xl w-full xl:w-1/4">
+      <Card className="rounded-none w-full xl:w-1/4">
         <CardHeader>
           <CardTitle>Dísponivel</CardTitle>
         </CardHeader>
@@ -90,7 +91,7 @@ export function CardsKpis() {
           </Badge>
         </CardContent>
       </Card>
-      <Card className="rounded-xl w-full xl:w-1/4">
+      <Card className="rounded-none w-full xl:w-1/4">
         <CardHeader>
           <CardTitle>Gastos Mensais</CardTitle>
         </CardHeader>
@@ -122,7 +123,7 @@ export function CardsKpis() {
           </Badge>
         </CardContent>
       </Card>
-      <Card className="rounded-xl w-full xl:w-1/4">
+      <Card className="rounded-none w-full xl:w-1/4">
         <CardHeader>
           <CardTitle>Taxa de Economia</CardTitle>
         </CardHeader>
