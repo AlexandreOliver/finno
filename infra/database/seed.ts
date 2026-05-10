@@ -9,8 +9,8 @@ export async function sedding() {
 
   try {
     await db.insert(schemas.users).values({
-      firstName: "Odisseu",
-      lastName: "Filho de Laertes",
+      firstName: "odisseu",
+      lastName: "filho de Laertes",
       email: "coroa@itaca.net",
       password: await passwordModel.passwordHashed("rei-de-itaca"),
     });

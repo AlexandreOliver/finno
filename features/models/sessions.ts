@@ -4,7 +4,6 @@ import { sessions } from "@/infra/database/schemas/sessions";
 import { and, eq, gt } from "drizzle-orm";
 
 import { randomBytes } from "node:crypto";
-import { cache } from "react";
 
 const EXPIRATION_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 30;
 
@@ -23,14 +22,14 @@ async function create(userId: string) {
   return newSession[0];
 }
 
-const findActiveByToken = cache(async (token: string) => {
+async function findActiveByToken(token: string) {
   const session = await db
     .select()
     .from(sessions)
     .where(and(gt(sessions.expiresAt, new Date()), eq(sessions.token, token)));
 
   return session[0];
-});
+}
 
 async function renew(sessionId: string) {
   const session = await db
@@ -45,7 +44,7 @@ async function renew(sessionId: string) {
   return session[0];
 }
 
-const isActive = cache(async (token: string) => {
+async function isActive(token: string) {
   if (!token) return false;
   const session = await db
     .select()
@@ -53,7 +52,7 @@ const isActive = cache(async (token: string) => {
     .where(and(gt(sessions.expiresAt, new Date()), eq(sessions.token, token)));
 
   return session[0] !== undefined;
-});
+}
 
 const session = {
   create,

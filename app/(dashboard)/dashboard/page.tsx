@@ -4,7 +4,15 @@ import {
   DetalhamentoReceita,
 } from "@/features/dasboard/components";
 
-export default function Page() {
+import { cookies } from "next/headers";
+
+import { verifySession } from "@/features/authorization/services/verifysession";
+
+export default async function Page() {
+  const sessionCookie = (await cookies()).get("session_token");
+
+  const authUser = await verifySession(sessionCookie?.value as string);
+
   return (
     <section className="flex flex-col gap-2">
       <div>
