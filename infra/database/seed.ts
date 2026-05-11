@@ -9,10 +9,19 @@ export async function sedding() {
 
   try {
     await db.insert(schemas.users).values({
-      firstName: "odisseu",
-      lastName: "filho de Laertes",
-      email: "coroa@itaca.net",
+      firstName: "ulisses",
+      lastName: "filho de laertes",
+      email: "coroa@itaca.ageu",
       password: await passwordModel.passwordHashed("rei-de-itaca"),
+    });
+
+    const userId = await db
+      .select({ id: schemas.users.id })
+      .from(schemas.users);
+
+    await db.insert(schemas.accounts).values({
+      labelName: "patrimonio",
+      ownerId: userId[0].id,
     });
   } catch (err) {
     const erro = err as Error;
