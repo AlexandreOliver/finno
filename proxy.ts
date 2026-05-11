@@ -1,7 +1,7 @@
 import { NextResponse, type NextProxy } from "next/server";
 
-export const PRIVATE = ["/dashboard", "/api"];
-export const PUBLIC = ["/auth"];
+export const PRIVATE = ["/dashboard"];
+export const PUBLIC = ["/auth", "/api"];
 
 export const proxy: NextProxy = async (request) => {
   const pathname = request.nextUrl.pathname;
