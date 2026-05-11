@@ -1,16 +1,16 @@
-import { pgTable, text, varchar, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, varchar, timestamp, index, uuid } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { users } from "./users";
 
 export const sessions = pgTable(
   "sessions",
   {
-    id: text()
+    id: uuid()
       .primaryKey()
       .$defaultFn(() => uuidv7()),
 
     token: varchar({ length: 96 }).notNull().unique(),
-    userId: text()
+    userId: uuid()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     expiresAt: timestamp({ withTimezone: true }).notNull(),

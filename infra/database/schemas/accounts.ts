@@ -2,8 +2,8 @@ import {
   decimal,
   index,
   pgTable,
-  text,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { v7 as uuid7 } from "uuid";
@@ -12,11 +12,11 @@ import { users } from "./users";
 export const accounts = pgTable(
   "accounts",
   {
-    id: text()
+    id: uuid()
       .primaryKey()
       .$defaultFn(() => uuid7()),
     labelName: varchar({ length: 20 }).notNull(),
-    ownerId: text()
+    ownerId: uuid()
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     balance: decimal({ precision: 12, scale: 2 }).default("0"),

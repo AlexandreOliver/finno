@@ -1,11 +1,18 @@
 import { sql } from "drizzle-orm";
-import { index, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 
 export const users = pgTable(
   "users",
   {
-    id: text()
+    id: uuid()
       .primaryKey()
       .$defaultFn(() => uuidv7()),
     firstName: varchar({ length: 30 }).notNull(),
