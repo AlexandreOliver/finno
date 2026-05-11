@@ -1,7 +1,7 @@
 import {
   CardsKpis,
   ChartTransactions,
-  DetalhamentoReceita,
+  FonteRenda,
 } from "@/features/dasboard/components";
 
 import { cookies } from "next/headers";
@@ -29,18 +29,21 @@ export default async function Page() {
             }).format(new Date())}
           </p>
         </div>
-        <div className="flex flex-col xl:flex-row">
-          <CardsKpis />
+        <div className="grid grid-cols-1 gap-2 xl:grid-cols-12">
+          <div className="xl:col-span-6">
+            <CardsKpis />
+          </div>
+          <div className="xl:col-span-6">
+            <FonteRenda />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-2">
-        <div>
-          <DetalhamentoReceita />
-        </div>
-        <div className="col-span-2">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
+        <div className="col-span-7">
           <ChartTransactions />
         </div>
+        <div className="col-span-5"></div>
       </div>
     </section>
   );

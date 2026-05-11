@@ -98,7 +98,7 @@ export function ChartTransactions() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-normal">Visão Geral das Despesas</CardTitle>
+        <CardTitle className="font-medium">Visão Geral das Despesas</CardTitle>
         <CardAction>
           <Select defaultValue="weekly">
             <SelectTrigger className="w-28" size="sm">
@@ -116,13 +116,13 @@ export function ChartTransactions() {
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-100 w-full">
+        <ChartContainer config={chartConfig} className="h-70 w-full">
           <LineChart
             accessibilityLayer
             data={chartData}
             margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false} strokeDasharray="5, 5, 1, 5" />
             <XAxis
               axisLine={false}
               dataKey="timestamp"
