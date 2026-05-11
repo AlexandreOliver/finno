@@ -19,6 +19,21 @@ export const getInitials = (str: string): string => {
   );
 };
 
+export const formatNome = (firstname: string, lastname: string) => {
+  const noFormated = firstname + " " + lastname;
+  let nomeCompleto = "";
+
+  noFormated.split(/\s+/).forEach((word) => {
+    if (word.length <= 3) {
+      nomeCompleto += " " + word;
+    } else {
+      nomeCompleto += " " + word.charAt(0).toUpperCase() + word.slice(1);
+    }
+  });
+
+  return nomeCompleto.trim();
+};
+
 export function formatCurrency(
   amount: number,
   opts?: {
