@@ -1,8 +1,7 @@
-import { pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { v7 as uuid7 } from "uuid";
 import { users } from "./users";
-
-export const typesEnum = pgEnum("types", ["debito", "credito", "investimento"]);
+import { typesEnum } from "./Enums";
 
 export const categories = pgTable("categories", {
   id: uuid()

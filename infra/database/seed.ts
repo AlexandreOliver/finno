@@ -3,7 +3,7 @@
 import { schemas } from "./schemas";
 import db from "./index";
 import passwordModel from "@/features/models/password";
-import { typesEnum } from "./schemas/categories";
+import { typesEnum } from "./schemas/Enums";
 
 const categorias = [
   {
