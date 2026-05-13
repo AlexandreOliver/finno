@@ -25,7 +25,7 @@ export const templateReccurent = pgTable(
     amount: decimal({ scale: 2, precision: 12 }).notNull(),
     frequency: frequencyEnum().notNull(),
     interval: integer().notNull(),
-    installments: integer().notNull(),
+    installments: integer().default(0),
     categoryId: uuid().references(() => categories.id),
     walletId: uuid().references(() => wallets.id),
     start_date: timestamp({ withTimezone: true }).defaultNow(),
