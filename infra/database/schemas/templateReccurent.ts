@@ -34,7 +34,6 @@ export const templateReccurent = pgTable(
   },
   (table) => [
     check("chck_amount_gt0", sql`${table.amount} > 0`),
-    check("chck_installments_gt0", sql`${table.installments} > 0`),
     check("chck_interval_gt0", sql`${table.interval} > 0`),
     check(
       "chck_start_before_end",
