@@ -9,7 +9,7 @@ import {
 import { v7 as uuid7 } from "uuid";
 import { typesEnum } from "./Enums";
 import { categories } from "./categories";
-import { accounts } from "./accounts";
+import { wallets } from "./wallets";
 import { templateReccurent } from "./templateReccurent";
 import { sql } from "drizzle-orm";
 
@@ -23,7 +23,7 @@ export const movements = pgTable(
     description: text().notNull(),
     amount: decimal({ scale: 2, precision: 12 }).notNull(),
     categoryId: uuid().references(() => categories.id),
-    accountId: uuid().references(() => accounts.id),
+    walletId: uuid().references(() => wallets.id),
     reccurentId: uuid().references(() => templateReccurent.id),
     executedAt: timestamp({ withTimezone: true }).defaultNow(),
     dueDate: timestamp({ withTimezone: true }).defaultNow(),
