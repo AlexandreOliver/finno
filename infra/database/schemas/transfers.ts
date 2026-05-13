@@ -1,6 +1,6 @@
 import { check, decimal, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 import { v7 as uuid7 } from "uuid";
-import { accounts } from "./accounts";
+import { wallets } from "./wallets";
 import { sql } from "drizzle-orm";
 
 export const transfers = pgTable(
@@ -9,13 +9,13 @@ export const transfers = pgTable(
     id: uuid()
       .primaryKey()
       .$defaultFn(() => uuid7()),
-    debited_account: uuid()
-      .references(() => accounts.id, {
+    debited_wallet: uuid()
+      .references(() => wallets.id, {
         onDelete: "cascade",
       })
       .notNull(),
-    credited_account: uuid()
-      .references(() => accounts.id)
+    credited_wallet: uuid()
+      .references(() => wallets.id)
       .notNull(),
     amount: decimal({ scale: 2, precision: 12 }).notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow(),
@@ -23,7 +23,7 @@ export const transfers = pgTable(
   (table) => [
     check(
       "chck_contas_diferentes",
-      sql`${table.credited_account} != ${table.debited_account}`,
+      sql`${table.credited_wallet} != ${table.debited_wallet}`,
     ),
     check("chck_amount_maior_q_0", sql`${table.amount} > 0`),
   ],

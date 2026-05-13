@@ -9,8 +9,8 @@ import {
 import { v7 as uuid7 } from "uuid";
 import { users } from "./users";
 
-export const accounts = pgTable(
-  "accounts",
+export const wallets = pgTable(
+  "wallets",
   {
     id: uuid()
       .primaryKey()

@@ -10,7 +10,7 @@ import {
 import { v7 as uuid7 } from "uuid";
 import { typesEnum, statusEnum, frequencyEnum } from "./Enums";
 import { categories } from "./categories";
-import { accounts } from "./accounts";
+import { wallets } from "./wallets";
 import { sql } from "drizzle-orm";
 
 export const templateReccurent = pgTable(
@@ -25,16 +25,15 @@ export const templateReccurent = pgTable(
     amount: decimal({ scale: 2, precision: 12 }).notNull(),
     frequency: frequencyEnum().notNull(),
     interval: integer().notNull(),
-    installments: integer().notNull(),
+    installments: integer().default(0),
     categoryId: uuid().references(() => categories.id),
-    accountId: uuid().references(() => accounts.id),
+    walletId: uuid().references(() => wallets.id),
     start_date: timestamp({ withTimezone: true }).defaultNow(),
     end_date: timestamp({ withTimezone: true }),
     next_due_date: timestamp({ withTimezone: true }),
   },
   (table) => [
     check("chck_amount_gt0", sql`${table.amount} > 0`),
-    check("chck_installments_gt0", sql`${table.installments} > 0`),
     check("chck_interval_gt0", sql`${table.interval} > 0`),
     check(
       "chck_start_before_end",
