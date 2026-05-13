@@ -6,9 +6,9 @@
     "url": "git@github.com:AlexandreOliver/finno.git"
   },
   "scripts": {
-    "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:push && next dev",
+    "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:push && pnpm db:seed && next dev",
     "dev:web": "next dev",
-    "test": " pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
+    "test": "pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
     "test:watch": "jest --runInBand --watch",
     "build": "next build",
     "lint": "eslint",
@@ -18,7 +18,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "pnpm service:db:up && drizzle-kit studio",
-    "db:seed": "node -r esbuild-register infra/database/seed.ts",
+    "db:seed": "node -r esbuild-register infra/scripts/seed.ts",
     "db:view": "drizzle-lab visualizer",
     "wait-for-database": "node infra/scripts/wait-for-database.js"
   },
