@@ -5,26 +5,27 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
+import { SessionProvider } from "@/features/authorization/contexts/SessionProvider";
 
 export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieJar = await cookies();
-
-  const sessionCookie = cookieJar.get("session_token");
+  const sessionCookie = (await cookies()).get("session_token");
 
   const authUser = await verifySession(sessionCookie?.value as string);
   if (!authUser.isAuth) redirect("/auth/signin");
 
   return (
-    <SidebarProvider className="gap-4">
-      <SidebarDashboard />
-      <main className="w-full">
-        <SidebarTrigger />
-        {children}
-      </main>
-    </SidebarProvider>
+    <SessionProvider value={authUser}>
+      <SidebarProvider className="gap-4">
+        <SidebarDashboard />
+        <main className="w-full">
+          <SidebarTrigger />
+          {children}
+        </main>
+      </SidebarProvider>
+    </SessionProvider>
   );
 }
