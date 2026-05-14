@@ -20,10 +20,9 @@ export const userSchema = createInsertSchema(users, {
     schema.min(6, { error: "A senha precisa ter mais que 6 digitos" }),
 });
 
-type IUserCreate = Omit<
-  zod.infer<typeof userSchema>,
-  "id" | "createdAt" | "updatedAt"
->;
+export type UserType = zod.infer<typeof userSchema>;
+
+type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
 
 async function getAll() {
   const result = await db.select().from(users);
@@ -31,7 +30,7 @@ async function getAll() {
   return result;
 }
 
-async function create(dataReceived: IUserCreate) {
+async function create(dataReceived: UserCreateType) {
   const dataValidated = userSchema.parse(dataReceived);
 
   const userExists = await findByEmail(dataValidated.email);
