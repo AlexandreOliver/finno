@@ -1,6 +1,8 @@
 import "./globals.css";
 
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
+
 import { geist } from "@/components/ui/font";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +17,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html id="root" lang="pt-BR" className={cn("antialiased", geist.className)}>
-      <body className="min-h-screen">{children}</body>
+    <html
+      id="root"
+      lang="pt-BR"
+      className={cn("antialiased", geist.className)}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen">
+        <ThemeProvider
+          attribute={"class"}
+          enableSystem={false}
+          themes={["light", "dark"]}
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

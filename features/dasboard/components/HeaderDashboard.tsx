@@ -1,4 +1,5 @@
-import { BellIcon, Coins, SunMoon, User } from "lucide-react";
+import ThemeComponent from "@/components/ThemeComponent";
+import { BellIcon, Coins, User } from "lucide-react";
 
 export function HeaderDashboard() {
   return (
@@ -10,10 +11,8 @@ export function HeaderDashboard() {
         </div>
 
         <div className="flex gap-5">
-          <div className="flex gap-4">
-            <div className="flex justify-between items-center">
-              <SunMoon />
-            </div>
+          <div className="flex gap-3">
+            <ThemeComponent />
             <div className="flex justify-between items-center">
               <BellIcon size={19} />
             </div>
