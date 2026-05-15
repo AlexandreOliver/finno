@@ -1,5 +1,5 @@
-import { HeaderHome } from "@/features/home/components/HeaderHome";
-import { Wallet, TrendingUp, Shield, BarChart3, Coins } from "lucide-react";
+import { HeaderHome } from "@/features/home/components";
+import { TrendingUp, Coins, Wallet, BarChart3, Shield } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
       <HeaderHome />
       <main className="min-h-screen bg-pure-white">
         {/* Hero Section */}
-        <section className="px-6 py-20 md:px-14 md:py-32 lg:px-20">
+        <section className="px-6 py-20 md:px-14 md:py-32 lg:px-20 bg-card">
           <div className=" max-w-4xl mx-auto text-center items-center">
             <div className="flex justify-center">
               <Coins color="orange" size="120" className="mb-7.5" />
@@ -30,7 +30,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/dashboard"
-                className=" border border-[#b9b9f9] text-[#533afd] dark:text-white hover:bg-[#9e9ef5] px-6 py-3 rounded-sm font-normal text-button transition-colors inline-flex items-center justify-center"
+                className=" border border-[#b9b9f9] text-[#4a30f3] dark:text-white hover:bg-[#9e9ef5] px-6 py-3 rounded-sm font-norma transition-colors inline-flex items-center justify-center"
                 title="Entre em uma conta de teste e visualize a aplicação"
               >
                 Ver demonstração
@@ -38,9 +38,8 @@ export default function Home() {
             </div>
           </div>
         </section>
-
         {/* Features Section */}
-        <section className="px-6 py-20 md:px-14 lg:px-20 bg-card">
+        <section className="px-6 py-20 md:px-14 lg:px-20">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-xl text-section-heading font-medium text-deep-navy leading-tight-section tracking-tight-section text-center mb-16">
               Recursos principais
@@ -84,9 +83,8 @@ export default function Home() {
             </div>
           </div>
         </section>
-
         {/* CTA Section */}
-        <section className="px-6 py-20 md:px-14 lg:px-20">
+        <section className="px-6 py-20 md:px-14 lg:px-20 bg-card">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-section-heading font-light text-deep-navy leading-tight-section tracking-tight-section mb-6">
               Pronto para transformar sua gestão financeira?

@@ -25,7 +25,7 @@ export default async function Page() {
   });
 
   return (
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-2 w-full">
       <div>
         <div className="p-3 bg-card border-b-4">
           <p className="text-3xl tracking-tight font-medium">{nomeCompleto}</p>

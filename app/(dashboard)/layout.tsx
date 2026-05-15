@@ -1,11 +1,9 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { SidebarDashboard } from "@/features/dasboard/components";
-
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { SessionProvider } from "@/features/authorization/contexts/SessionProvider";
+import { HeaderDashboard } from "@/features/dasboard/components";
 
 export default async function DashboardLayout({
   children,
@@ -19,13 +17,8 @@ export default async function DashboardLayout({
 
   return (
     <SessionProvider value={authUser}>
-      <SidebarProvider className="gap-4">
-        <SidebarDashboard />
-        <main className="w-full">
-          <SidebarTrigger />
-          {children}
-        </main>
-      </SidebarProvider>
+      <HeaderDashboard />
+      <main className="boxed">{children}</main>
     </SessionProvider>
   );
 }
