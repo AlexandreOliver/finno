@@ -19,8 +19,8 @@ export const getInitials = (str: string): string => {
   );
 };
 
-export const formatNome = (firstname: string, lastname: string) => {
-  const noFormated = firstname + " " + lastname;
+export const formatNome = (firstname: string, lastname?: string) => {
+  const noFormated = lastname ? firstname + " " + lastname : firstname;
   let nomeCompleto = "";
 
   noFormated.split(/\s+/).forEach((word) => {
