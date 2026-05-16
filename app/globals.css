@@ -42,11 +42,11 @@
 
 /* Stripe-inspired theme variables */
 :root {
-  --background: oklch(1 0 0);
+  --background: oklch(0.9551 0 0);
   --foreground: oklch(0.26 0.03 262.67);
   --color-january: oklch(23 14 24);
   --radius: 0.625rem;
-  --card: oklch(0.9551 0 0);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.32 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.32 0 0);

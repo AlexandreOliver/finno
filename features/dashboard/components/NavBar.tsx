@@ -17,7 +17,7 @@ export function NavBar() {
     },
     {
       label: "Transações",
-      link: "/transaction",
+      link: "/dashboard/transaction",
       icon: <ArrowUpDown size={22} />,
     },
     {
