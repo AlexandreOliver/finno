@@ -1,5 +1,5 @@
-import { HeaderHome } from "@/features/home/components";
-import { TrendingUp, Coins, Wallet, BarChart3, Shield } from "lucide-react";
+import { HeaderHome, InfoCards } from "@/features/home/components";
+import { TrendingUp, Coins } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -39,50 +39,7 @@ export default function Home() {
           </div>
         </section>
         {/* Features Section */}
-        <section className="px-6 py-20 md:px-14 lg:px-20">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-xl text-section-heading font-medium text-deep-navy leading-tight-section tracking-tight-section text-center mb-16">
-              Recursos principais
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Card 1 */}
-              <div className="bg-popover border border-[#e5edf5] rounded-[5px] p-8 shadow-sm hover:shadow-stripe-elevated transition-shadow">
-                <Wallet className="w-8 h-8 text-stripe-purple mb-6" />
-                <h3 className="text-sub-heading font-normal text-deep-navy leading-tight-sub tracking-tight-small mb-4">
-                  Controle de Gastos
-                </h3>
-                <p className="text-body font-normal leading-normal">
-                  Categorize e monitore todos os seus gastos em tempo real, com
-                  relatórios detalhados e insights valiosos.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="bg-popover border border-[#e5edf5] rounded-[5px] p-8 shadow-sm hover:shadow-stripe-elevated transition-shadow">
-                <BarChart3 className="w-8 h-8 text-stripe-purple mb-6" />
-                <h3 className="text-sub-heading font-normal text-deep-navy leading-tight-sub tracking-tight-small mb-4">
-                  Análises Avançadas
-                </h3>
-                <p className="text-body font-normal leading-normal">
-                  Visualize seus dados financeiros com gráficos interativos e
-                  previsões baseadas em IA.
-                </p>
-              </div>
-
-              {/* Card 3 */}
-              <div className="bg-popover border border-[#e5edf5] rounded-comfortable p-8 shadow-sm hover:shadow-stripe-elevated transition-shadow">
-                <Shield className="w-8 h-8 text-stripe-purple mb-6" />
-                <h3 className="text-sub-heading font-normal text-deep-navy leading-tight-sub tracking-tight-small mb-4">
-                  Segurança Total
-                </h3>
-                <p className="text-body font-normal leading-normal">
-                  Seus dados são protegidos com criptografia de ponta e
-                  conformidade com as melhores práticas de segurança.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <InfoCards />
         {/* CTA Section */}
         <section className="px-6 py-20 md:px-14 lg:px-20 bg-card">
           <div className="max-w-4xl mx-auto text-center">
