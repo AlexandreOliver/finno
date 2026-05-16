@@ -2,7 +2,7 @@ import {
   CardsKpis,
   ChartTransactions,
   FonteRenda,
-} from "@/features/dasboard/components";
+} from "@/features/dashboard/components";
 
 import { cookies } from "next/headers";
 
