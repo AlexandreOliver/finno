@@ -4,3 +4,5 @@ export * from "./DateRangeComponent";
 export * from "./DetalhamentoReceita";
 export * from "./SidebarDashboard";
 export * from "./FonteRenda";
+export * from "./HeaderDashboard";
+export * from "./NavBar";
