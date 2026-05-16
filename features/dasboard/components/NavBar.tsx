@@ -36,7 +36,7 @@ export function NavBar() {
           <Link href="#" prefetch={false}>
             <div className="flex rounded-md justify-center items-center gap-2 px-1 py-2 hover:bg-gray-300 hover:text-black">
               <BanknoteArrowUp size={22} />
-              <span>Home</span>
+              <span>Receita</span>
             </div>
           </Link>
           <Separator

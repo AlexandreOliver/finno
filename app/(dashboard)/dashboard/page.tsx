@@ -11,6 +11,10 @@ import { formatNome } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+export const metadata = {
+  title: "Dashboard",
+};
+
 export default async function Page() {
   const sessionCookie = (await cookies()).get("session_token");
 

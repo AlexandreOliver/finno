@@ -7,7 +7,10 @@ import { geist } from "@/components/ui/font";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Finno",
+  title: {
+    template: "%s | Finno",
+    default: "Finno",
+  },
   description: "Orçamento Fácil",
 };
 
