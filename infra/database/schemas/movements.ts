@@ -22,8 +22,12 @@ export const movements = pgTable(
     type: typesEnum().notNull(),
     description: text().notNull(),
     amount: decimal({ scale: 2, precision: 12 }).notNull(),
-    categoryId: uuid().references(() => categories.id),
-    walletId: uuid().references(() => wallets.id),
+    categoryId: uuid()
+      .references(() => categories.id)
+      .notNull(),
+    walletId: uuid()
+      .references(() => wallets.id)
+      .notNull(),
     reccurentId: uuid().references(() => templateReccurent.id),
     executedAt: timestamp({ withTimezone: true }).defaultNow(),
     dueDate: timestamp({ withTimezone: true }),
