@@ -13,12 +13,29 @@ async function sedding() {
   console.log("Iniciando seeding...");
 
   try {
-    await db.insert(schemas.users).values(seed_users);
-    await db.insert(schemas.categories).values(seed_categorias);
-    await db.insert(schemas.wallets).values(seed_wallets);
-    await db.insert(schemas.templateReccurent).values(seed_templateReccurent);
-    await db.insert(schemas.movements).values(seed_movements);
-    await db.insert(schemas.transfers).values(seed_transfers);
+    await db.insert(schemas.users).values(seed_users).onConflictDoNothing();
+
+    await db
+      .insert(schemas.categories)
+      .values(seed_categorias)
+      .onConflictDoNothing();
+
+    await db.insert(schemas.wallets).values(seed_wallets).onConflictDoNothing();
+
+    await db
+      .insert(schemas.templateReccurent)
+      .values(seed_templateReccurent)
+      .onConflictDoNothing();
+
+    await db
+      .insert(schemas.movements)
+      .values(seed_movements)
+      .onConflictDoNothing();
+
+    await db
+      .insert(schemas.transfers)
+      .values(seed_transfers)
+      .onConflictDoNothing();
   } catch (err) {
     const erro = err as Error;
     console.error(erro);
