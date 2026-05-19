@@ -17,6 +17,10 @@ export const movementsSchema = createInsertSchema(movements, {
       }, schema)
       .refine((value) => !Number.isNaN(Number.parseFloat(value)), {
         error: "O Valor precisa ser um Número",
+        abort: true,
+      })
+      .refine((value) => Number.parseFloat(value) > 0, {
+        error: "O Valor Precisa ser maior do que 0",
       }),
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
 });
