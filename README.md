@@ -1,5 +1,3 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Visão Geral
 
 Esse projeto tem como objetivo, ser uma ferrementa útil para aqueles que gostariam de controlar seus gastos financeiros, de um forma mais segura e inteligente.
@@ -26,13 +24,19 @@ pnpm i
 pnpm dev
 ```
 
-Entao acesse [http://localhost:3000](http://localhost:3000)
+4. Entao acesse [http://localhost:3000](http://localhost:3000)
+5. Utilize as credenciais padrões:
+
+```
+Email: coroa@itaca.ageu
+Senha: rei-de-itaca
+```
 
 ## Scripts
 
 pnpm \<comand>
 
-- dev - Inicia o Banco de Dados local, roda as migrações e inicia a aplicação
+- dev - Inicia o Banco de Dados local, roda as migrações, semeia o banco e inicia a aplicação
 - dev:web - Inicia somente a aplicação web
 - test - Inicia o Banco de Dados Local e roda a bateria de testes
 - test:watch - Roda os testes para desenvolvimento assistido,
@@ -56,11 +60,16 @@ pnpm \<comand>
 
 - users - Dedicada a registrar todos os usuarios cadastrados no sistema.
 - sessions - Dedicada a regitrar todas as sessões ativas e inativas
-- in progress...
+- wallets - Dedicada a registrar todas as carteiras de um usuario
+- categories - Dedicada a registrar todas as categorias de movementos
+- transfers - Registra as transferencias entre carteiras
+- movements - Registra todos as movimentações financeiras de entrada e saida
+- template_reccurent - Registra as movimentações finaceiras recorrentes e planejadas
 
 ## Regras de Negócios
 
 - Um usuario poderá ter múltiplas contas, mas cada conta terá apenas um dono
+- Um usuario poderá criar novas categorias personalizadas, tendo acesso somente as que criou e as que são padrão.
 - in progress...
 
 ## Tecnologias
@@ -69,6 +78,18 @@ pnpm \<comand>
 - Drizzle ORM
 - Docker
 - Zod
+- Shadcn UI
+- PostgreSQL
+
+## Rotas
+
+```
+/
+auth/login/
+auth/register/
+dashboard/
+dashboard/trasactions/
+```
 
 ## Caracteristicas
 
