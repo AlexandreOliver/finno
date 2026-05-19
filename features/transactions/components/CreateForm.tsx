@@ -49,6 +49,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
       ownerId: user?.id as string,
       returnFields: ["id", "labelName"],
     }).then((data) => {
+      console.log(data);
       setWallets(
         data.map((wallet) => {
           return {
@@ -58,7 +59,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
         }),
       );
     });
-  }, [user]);
+  }, [user?.id]);
 
   const categoriesBytype = useMemo(() => {
     return categoriesAll.filter((ctg) => ctg.type === type);
