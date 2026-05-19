@@ -1,8 +1,7 @@
 import { Badge } from "@/components/ui/badge";
+import { CreateDialog } from "@/features/transactions/components";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 
 export const metadata = {
   title: "Transações",
@@ -31,26 +30,8 @@ export default function Page() {
           </div>
         </div>
         <div className="flex gap-4">
-          <div className="border flex p-2 rounded-md border-green-400 dark:border-green-800 hover:bg-green-400/20">
-            <Link
-              href="#"
-              prefetch={false}
-              className="text-green-700 dark:text-green-300"
-            >
-              <Plus className="inline mr-1" />
-              <span>Nova Receita</span>
-            </Link>
-          </div>
-          <div className="border flex p-2 rounded-md border-red-400 dark:border-red-800 hover:bg-red-400/20">
-            <Link
-              href="#"
-              prefetch={false}
-              className="text-red-700 dark:text-red-400"
-            >
-              <Plus className="inline mr-1" />
-              <span>Nova Despesa</span>
-            </Link>
-          </div>
+          <CreateDialog type="Renda" label="Nova Receita" />
+          <CreateDialog type="Despesa" label="Nova Despesa" />
         </div>
       </div>
     </section>
