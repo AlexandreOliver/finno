@@ -14,7 +14,7 @@ export function ButtonCreate({ variant, label, ...rest }: ButtonCreateProps) {
       "border-green-400 dark:border-green-800 hover:bg-green-400/20 text-green-700 dark:text-green-300";
   } else if (variant === "Despesa") {
     styles =
-      "border-red-400 dark:border-red-800 hover:bg-red-400/20 text-red-700 dark:text-red-400";
+      "border-red-400 dark:border-red-800 hover:bg-red-700/40 text-red-700 dark:text-red-400";
   }
 
   return (

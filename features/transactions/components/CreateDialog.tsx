@@ -40,7 +40,7 @@ export function CreateDialog(props: CreateFormProps) {
         />
         <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
-            <DialogTitle>{props.label}</DialogTitle>
+            <DialogTitle>Nova Transação</DialogTitle>
           </DialogHeader>
           <CreateForm variant={props.type} />
         </DialogContent>

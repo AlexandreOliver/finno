@@ -125,8 +125,8 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
             // setSelectedCategory(null);
           }}
           className={clsx(
-            "border border-red-400 dark:border-red-700 p-2 text-center text-xl rounded-sm text-red-700 dark:text-red-400",
-            type === "debito" ? "bg-red-700/40" : "hover:bg-red-700/40",
+            "border border-red-400 dark:border-red-700 p-2 text-center text-xl rounded-sm text-red-700 dark:text-red-600",
+            type === "debito" ? "bg-red-700/30" : "hover:bg-red-700/30",
           )}
         >
           Despesa

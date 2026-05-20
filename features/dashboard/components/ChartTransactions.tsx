@@ -98,7 +98,7 @@ export function ChartTransactions() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-medium">Visão Geral das Despesas</CardTitle>
+        <CardTitle className="font-medium">Visão Geral </CardTitle>
         <CardAction>
           <Select defaultValue="weekly">
             <SelectTrigger className="w-28" size="sm">
