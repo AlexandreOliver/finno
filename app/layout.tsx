@@ -31,6 +31,7 @@ export default function RootLayout({
           attribute={"class"}
           enableSystem={false}
           themes={["light", "dark"]}
+          forcedTheme="dark"
         >
           {children}
         </ThemeProvider>

@@ -11,7 +11,7 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <Card className="w-95">
+    <Card className="w-85">
       <CardHeader className="text-center">
         <CardTitle>Login</CardTitle>
         <CardDescription>Entre com seu email e senha</CardDescription>
