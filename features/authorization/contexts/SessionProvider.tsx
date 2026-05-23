@@ -1,11 +1,10 @@
 "use client";
 
-import { UserType } from "@/features/models/user";
 import { createContext, ReactNode } from "react";
 
 interface ISession {
   isAuth: boolean;
-  user: UserType | null;
+  user: { id: string; firstName: string; lastName: string } | null;
 }
 
 const defaultSessionState: ISession = {

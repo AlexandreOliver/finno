@@ -13,5 +13,12 @@ export const verifySession = cache(async (sessionToken: string) => {
   const user = await userModel.findById(session?.userId);
   //console.log(user);
 
-  return { isAuth: isValid, user: user };
+  return {
+    isAuth: isValid,
+    user: {
+      id: user?.id,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+    },
+  };
 });
