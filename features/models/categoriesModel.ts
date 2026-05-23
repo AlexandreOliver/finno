@@ -53,9 +53,41 @@ const findAll: FunctionFindAll = async ({ userId, returnFields }) => {
   >[];
 };
 
-const movementsModel = {
-  create,
-  findAll,
+export type FunctionFindId = <K extends keyof ColumnsTypes>({
+  id,
+  returnFields,
+}: {
+  id: string;
+  returnFields: readonly K[];
+}) => Promise<Pick<ColumnsTypes, K> | null>;
+
+const findById: FunctionFindId = async ({ id, returnFields }) => {
+  if (!id || returnFields.length === 0) return null;
+
+  const selectCollumns = returnFields.reduce(
+    (acc, column) => {
+      acc[column] = categories[column];
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as any,
+  );
+
+  const category = await db
+    .select(selectCollumns)
+    .from(categories)
+    .where(eq(categories.id, id));
+
+  return category[0] as unknown as Pick<
+    ColumnsTypes,
+    (typeof returnFields)[number]
+  >;
 };
 
-export default movementsModel;
+const categoriesModel = {
+  create,
+  findAll,
+  findById,
+};
+
+export default categoriesModel;
