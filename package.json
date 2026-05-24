@@ -57,6 +57,7 @@
     "@jest/globals": "^30.3.0",
     "@tailwindcss/postcss": "^4",
     "@tanstack/eslint-plugin-query": "^5.100.13",
+    "@tanstack/react-query-devtools": "^5.100.14",
     "@types/async-retry": "^1.4.9",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
