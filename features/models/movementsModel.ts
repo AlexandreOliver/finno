@@ -223,25 +223,16 @@ const findByWalletIdWithCategory = async <
 
   if (Array.isArray(walletId)) {
     walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
-
-    const category = await db
-      .select(selectCollumns)
-      .from(movements)
-      .where(or(...filters))
-      .orderBy(movements.executedAt, movements.amount)
-      .leftJoin(categories, eq(categories.id, movements.categoryId));
-
-    return category as unknown as Pick<
-      ColumnsTypes,
-      (typeof returnFields)[number]
-    >[] &
-      { labelCategory: string; categoryId: string }[];
   }
 
   const category = await db
     .select(selectCollumns)
     .from(movements)
-    .where(eq(movements.walletId, walletId as string))
+    .where(
+      Array.isArray(walletId)
+        ? or(...filters)
+        : eq(movements.walletId, walletId as string),
+    )
     .orderBy(movements.executedAt, movements.amount)
     .leftJoin(categories, eq(categories.id, movements.categoryId));
 
