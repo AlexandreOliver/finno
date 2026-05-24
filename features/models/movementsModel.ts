@@ -196,10 +196,16 @@ const findByWalletIdWithCategory = async <
   walletId,
   returnFields,
 }: {
-  walletId: string;
+  walletId: string | string[];
   returnFields: readonly K[];
-}) => {
-  if (!walletId || returnFields.length === 0) return null;
+}): Promise<
+  | (Pick<ColumnsTypes, (typeof returnFields)[number]>[] &
+      { labelCategory: string; categoryId: string }[])
+  | []
+> => {
+  if (returnFields.length === 0) return [];
+  if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
+    return [];
 
   const selectCollumns = returnFields.reduce(
     (acc, column) => {
@@ -210,17 +216,37 @@ const findByWalletIdWithCategory = async <
     { labelCategory: categories.label, categoryId: categories.id } as any,
   );
 
+  const filters: SQL[] = [];
+
+  if (Array.isArray(walletId)) {
+    walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
+
+    const category = await db
+      .select(selectCollumns)
+      .from(movements)
+      .where(or(...filters))
+      .orderBy(movements.executedAt, movements.amount)
+      .leftJoin(categories, eq(categories.id, movements.categoryId));
+
+    return category as unknown as Pick<
+      ColumnsTypes,
+      (typeof returnFields)[number]
+    >[] &
+      { labelCategory: string; categoryId: string }[];
+  }
+
   const category = await db
     .select(selectCollumns)
     .from(movements)
-    .where(eq(movements.walletId, walletId))
+    .where(eq(movements.walletId, walletId as string))
     .orderBy(movements.executedAt, movements.amount)
     .leftJoin(categories, eq(categories.id, movements.categoryId));
 
   return category as unknown as Pick<
     ColumnsTypes,
     (typeof returnFields)[number]
-  >[];
+  >[] &
+    { labelCategory: string; categoryId: string }[];
 };
 
 const movementsModel = {
