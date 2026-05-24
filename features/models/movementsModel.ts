@@ -131,10 +131,10 @@ const deleteById = async (movementId: string) => {
  * @returns A quantidade de registros de movimentos. Quando walletId é uma lista, retorna a soma total das movimentacoes de cada carteira
  *
  * @example
- * count("121212-121-1232-111111111111");
+ * count("019e1dcf-f7dd-7c41-86c9-8da67aee78ee");
  *
  *  @example
- * count(["121212-121-1232-111111111111", 'wwwwwww232-333333-12-333333']);
+ * count(["019e1dcf-f7dd-7c41-86c9-8da67aee78ee", '019e1dc7-df44-7810-afb6-5e56ac7becf1']);
  */
 const count = async (walletId?: string | string[]) => {
   let count;
@@ -149,7 +149,7 @@ const count = async (walletId?: string | string[]) => {
   }
 
   if (walletId) {
-    count = await db.$count(movements, eq(movements.categoryId, walletId));
+    count = await db.$count(movements, eq(movements.walletId, walletId));
     return count;
   }
 
