@@ -134,12 +134,15 @@ const deleteById = async (movementId: string) => {
  * count("019e1dcf-f7dd-7c41-86c9-8da67aee78ee");
  *
  *  @example
- * count(["019e1dcf-f7dd-7c41-86c9-8da67aee78ee", '019e1dc7-df44-7810-afb6-5e56ac7becf1']);
+ * count(["019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
+ *        "019e1dc7-df44-7810-afb6-5e56ac7becf1"]);
  */
 const count = async (walletId?: string | string[]) => {
   let count;
 
   if (Array.isArray(walletId)) {
+    if (walletId.length === 0) return 0;
+
     const filters: SQL[] = [];
 
     walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
