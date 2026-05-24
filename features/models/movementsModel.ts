@@ -3,7 +3,7 @@ import db from "@/infra/database";
 import { movements } from "@/infra/database/schemas/movements";
 import { createInsertSchema } from "drizzle-zod";
 import zod from "zod";
-import { and, between, eq, SQL, desc } from "drizzle-orm";
+import { and, between, eq, SQL, desc, or } from "drizzle-orm";
 import { categories } from "@/infra/database/schemas/categories";
 
 export const movementsSchema = createInsertSchema(movements, {
@@ -87,6 +87,7 @@ const findByWalletIdForQuery: FunctionFindAllMoviments = async ({
   }
 
   let consulta;
+
   if (query?.limit) {
     consulta = db.$with("sql").as(
       db
@@ -103,8 +104,7 @@ const findByWalletIdForQuery: FunctionFindAllMoviments = async ({
         .select(selectCollumns)
         .from(movements)
         .where(filters.length > 0 ? and(...filters) : undefined)
-        .orderBy(movements.executedAt, desc(movements.amount))
-        .offset(((query?.page ?? 1) - 1) * (query?.limit ?? 0)),
+        .orderBy(movements.executedAt, desc(movements.amount)),
     );
   }
   const movementsResult = await db.with(consulta).select().from(consulta);
@@ -124,11 +124,32 @@ const deleteById = async (movementId: string) => {
   return returnDb[0];
 };
 
-const count = async (walletId?: string) => {
+/**
+ * Conta a quantidade de movimentos.
+ *
+ * @param walletId - UUIDv7 de uma carteira ou uma lista delas.
+ * @returns A quantidade de registros de movimentos. Quando walletId é uma lista, retorna a soma total das movimentacoes de cada carteira
+ *
+ * @example
+ * count("121212-121-1232-111111111111");
+ *
+ *  @example
+ * count(["121212-121-1232-111111111111", 'wwwwwww232-333333-12-333333']);
+ */
+const count = async (walletId?: string | string[]) => {
   let count;
 
+  if (Array.isArray(walletId)) {
+    const filters: SQL[] = [];
+
+    walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
+
+    count = await db.$count(movements, or(...filters));
+    return count;
+  }
+
   if (walletId) {
-    count = await db.$count(movements, eq(movements.walletId, walletId));
+    count = await db.$count(movements, eq(movements.categoryId, walletId));
     return count;
   }
 
