@@ -6,6 +6,7 @@ import zod from "zod";
 import { and, between, eq, SQL, desc, or, inArray } from "drizzle-orm";
 import { categories } from "@/infra/database/schemas/categories";
 import { PgColumn, PgSelect } from "drizzle-orm/pg-core";
+import { cache } from "react";
 
 export const movementsSchema = createInsertSchema(movements, {
   amount: (schema) =>
@@ -35,11 +36,11 @@ type TypeMovementsCreate = Omit<
   "id" | "dueDate"
 >;
 
-async function create(movObject: TypeMovementsCreate) {
+const create = cache(async (movObject: TypeMovementsCreate) => {
   const newMovement = movementsSchema.parse(movObject);
 
   await db.insert(movements).values(newMovement);
-}
+});
 
 export type QueryParamsMovements = {
   limit?: number;
@@ -87,109 +88,106 @@ export type FunctionFindAllMoviments = <K extends keyof ColumnsTypes>(
  *     }
  * ]
  */
-const findByWalletIdForQuery: FunctionFindAllMoviments = async ({
-  walletId,
-  returnFields,
-  query,
-  include,
-}) => {
-  if (returnFields.length === 0) return [];
-  if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
-    return [];
+const findByWalletIdForQuery: FunctionFindAllMoviments = cache(
+  async ({ walletId, returnFields, query, include }) => {
+    if (returnFields.length === 0) return [];
+    if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
+      return [];
 
-  const selectCollumns = returnFields.reduce(
-    (acc, column) => {
-      acc[column] = movements[column];
-      return acc;
-    },
-    collmnsInclude() as Record<string, PgColumn>,
-  );
+    const selectCollumns = returnFields.reduce(
+      (acc, column) => {
+        acc[column] = movements[column];
+        return acc;
+      },
+      collmnsInclude() as Record<string, PgColumn>,
+    );
 
-  const filters: SQL[] = [];
+    const filters: SQL[] = [];
 
-  if (Array.isArray(walletId)) {
-    filters.push(inArray(movements.walletId, walletId));
-  } else {
-    filters.push(eq(movements.walletId, walletId));
-  }
+    if (Array.isArray(walletId)) {
+      filters.push(inArray(movements.walletId, walletId));
+    } else {
+      filters.push(eq(movements.walletId, walletId));
+    }
 
-  if (query?.month) {
-    const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
-    const endDate = new Date(new Date().getFullYear(), query.month, 0);
-    filters.push(between(movements.executedAt, startDate, endDate));
-  }
-  if (query?.year) {
-    const startDate = new Date(query.year, new Date().getMonth());
-    const endDate = new Date(query.year + 1, new Date().getMonth());
-    filters.push(between(movements.executedAt, startDate, endDate));
-  }
+    if (query?.month) {
+      const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
+      const endDate = new Date(new Date().getFullYear(), query.month, 0);
+      filters.push(between(movements.executedAt, startDate, endDate));
+    }
+    if (query?.year) {
+      const startDate = new Date(query.year, new Date().getMonth());
+      const endDate = new Date(query.year + 1, new Date().getMonth());
+      filters.push(between(movements.executedAt, startDate, endDate));
+    }
 
-  let consulta;
+    let consulta;
 
-  if (query?.limit) {
-    consulta = db
-      .select(selectCollumns)
-      .from(movements)
-      .where(and(...filters))
-      .orderBy(movements.executedAt, desc(movements.amount))
-      .offset(((query?.page ?? 1) - 1) * query.limit)
-      .limit(query.limit)
-      .$dynamic();
-  } else {
-    consulta = db
-      .select(selectCollumns)
-      .from(movements)
-      .where(and(...filters))
-      .orderBy(movements.executedAt, desc(movements.amount))
-      .$dynamic();
-  }
+    if (query?.limit) {
+      consulta = db
+        .select(selectCollumns)
+        .from(movements)
+        .where(and(...filters))
+        .orderBy(movements.executedAt, desc(movements.amount))
+        .offset(((query?.page ?? 1) - 1) * query.limit)
+        .limit(query.limit)
+        .$dynamic();
+    } else {
+      consulta = db
+        .select(selectCollumns)
+        .from(movements)
+        .where(and(...filters))
+        .orderBy(movements.executedAt, desc(movements.amount))
+        .$dynamic();
+    }
 
-  let movementsResult = {};
-  if (include?.category) {
-    movementsResult = await withCategory(consulta);
-  } else {
-    movementsResult = await execute(consulta);
-  }
+    let movementsResult = {};
+    if (include?.category) {
+      movementsResult = await withCategory(consulta);
+    } else {
+      movementsResult = await execute(consulta);
+    }
 
-  return movementsResult as unknown as Pick<
-    ColumnsTypes,
-    (typeof returnFields)[number]
-  >[];
+    return movementsResult as unknown as Pick<
+      ColumnsTypes,
+      (typeof returnFields)[number]
+    >[];
 
-  async function withCategory<T extends PgSelect>(qb: T) {
-    return qb.leftJoin(categories, eq(categories.id, movements.categoryId));
-  }
+    async function withCategory<T extends PgSelect>(qb: T) {
+      return qb.leftJoin(categories, eq(categories.id, movements.categoryId));
+    }
 
-  async function execute<T extends PgSelect>(qb: T) {
-    return qb;
-  }
+    async function execute<T extends PgSelect>(qb: T) {
+      return qb;
+    }
 
-  function collmnsInclude() {
-    if (!include) {
+    function collmnsInclude() {
+      if (!include) {
+        return {};
+      }
+
+      if (include.category) {
+        return { labelCategory: categories.label, categoryId: categories.id };
+      }
+
       return {};
     }
+  },
+);
 
-    if (include.category) {
-      return { labelCategory: categories.label, categoryId: categories.id };
-    }
-
-    return {};
-  }
-};
-
-const deleteById = async (movementId: string) => {
+const deleteById = cache(async (movementId: string) => {
   const returnDb = await db
     .delete(movements)
     .where(eq(movements.id, movementId))
     .returning({ id: movements.id });
 
   return returnDb[0];
-};
+});
 
 /**
  * Conta a quantidade de movimentos.
  *
- * @param {string | string[]} [walletId] - UUIDv7 de uma carteira ou uma lista delas.
+ * @param walletId - UUIDv7 de uma carteira ou uma lista delas.
  *
  * @return {number} A quantidade de registros de movimentos. Quando walletId é uma lista, retorna a soma total das movimentacoes de cada carteira
  *
@@ -200,7 +198,7 @@ const deleteById = async (movementId: string) => {
  * count(["019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
  *        "019e1dc7-df44-7810-afb6-5e56ac7becf1"]);
  */
-const count = async (walletId?: string | string[]) => {
+const count = cache(async (walletId?: string | string[]) => {
   let count;
 
   if (Array.isArray(walletId)) {
@@ -222,89 +220,89 @@ const count = async (walletId?: string | string[]) => {
   count = await db.$count(movements);
 
   return count;
-};
+});
 
-const findByIdWithCategory = async <
-  K extends keyof Omit<ColumnsTypes, "categoryId">,
->({
-  id,
-  returnFields,
-}: {
-  id: string;
-  returnFields: readonly K[];
-}) => {
-  if (!id || returnFields.length === 0) return null;
+const findByIdWithCategory = cache(
+  async <K extends keyof Omit<ColumnsTypes, "categoryId">>({
+    id,
+    returnFields,
+  }: {
+    id: string;
+    returnFields: readonly K[];
+  }) => {
+    if (!id || returnFields.length === 0) return null;
 
-  const selectCollumns = returnFields.reduce(
-    (acc, column) => {
-      acc[column] = movements[column];
-      return acc;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { labelCategory: categories.label, categoryId: categories.id } as any,
-  );
+    const selectCollumns = returnFields.reduce(
+      (acc, column) => {
+        acc[column] = movements[column];
+        return acc;
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { labelCategory: categories.label, categoryId: categories.id } as any,
+    );
 
-  const category = await db
-    .select(selectCollumns)
-    .from(movements)
-    .where(eq(movements.id, id))
-    .leftJoin(categories, eq(categories.id, movements.categoryId));
+    const category = await db
+      .select(selectCollumns)
+      .from(movements)
+      .where(eq(movements.id, id))
+      .leftJoin(categories, eq(categories.id, movements.categoryId));
 
-  return category[0] as unknown as Pick<
-    ColumnsTypes,
-    (typeof returnFields)[number]
-  >;
-};
+    return category[0] as unknown as Pick<
+      ColumnsTypes,
+      (typeof returnFields)[number]
+    >;
+  },
+);
 
-const findByWalletIdWithCategory = async <
-  K extends keyof Omit<ColumnsTypes, "categoryId">,
->({
-  walletId,
-  returnFields,
-}: {
-  walletId: string | string[];
-  returnFields: readonly K[];
-}): Promise<
-  | (Pick<ColumnsTypes, (typeof returnFields)[number]>[] &
-      { labelCategory: string; categoryId: string }[])
-  | []
-> => {
-  if (returnFields.length === 0) return [];
-  if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
-    return [];
+const findByWalletIdWithCategory = cache(
+  async <K extends keyof Omit<ColumnsTypes, "categoryId">>({
+    walletId,
+    returnFields,
+  }: {
+    walletId: string | string[];
+    returnFields: readonly K[];
+  }): Promise<
+    | (Pick<ColumnsTypes, (typeof returnFields)[number]>[] &
+        { labelCategory: string; categoryId: string }[])
+    | []
+  > => {
+    if (returnFields.length === 0) return [];
+    if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
+      return [];
 
-  const selectCollumns = returnFields.reduce(
-    (acc, column) => {
-      acc[column] = movements[column];
-      return acc;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { labelCategory: categories.label, categoryId: categories.id } as any,
-  );
+    const selectCollumns = returnFields.reduce(
+      (acc, column) => {
+        acc[column] = movements[column];
+        return acc;
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { labelCategory: categories.label, categoryId: categories.id } as any,
+    );
 
-  const filters: SQL[] = [];
+    const filters: SQL[] = [];
 
-  if (Array.isArray(walletId)) {
-    walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
-  }
+    if (Array.isArray(walletId)) {
+      walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
+    }
 
-  const category = await db
-    .select(selectCollumns)
-    .from(movements)
-    .where(
-      Array.isArray(walletId)
-        ? or(...filters)
-        : eq(movements.walletId, walletId as string),
-    )
-    .orderBy(movements.executedAt, movements.amount)
-    .leftJoin(categories, eq(categories.id, movements.categoryId));
+    const category = await db
+      .select(selectCollumns)
+      .from(movements)
+      .where(
+        Array.isArray(walletId)
+          ? or(...filters)
+          : eq(movements.walletId, walletId as string),
+      )
+      .orderBy(movements.executedAt, movements.amount)
+      .leftJoin(categories, eq(categories.id, movements.categoryId));
 
-  return category as unknown as Pick<
-    ColumnsTypes,
-    (typeof returnFields)[number]
-  >[] &
-    { labelCategory: string; categoryId: string }[];
-};
+    return category as unknown as Pick<
+      ColumnsTypes,
+      (typeof returnFields)[number]
+    >[] &
+      { labelCategory: string; categoryId: string }[];
+  },
+);
 
 const movementsModel = {
   create,

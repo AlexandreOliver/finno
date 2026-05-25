@@ -4,6 +4,7 @@ import { categories } from "@/infra/database/schemas/categories";
 import { createInsertSchema } from "drizzle-zod";
 import zod from "zod";
 import { eq, isNull, or } from "drizzle-orm";
+import { cache } from "react";
 
 export const categorySchema = createInsertSchema(categories);
 
@@ -28,7 +29,7 @@ export type FunctionFindAll = <K extends keyof ColumnsTypes>({
   returnFields: readonly K[];
 }) => Promise<Pick<ColumnsTypes, K>[]>;
 
-const findAll: FunctionFindAll = async ({ userId, returnFields }) => {
+const findAll: FunctionFindAll = cache(async ({ userId, returnFields }) => {
   if (returnFields.length === 0) {
     return [];
   }
@@ -51,7 +52,7 @@ const findAll: FunctionFindAll = async ({ userId, returnFields }) => {
     ColumnsTypes,
     (typeof returnFields)[number]
   >[];
-};
+});
 
 export type FunctionFindId = <K extends keyof ColumnsTypes>({
   id,
@@ -61,7 +62,7 @@ export type FunctionFindId = <K extends keyof ColumnsTypes>({
   returnFields: readonly K[];
 }) => Promise<Pick<ColumnsTypes, K> | null>;
 
-const findById: FunctionFindId = async ({ id, returnFields }) => {
+const findById: FunctionFindId = cache(async ({ id, returnFields }) => {
   if (!id || returnFields.length === 0) return null;
 
   const selectCollumns = returnFields.reduce(
@@ -82,7 +83,7 @@ const findById: FunctionFindId = async ({ id, returnFields }) => {
     ColumnsTypes,
     (typeof returnFields)[number]
   >;
-};
+});
 
 const categoriesModel = {
   create,

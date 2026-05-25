@@ -5,6 +5,7 @@ import { createInsertSchema } from "drizzle-zod";
 import zod from "zod";
 import passwordModel from "./password";
 import { eq } from "drizzle-orm";
+import { cache } from "react";
 
 export const userSchema = createInsertSchema(users, {
   firstName: (schema) =>
@@ -24,13 +25,13 @@ export type UserType = zod.infer<typeof userSchema>;
 
 type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
 
-async function getAll() {
+const getAll = cache(async function getAll() {
   const result = await db.select().from(users);
 
   return result;
-}
+});
 
-async function create(dataReceived: UserCreateType) {
+const create = cache(async (dataReceived: UserCreateType) => {
   const dataValidated = userSchema.parse(dataReceived);
 
   const userExists = await findByEmail(dataValidated.email);
@@ -51,9 +52,9 @@ async function create(dataReceived: UserCreateType) {
     .returning({ id: users.id });
 
   return result[0];
-}
+});
 
-async function findByEmail(email: string) {
+const findByEmail = cache(async (email: string) => {
   try {
     const userInDb = await db
       .select()
@@ -71,13 +72,13 @@ async function findByEmail(email: string) {
     }
     throw err;
   }
-}
+});
 
-async function findById(id: string) {
+const findById = cache(async function findById(id: string) {
   const userInDb = await db.select().from(users).where(eq(users.id, id));
 
   return userInDb[0];
-}
+});
 
 const userModel = {
   getAll,
