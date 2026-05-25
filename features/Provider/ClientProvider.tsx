@@ -9,7 +9,7 @@ export default function ClientProvider({ children }: { children: ReactNode }) {
   const [QueryClientInstance] = useState(
     () =>
       new QueryClient({
-        defaultOptions: { queries: { staleTime: 1000 * 60 * 5 } },
+        defaultOptions: { queries: { staleTime: 1000 * 60 * 15 } },
       }),
   );
 
