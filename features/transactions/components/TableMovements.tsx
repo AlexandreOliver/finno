@@ -38,8 +38,8 @@ import { useMemo, useState } from "react";
 
 export function TableMovements() {
   const { user } = useSession();
-
   const [page, setPage] = useState(1);
+  const [month, setMonth] = useState(() => new Date());
 
   const { data: wallets } = useQuery({
     queryKey: ["wallets", { userId: user?.id }],
@@ -54,15 +54,19 @@ export function TableMovements() {
   const wallets_Ids = useMemo(() => wallets?.map((w) => w.id), [wallets]);
 
   const limit = 10;
-
   const { data: movements } = useQuery({
-    queryKey: ["movements", wallets_Ids, { page, limit }],
+    queryKey: [
+      "movements",
+      wallets_Ids,
+      { page, limit, month: month.getMonth() + 1 },
+    ],
     queryFn: () =>
       getMovementsService({
         walletId: wallets_Ids as string[],
         query: {
           page,
           limit,
+          month: month.getMonth() + 1,
         },
       }),
     placeholderData: (previousData) => previousData,
@@ -81,6 +85,40 @@ export function TableMovements() {
   return (
     <div className="min-h-147.25">
       <div className="flex flex-col gap-2">
+        <div className="flex justify-between items-center">
+          <div className="border border-[#2A3040] rounded-md h-full flex gap-3 p-1 items-center">
+            <button
+              className="hover:bg-[#2A3040] h-12"
+              onClick={() =>
+                setMonth(
+                  (d) =>
+                    new Date(d.getFullYear(), d.getMonth() - 1, d.getDate()),
+                )
+              }
+            >
+              <ChevronLeft size={30} />
+            </button>
+            <div className="w-35 text-center">
+              {format(month, "MMMM 'de' yyyy ", { locale: ptBR })}
+            </div>
+            <button
+              disabled={month.getMonth() === new Date().getMonth()}
+              className="hover:bg-[#2A3040] h-12"
+              onClick={() =>
+                setMonth(
+                  (d) =>
+                    new Date(d.getFullYear(), d.getMonth() + 1, d.getDate()),
+                )
+              }
+            >
+              {month.getMonth() === new Date().getMonth() ? (
+                <></>
+              ) : (
+                <ChevronRight size={30} />
+              )}
+            </button>
+          </div>
+        </div>
         <div className="rounded-md overflow-hidden border border-[#3a3f4d]">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
