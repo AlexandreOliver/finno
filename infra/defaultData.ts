@@ -30,11 +30,6 @@ const seed_wallets = [
     labelName: "Principal",
     ownerId: seed_users[0].id,
   },
-  {
-    id: "019e5c6a-b4c1-7fc3-bc12-99344bc3a8e3",
-    labelName: "Cofre",
-    ownerId: seed_users[0].id,
-  },
 ];
 
 const seed_categorias = [
@@ -188,7 +183,7 @@ const seed_movements = [
     description: "Salário do cofre",
     amount: "1123.23",
     categoryId: seed_categorias[13].id,
-    walletId: seed_wallets[2].id,
+    walletId: seed_wallets[1].id,
     executedAt: new Date(),
   },
   {

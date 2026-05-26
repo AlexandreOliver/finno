@@ -88,6 +88,7 @@ export function TableMovements() {
                 <TableHead className="w-15 p-3 text-center">DATA</TableHead>
                 <TableHead className="p-3">DESCRIÇÃO</TableHead>
                 <TableHead className="w-20 text-center p-3">TIPO</TableHead>
+                <TableHead className="w-12 text-center p-3">CARTEIRA</TableHead>
                 <TableHead className="w-30 text-center p-3">
                   CATEGORIA
                 </TableHead>
@@ -113,6 +114,9 @@ export function TableMovements() {
                           <Badge className="dark:bg-green-800 ">Entrada</Badge>
                         )}
                       </div>
+                    </TableCell>
+                    <TableCell className="text-center p-2">
+                      {wallets?.find((w) => w.id === mov.walletId)?.labelName}
                     </TableCell>
                     <TableCell className="text-center p-2">
                       {mov.labelCategory}
