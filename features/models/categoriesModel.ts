@@ -4,6 +4,7 @@ import { categories } from "@/infra/database/schemas/categories";
 import { createInsertSchema } from "drizzle-zod";
 import zod from "zod";
 import { eq, isNull, or } from "drizzle-orm";
+import { cache } from "react";
 
 export const categorySchema = createInsertSchema(categories);
 
@@ -28,7 +29,7 @@ export type FunctionFindAll = <K extends keyof ColumnsTypes>({
   returnFields: readonly K[];
 }) => Promise<Pick<ColumnsTypes, K>[]>;
 
-const findAll: FunctionFindAll = async ({ userId, returnFields }) => {
+const findAll: FunctionFindAll = cache(async ({ userId, returnFields }) => {
   if (returnFields.length === 0) {
     return [];
   }
@@ -51,11 +52,43 @@ const findAll: FunctionFindAll = async ({ userId, returnFields }) => {
     ColumnsTypes,
     (typeof returnFields)[number]
   >[];
-};
+});
 
-const movementsModel = {
+export type FunctionFindId = <K extends keyof ColumnsTypes>({
+  id,
+  returnFields,
+}: {
+  id: string;
+  returnFields: readonly K[];
+}) => Promise<Pick<ColumnsTypes, K> | null>;
+
+const findById: FunctionFindId = cache(async ({ id, returnFields }) => {
+  if (!id || returnFields.length === 0) return null;
+
+  const selectCollumns = returnFields.reduce(
+    (acc, column) => {
+      acc[column] = categories[column];
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as any,
+  );
+
+  const category = await db
+    .select(selectCollumns)
+    .from(categories)
+    .where(eq(categories.id, id));
+
+  return category[0] as unknown as Pick<
+    ColumnsTypes,
+    (typeof returnFields)[number]
+  >;
+});
+
+const categoriesModel = {
   create,
   findAll,
+  findById,
 };
 
-export default movementsModel;
+export default categoriesModel;

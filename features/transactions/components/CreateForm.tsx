@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useEffect, ComponentProps, useMemo, useCallback } from "react";
+import { ComponentProps, useMemo, useCallback } from "react";
 import { useActionState, useState } from "react";
 
 import { typesEnum } from "@/infra/database/schemas/Enums";
@@ -15,10 +15,11 @@ import clsx from "clsx";
 
 import { CreateMovementAction } from "../actions/createMovements";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import { findCategories, Category } from "../services/findCategories";
-import { findWallets, Wallet } from "../services/findWallets";
+import { findCategories } from "../services/findCategories";
+import { findWallets } from "../services/findWallets";
 import { useSession } from "@/hooks/useSession";
 import { SelectField } from "./SelectField";
+import { useQuery } from "@tanstack/react-query";
 
 type FormProps = {
   variant: "Renda" | "Despesa" | "Investimento";
@@ -29,41 +30,35 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
   const [type, setType] = useState(
     variant === "Renda" ? typesEnum.enumValues[1] : typesEnum.enumValues[0],
   );
-  const [categoriesAll, setCategories] = useState<Array<Category>>([]);
-  const [wallets, setWallets] = useState<Array<Wallet>>([]);
   const [stateForm, formAction, isPedding] = useActionState(
     CreateMovementAction,
     { sucess: false },
   );
   const [amount, setAmount] = useState("");
 
-  useEffect(() => {
-    findCategories({
-      userId: user?.id,
-      returnFields: ["id", "label", "type"],
-    }).then((data) => {
-      setCategories(data);
-    });
+  const { data: dataWallets } = useQuery({
+    queryKey: ["wallets", { userId: user?.id }],
+    queryFn: () =>
+      findWallets({
+        ownerId: user?.id as string,
+        returnFields: ["id", "balance", "createdAt", "labelName", "updatedAt"],
+      }),
+    enabled: !!user?.id,
+  });
 
-    findWallets({
-      ownerId: user?.id as string,
-      returnFields: ["id", "labelName"],
-    }).then((data) => {
-      console.log(data);
-      setWallets(
-        data.map((wallet) => {
-          return {
-            id: wallet?.id as string,
-            label: wallet?.labelName as string,
-          };
-        }),
-      );
-    });
-  }, [user?.id]);
+  const { data: categories } = useQuery({
+    queryKey: ["categorias", { userId: user?.id }],
+    queryFn: () =>
+      findCategories({
+        userId: user?.id as string,
+        returnFields: ["id", "label", "type"],
+      }),
+    enabled: !!user?.id,
+  });
 
   const categoriesBytype = useMemo(() => {
-    return categoriesAll.filter((ctg) => ctg.type === type);
-  }, [categoriesAll, type]);
+    return categories?.filter((ctg) => ctg.type === type);
+  }, [categories, type]);
 
   const normalizeCurrencyString = useCallback((input: string) => {
     if (typeof input !== "string" || input === "") return "";
@@ -131,7 +126,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
         >
           Despesa
         </button>
-        <input name="type" className="hidden" defaultValue={type}></input>
+        <input name="type" className="hidden" value={type} readOnly></input>
       </div>
       <Field>
         <FieldLabel htmlFor="description">Descrição:</FieldLabel>
@@ -169,7 +164,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
           <SelectField
             key={type}
             nameForm="categoryId"
-            data={categoriesBytype}
+            data={categoriesBytype ?? [{ id: "noFound", label: "" }]}
             isError={stateForm?.errors?.categoryId ? true : false}
             placeholder="Categorias"
           />
@@ -177,9 +172,17 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
         <div className="grid gap-3">
           <label htmlFor="walletId">Carteira de Origem:</label>
           <SelectField
-            // key={type}
             nameForm="walletId"
-            data={wallets}
+            data={
+              dataWallets
+                ? dataWallets.map((w) => {
+                    return {
+                      id: w.id,
+                      label: w.labelName,
+                    };
+                  })
+                : [{ id: "error", label: "noFound" }]
+            }
             isError={stateForm?.errors?.walletId ? true : false}
             placeholder="Carteiras"
           />

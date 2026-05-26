@@ -5,6 +5,12 @@ import { verifySession } from "@/features/authorization/services/verifysession";
 import { SessionProvider } from "@/features/authorization/contexts/SessionProvider";
 import { HeaderDashboard, NavBar } from "@/features/dashboard/components";
 
+import ClientProvider from "@/features/Provider/ClientProvider";
+import getQueryClient from "@/features/Provider/QueryClientServer";
+
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { findWallets } from "@/features/transactions/services/findWallets";
+
 export default async function DashboardLayout({
   children,
 }: Readonly<{
@@ -15,11 +21,26 @@ export default async function DashboardLayout({
   const authUser = await verifySession(sessionCookie?.value as string);
   if (!authUser.isAuth) redirect("/auth/signin");
 
+  const queryClient = getQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["wallets", { userId: authUser.user.id }],
+    queryFn: () =>
+      findWallets({
+        ownerId: authUser.user.id,
+        returnFields: ["id", "balance", "createdAt", "labelName", "updatedAt"],
+      }),
+  });
+
   return (
     <SessionProvider value={authUser}>
       <HeaderDashboard />
       <NavBar />
-      <main className="boxed">{children}</main>
+      <ClientProvider>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <main className="boxed">{children}</main>
+        </HydrationBoundary>
+      </ClientProvider>
     </SessionProvider>
   );
 }
