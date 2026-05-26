@@ -6,11 +6,9 @@ import { SessionProvider } from "@/features/authorization/contexts/SessionProvid
 import { HeaderDashboard, NavBar } from "@/features/dashboard/components";
 
 import ClientProvider from "@/features/Provider/ClientProvider";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import getQueryClient from "@/features/Provider/QueryClientServer";
+
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { findWallets } from "@/features/transactions/services/findWallets";
 
 export default async function DashboardLayout({
@@ -23,16 +21,14 @@ export default async function DashboardLayout({
   const authUser = await verifySession(sessionCookie?.value as string);
   if (!authUser.isAuth) redirect("/auth/signin");
 
-  const queryClient = new QueryClient();
+  const queryClient = getQueryClient();
+
   await queryClient.prefetchQuery({
     queryKey: ["wallets", { userId: authUser.user.id }],
     queryFn: () =>
       findWallets({
         ownerId: authUser.user.id,
         returnFields: ["id", "balance", "createdAt", "labelName", "updatedAt"],
-      }).then((d) => {
-        console.log("Prefetch feito");
-        return d;
       }),
   });
 
