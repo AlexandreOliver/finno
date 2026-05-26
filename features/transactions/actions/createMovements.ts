@@ -5,6 +5,8 @@ import movementsModel, {
   movementsSchema,
 } from "@/features/models/movementsModel";
 import { revalidatePath } from "next/cache";
+import { verifySession } from "@/features/authorization/services/verifysession";
+import { cookies } from "next/headers";
 
 interface StateForm {
   errors?: {
@@ -22,6 +24,12 @@ export async function CreateMovementAction(
   prevState: StateForm,
   formData: FormData,
 ): Promise<StateForm> {
+  const { isAuth } = await verifySession(
+    (await cookies()).get("session_token")?.value as string,
+  );
+
+  if (!isAuth) throw new Error("Não autorizado");
+
   const rawData = movementsSchema.safeParse({
     type: formData.get("type")?.toString(),
     description: formData.get("description"),
