@@ -56,7 +56,7 @@ export function TableMovements() {
   const limit = 10;
 
   const { data: movements } = useQuery({
-    queryKey: ["movements", { page, limit }],
+    queryKey: ["movements", wallets_Ids, { page, limit }],
     queryFn: () =>
       getMovementsService({
         walletId: wallets_Ids as string[],

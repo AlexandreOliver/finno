@@ -4,9 +4,6 @@ import {
   FonteRenda,
 } from "@/features/dashboard/components";
 
-import { cookies } from "next/headers";
-
-import { verifySession } from "@/features/authorization/services/verifysession";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -15,10 +12,6 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const sessionCookie = (await cookies()).get("session_token");
-
-  const authUser = await verifySession(sessionCookie?.value as string);
-
   const dateFormated = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
   });

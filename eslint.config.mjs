@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import tanstackEslint from '@tanstack/eslint-plugin-query'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -13,6 +14,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+
+  ...tanstackEslint.configs['flat/recommended']
 ]);
 
 export default eslintConfig;

@@ -11,6 +11,7 @@ export function useMediaQuery(query: string) {
 
     // Set initial value once mounted on the client
     if (media.matches !== matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMatches(media.matches);
     }
 

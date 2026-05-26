@@ -6,11 +6,11 @@ import categoriesModel, {
 } from "@/features/models/categoriesModel";
 import { cookies } from "next/headers";
 
-type Category = {
-  id: string;
-  label: string;
-  type: string;
-};
+// type Category = {
+//   id: string;
+//   label: string;
+//   type: string;
+// };
 
 export const findCategories: FunctionFindAll = async ({
   userId,

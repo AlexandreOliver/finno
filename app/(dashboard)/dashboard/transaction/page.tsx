@@ -35,7 +35,7 @@ export default async function Page() {
   const wallets_Ids = wallets.map((w) => w.id);
 
   await queryClient.prefetchQuery({
-    queryKey: ["movements", { page: 1, limit: 10 }],
+    queryKey: ["movements", wallets_Ids, { page: 1, limit: 10 }],
     queryFn: () =>
       getMovementsService({
         walletId: wallets_Ids as string[],
