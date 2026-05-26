@@ -69,6 +69,15 @@ export function TableMovements() {
     enabled: !!wallets_Ids,
   });
 
+  const totalPages = useMemo(
+    () =>
+      Math.round(
+        ((movements?.totalMovementsFromDb as number) + 5) /
+          (movements?.limit ?? 0),
+      ),
+    [movements?.totalMovementsFromDb, movements?.limit],
+  );
+
   return (
     <div className="min-h-147.25">
       <div className="flex flex-col gap-2">
@@ -148,13 +157,7 @@ export function TableMovements() {
         <div className="flex justify-between items-center">
           <span>{movements?.totalMovementsFromDb} Transações</span>
           <div className="flex gap-5 justify-center items-center">
-            <span>
-              Pagina {movements?.page} de{" "}
-              {Math.round(
-                (movements?.totalMovementsFromDb as number) /
-                  (movements?.limit ?? 0),
-              )}
-            </span>
+            <span>{`Pagina ${movements?.page} de ${totalPages}`}</span>
             <div className="flex gap-2">
               <button className="border rounded-md p-1">
                 <ChevronsLeftIcon />
@@ -162,7 +165,7 @@ export function TableMovements() {
               <button
                 className="border rounded-md p-1"
                 onClick={() => {
-                  if (page == 1) return;
+                  if (page === 1) return;
                   setPage((p) => p - 1);
                 }}
               >
@@ -170,7 +173,10 @@ export function TableMovements() {
               </button>
               <button
                 className="border rounded-md p-1"
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => {
+                  if (page === totalPages) return;
+                  setPage((p) => p + 1);
+                }}
               >
                 <ChevronRight />
               </button>
