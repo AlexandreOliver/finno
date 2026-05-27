@@ -36,6 +36,14 @@ import { useSession } from "@/hooks/useSession";
 import { findWallets } from "../services/findWallets";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export function TableMovements() {
@@ -45,7 +53,7 @@ export function TableMovements() {
   const [seletorType, setType] = useState<"todas" | "debito" | "credito">(
     "todas",
   );
-  console.log(seletorType);
+  const [selectWallet, setWallet] = useState(() => "todas");
 
   const { data: wallets } = useQuery({
     queryKey: ["wallets", { userId: user?.id }],
@@ -91,15 +99,46 @@ export function TableMovements() {
   const payloadFiltred = useMemo(
     () =>
       movements?.payload.filter(
-        (w) => w.type === seletorType || seletorType === "todas",
+        (w) =>
+          (w.type === seletorType || seletorType === "todas") &&
+          (w.walletId === selectWallet || selectWallet === "todas"),
       ) ?? [],
-    [movements?.payload, seletorType],
+    [movements?.payload, seletorType, selectWallet],
   );
 
   return (
     <div className="min-h-147.25">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-center">
+          <div className="p-2 rounded-md border border-card flex gap-2 items-center ">
+            <span className="text-md ml-2">Carteiras:</span>
+            <Select
+              defaultValue={{ value: "todas", label: "Todas" }}
+              onValueChange={(e: { value: string; label: string } | null) =>
+                setWallet(e?.value as string)
+              }
+            >
+              <SelectTrigger className="w-45">
+                <SelectValue placeholder="Carteiras" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {wallets &&
+                    wallets.map((w) => (
+                      <SelectItem
+                        key={w.id}
+                        value={{ value: w.id, label: w.labelName }}
+                      >
+                        {w.labelName}
+                      </SelectItem>
+                    ))}
+                  <SelectItem value={{ value: "todas", label: "Todas" }}>
+                    Todas
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="border border-[#2A3040] rounded-md h-full flex gap-3 p-1 items-center">
             <button
               className="hover:bg-[#2A3040] h-12"
