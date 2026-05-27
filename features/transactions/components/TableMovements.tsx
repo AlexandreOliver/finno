@@ -21,6 +21,7 @@ import {
   ChevronRight,
   ChevronsLeftIcon,
   ChevronsRight,
+  DatabaseSearch,
   Edit,
   Settings2Icon,
 } from "lucide-react";
@@ -35,11 +36,16 @@ import { useSession } from "@/hooks/useSession";
 import { findWallets } from "../services/findWallets";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export function TableMovements() {
   const { user } = useSession();
   const [page, setPage] = useState(1);
   const [month, setMonth] = useState(() => new Date());
+  const [seletorType, setType] = useState<"todas" | "debito" | "credito">(
+    "todas",
+  );
+  console.log(seletorType);
 
   const { data: wallets } = useQuery({
     queryKey: ["wallets", { userId: user?.id }],
@@ -82,6 +88,14 @@ export function TableMovements() {
     [movements?.totalMovementsFromDb, movements?.limit],
   );
 
+  const payloadFiltred = useMemo(
+    () =>
+      movements?.payload.filter(
+        (w) => w.type === seletorType || seletorType === "todas",
+      ) ?? [],
+    [movements?.payload, seletorType],
+  );
+
   return (
     <div className="min-h-147.25">
       <div className="flex flex-col gap-2">
@@ -118,6 +132,40 @@ export function TableMovements() {
               )}
             </button>
           </div>
+          <div className="flex justify-end">
+            <ToggleGroup
+              key={seletorType}
+              defaultValue={[seletorType]}
+              onValueChange={(e) => setType(e[0] as typeof seletorType)}
+              variant="outline"
+              spacing={2}
+            >
+              <ToggleGroupItem
+                size="lg"
+                value="todas"
+                aria-label="Toggle todas"
+                className="text-lg font-light data-pressed:bg-[#0e1738] hover:bg-gray-900"
+              >
+                Todas
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                size="lg"
+                value="credito"
+                aria-label="Toggle entradas"
+                className="data-pressed:bg-green-600 hover:bg-green-600/40 text-lg font-light"
+              >
+                Entradas
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                size="lg"
+                value="debito"
+                aria-label="Toggle saidas"
+                className="data-pressed:bg-red-600 hover:bg-red-600/40 text-lg font-light"
+              >
+                Saidas
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
         </div>
         <div className="rounded-md overflow-hidden border border-[#3a3f4d]">
           <Table className="p-5 rounded-xl">
@@ -130,13 +178,13 @@ export function TableMovements() {
                 <TableHead className="w-30 text-center p-3">
                   CATEGORIA
                 </TableHead>
-                <TableHead className="text-right p-3">VALOR</TableHead>
+                <TableHead className="w-74 text-right p-3">VALOR</TableHead>
                 <TableHead className="w-25 text-center p-3">AÇÕES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className=" bg-[#2A3040]/20 text-base">
-              {movements &&
-                movements.payload.map((mov) => (
+              {payloadFiltred.length > 0 ? (
+                payloadFiltred.map((mov) => (
                   <TableRow key={mov.id} className="border-[#323A4D]">
                     <TableCell className="p-2">
                       {format(mov.executedAt as Date, "d 'de' MMM", {
@@ -192,7 +240,20 @@ export function TableMovements() {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              ) : (
+                <TableRow className="border-[#323A4D] hover:bg-bg-[#2A3040]/20">
+                  <TableCell colSpan={7} className="h-55 text-center">
+                    <div className="flex justify-center items-center gap-3">
+                      <DatabaseSearch />
+                      <span>Sem dados</span>
+                    </div>
+                    <div className="text-sm mt-1 text-muted-foreground">
+                      Tente mudar os filtros
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
