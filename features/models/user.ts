@@ -64,7 +64,7 @@ const findByEmail = cache(async (email: string) => {
 
     return userInDb[0];
   } catch (err) {
-    const error = err as Error;
+    const error = err as { cause: { code: string } };
     if (error.cause.code === "ECONNREFUSED") {
       throw new Error("ServiceError: Banco de dados esta offline", {
         cause: err,

@@ -95,6 +95,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartTransactions() {
+  return null;
   return (
     <Card>
       <CardHeader>

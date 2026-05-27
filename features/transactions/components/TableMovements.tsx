@@ -118,7 +118,7 @@ export function TableMovements() {
                 setWallet(e?.value as string)
               }
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-35">
                 <SelectValue placeholder="Carteiras" />
               </SelectTrigger>
               <SelectContent>
