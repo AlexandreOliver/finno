@@ -67,7 +67,7 @@ export const getMovementsService: TGetMovementsService = async ({
         category: true,
       },
     }),
-    movementsModel.count(walletId),
+    movementsModel.count(walletId, query),
   ]);
 
   return {
