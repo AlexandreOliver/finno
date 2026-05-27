@@ -13,8 +13,10 @@ export default function Page() {
   return (
     <Card className="w-85">
       <CardHeader className="text-center">
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Entre com seu email e senha</CardDescription>
+        <CardTitle className="text-xl">Login</CardTitle>
+        <CardDescription className="text-md">
+          Entre com seu email e senha
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <LoginForm />
@@ -22,11 +24,11 @@ export default function Page() {
       <CardFooter className="flex flex-col gap-4 justify-center items-center">
         <Link
           href="/forgotpassword"
-          className="font-medium text-sm text-sky-500"
+          className="font-medium text-md text-sky-500"
         >
           Esqueci a senha
         </Link>
-        <span className="font-medium text-sm text-center">
+        <span className="font-medium text-md text-center">
           Não tem uma conta?{" "}
           <Link href="/auth/register" className="text-sky-500">
             Crie
