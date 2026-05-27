@@ -178,9 +178,24 @@ const seed_templateReccurent = [
 
 const seed_movements = [
   {
+    id: "019e5c74-dfb9-7691-961c-81d6ef0d3a31",
+    type: typesEnum.enumValues[1],
+    description: "Salário",
+    amount: "1123.23",
+    categoryId: seed_categorias[13].id,
+    walletId: seed_wallets[1].id,
+    executedAt: new Date(
+      hoje.getFullYear(),
+      hoje.getMonth() - 1,
+      hoje.getDate(),
+      hoje.getHours(),
+      hoje.getMinutes(),
+    ),
+  },
+  {
     id: "019e5c74-dfb9-7691-961c-81d6ef0d3a32",
     type: typesEnum.enumValues[1],
-    description: "Salário do cofre",
+    description: "Salário",
     amount: "1123.23",
     categoryId: seed_categorias[13].id,
     walletId: seed_wallets[1].id,

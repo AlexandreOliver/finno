@@ -56,6 +56,30 @@ describe("Model Movements", () => {
 
       expect(result).toBe(0);
     });
+
+    test("Recebe uma lista de UUID de wallets e uma query e retorna o total de movimentos respectivos", async () => {
+      const result = await movementsModel.count(
+        [
+          "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
+          "019e1dc7-df44-7810-afb6-5e56ac7becf1",
+        ],
+        { month: 4 },
+      );
+
+      const countMov = seed_movements.reduce((acc, m) => {
+        if (
+          [
+            "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
+            "019e1dc7-df44-7810-afb6-5e56ac7becf1",
+          ].includes(m.walletId) &&
+          m.executedAt.getMonth() + 1 === 4
+        ) {
+          return (acc += 1);
+        } else return acc;
+      }, 0);
+
+      expect(result).toBe(countMov);
+    });
   });
   describe("Método findByWalletIdWithCategory()", () => {
     test("Recebe uma UUID e retorna valores corretos", async () => {

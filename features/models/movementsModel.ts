@@ -188,6 +188,7 @@ const deleteById = cache(async (movementId: string) => {
  * Conta a quantidade de movimentos.
  *
  * @param walletId - UUIDv7 de uma carteira ou uma lista delas.
+ * @param query - Critérios de consulta que definem quais movimentações será contada
  *
  * @return {number} A quantidade de registros de movimentos. Quando walletId é uma lista, retorna a soma total das movimentacoes de cada carteira
  *
@@ -198,29 +199,47 @@ const deleteById = cache(async (movementId: string) => {
  * count(["019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
  *        "019e1dc7-df44-7810-afb6-5e56ac7becf1"]);
  */
-const count = cache(async (walletId?: string | string[]) => {
-  let count;
+const count = cache(
+  async (
+    walletId?: string | string[],
+    query?: Pick<QueryParamsMovements, "month">,
+  ) => {
+    let count;
 
-  if (Array.isArray(walletId)) {
-    if (walletId.length === 0) return 0;
+    const filtersQuery: SQL[] = [];
+    if (query?.month) {
+      const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
+      const endDate = new Date(new Date().getFullYear(), query.month, 0);
+      filtersQuery.push(between(movements.executedAt, startDate, endDate));
+    }
 
-    const filters: SQL[] = [];
+    if (Array.isArray(walletId)) {
+      if (walletId.length === 0) return 0;
 
-    walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
+      const filters: SQL[] = [];
 
-    count = await db.$count(movements, or(...filters));
+      walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
+
+      count = await db.$count(
+        movements,
+        and(
+          or(...filters),
+          filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
+        ),
+      );
+      return count;
+    }
+
+    if (walletId) {
+      count = await db.$count(movements, eq(movements.walletId, walletId));
+      return count;
+    }
+
+    count = await db.$count(movements);
+
     return count;
-  }
-
-  if (walletId) {
-    count = await db.$count(movements, eq(movements.walletId, walletId));
-    return count;
-  }
-
-  count = await db.$count(movements);
-
-  return count;
-});
+  },
+);
 
 const findByIdWithCategory = cache(
   async <K extends keyof Omit<ColumnsTypes, "categoryId">>({
