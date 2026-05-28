@@ -45,11 +45,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import clsx from "clsx";
 
 export function TableMovements() {
   const { user } = useSession();
   const [page, setPage] = useState(1);
-  const [month, setMonth] = useState(() => new Date());
+  const [dateEnd, setEnd] = useState(new Date());
+  const [dateStart, setStart] = useState(
+    () => new Date(dateEnd.getFullYear(), dateEnd.getMonth(), 1, 0, 0),
+  );
+
   const [seletorType, setType] = useState<"todas" | "debito" | "credito">(
     "todas",
   );
@@ -67,20 +72,30 @@ export function TableMovements() {
 
   const wallets_Ids = useMemo(() => wallets?.map((w) => w.id), [wallets]);
 
+  const rangeDate = useMemo(() => {
+    const range = {
+      start: dateStart.toLocaleDateString("en-US"),
+      end: dateEnd.toLocaleDateString("en-US"),
+    };
+    return range;
+  }, [dateEnd, dateStart]);
+
   const limit = 10;
   const { data: movements } = useQuery({
     queryKey: [
       "movements",
       wallets_Ids,
-      { page, limit, month: month.getMonth() + 1 },
+      { page, limit, query: { date: rangeDate } },
     ],
     queryFn: () =>
       getMovementsService({
         walletId: wallets_Ids as string[],
-        query: {
+        pagination: {
           page,
           limit,
-          month: month.getMonth() + 1,
+        },
+        query: {
+          date: rangeDate,
         },
       }),
     placeholderData: (previousData) => previousData,
@@ -89,9 +104,8 @@ export function TableMovements() {
 
   const totalPages = useMemo(
     () =>
-      Math.round(
-        ((movements?.totalMovementsFromDb as number) + 5) /
-          (movements?.limit ?? 0),
+      Math.ceil(
+        (movements?.totalMovementsFromDb as number) / (movements?.limit ?? 0),
       ),
     [movements?.totalMovementsFromDb, movements?.limit],
   );
@@ -142,33 +156,53 @@ export function TableMovements() {
           <div className="border border-[#2A3040] rounded-md h-full flex gap-3 p-1 items-center">
             <button
               className="hover:bg-[#2A3040] h-12"
-              onClick={() =>
-                setMonth(
-                  (d) =>
-                    new Date(d.getFullYear(), d.getMonth() - 1, d.getDate()),
-                )
-              }
+              onClick={() => {
+                setEnd(
+                  (endPrev) =>
+                    new Date(endPrev.getFullYear(), endPrev.getMonth(), 0),
+                );
+                setStart(
+                  (datePrev) =>
+                    new Date(
+                      datePrev.getFullYear(),
+                      datePrev.getMonth() - 1,
+                      1,
+                    ),
+                );
+              }}
             >
               <ChevronLeft size={30} />
             </button>
             <div className="w-35 text-center">
-              {format(month, "MMMM 'de' yyyy ", { locale: ptBR })}
+              {format(dateStart, "MMMM 'de' yyyy ", { locale: ptBR })}
             </div>
             <button
-              disabled={month.getMonth() === new Date().getMonth()}
-              className="hover:bg-[#2A3040] h-12"
-              onClick={() =>
-                setMonth(
-                  (d) =>
-                    new Date(d.getFullYear(), d.getMonth() + 1, d.getDate()),
-                )
-              }
+              disabled={dateEnd.toDateString() === new Date().toDateString()}
+              className=" h-12 not-disabled:hover:bg-[#2A3040]"
+              onClick={() => {
+                setStart(
+                  (datePrev) =>
+                    new Date(
+                      datePrev.getFullYear(),
+                      datePrev.getMonth() + 1,
+                      1,
+                    ),
+                );
+                setEnd((d) =>
+                  d.getMonth() + 1 === new Date().getMonth() &&
+                  d.getFullYear() === new Date().getFullYear()
+                    ? new Date()
+                    : new Date(d.getFullYear(), d.getMonth() + 2, 0),
+                );
+              }}
             >
-              {month.getMonth() === new Date().getMonth() ? (
-                <></>
-              ) : (
-                <ChevronRight size={30} />
-              )}
+              <ChevronRight
+                size={30}
+                className={clsx({
+                  "text-background":
+                    dateEnd.toDateString() === new Date().toDateString(),
+                })}
+              />
             </button>
           </div>
           <div className="flex justify-end">
@@ -211,13 +245,13 @@ export function TableMovements() {
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-[15px]">
                 <TableHead className="w-15 p-3 text-center">DATA</TableHead>
-                <TableHead className="p-3">DESCRIÇÃO</TableHead>
+                <TableHead className="w-100 p-3">DESCRIÇÃO</TableHead>
                 <TableHead className="w-20 text-center p-3">TIPO</TableHead>
                 <TableHead className="w-12 text-center p-3">CARTEIRA</TableHead>
-                <TableHead className="w-30 text-center p-3">
+                <TableHead className="w-42 text-center p-3">
                   CATEGORIA
                 </TableHead>
-                <TableHead className="w-74 text-right p-3">VALOR</TableHead>
+                <TableHead className="w-24 text-right p-3">VALOR</TableHead>
                 <TableHead className="w-25 text-center p-3">AÇÕES</TableHead>
               </TableRow>
             </TableHeader>

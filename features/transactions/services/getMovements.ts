@@ -2,7 +2,6 @@
 
 import { verifySession } from "@/features/authorization/services/verifysession";
 import movementsModel from "@/features/models/movementsModel";
-import { QueryParamsMovements } from "@/features/models/types/movements";
 import { cookies } from "next/headers";
 
 type IPayload = {
@@ -28,12 +27,19 @@ type TGetMovementsService = ({
   query,
 }: {
   walletId: string[] | string;
-  query?: QueryParamsMovements;
+  query?: {
+    date: {
+      start?: string;
+      end?: string;
+    };
+  };
+  pagination: { limit: number; page: number };
 }) => Promise<TReturnGetMovements>;
 
 export const getMovementsService: TGetMovementsService = async ({
   walletId,
-  query = { limit: 10, page: 1 },
+  query,
+  pagination = { limit: 10, page: 1 },
 }) => {
   const { isAuth } = await verifySession(
     (await cookies()).get("session_token")?.value as string,
@@ -44,8 +50,8 @@ export const getMovementsService: TGetMovementsService = async ({
   if (!walletId)
     return {
       totalMovementsFromDb: 0,
-      page: query.page as number,
-      limit: query.limit as number,
+      page: pagination.page as number,
+      limit: pagination.limit as number,
       payload: [],
     };
 
@@ -58,22 +64,33 @@ export const getMovementsService: TGetMovementsService = async ({
     "type",
   ] as const;
 
+  let dateParsed = {};
+  if (query?.date && query.date.start && query.date.end) {
+    dateParsed = {
+      start: new Date(new Date(query?.date.start).setUTCHours(0)),
+      end: new Date(new Date(query?.date.end).setUTCHours(23, 59, 59, 999)),
+    };
+  }
+
   const [movements, countDb] = await Promise.all([
     movementsModel.findByWalletIdForQuery({
       walletId: walletId,
       returnFields: fields,
-      query,
+      query: {
+        date: dateParsed,
+      },
+      pagination,
       include: {
         category: true,
       },
     }),
-    movementsModel.count(walletId, query),
+    movementsModel.count(walletId, { date: dateParsed }),
   ]);
 
   return {
     totalMovementsFromDb: countDb,
-    page: query.page,
-    limit: query.limit,
+    page: pagination.page,
+    limit: pagination.limit,
     payload: movements,
   } as TReturnGetMovements;
 };

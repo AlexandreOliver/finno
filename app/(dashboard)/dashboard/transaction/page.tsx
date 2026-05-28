@@ -34,20 +34,29 @@ export default async function Page() {
 
   const wallets_Ids = wallets.map((w) => w.id);
 
+  const hoje = new Date();
+
+  const query = {
+    date: {
+      start: new Date(
+        hoje.getFullYear(),
+        hoje.getMonth(),
+        1,
+      ).toLocaleDateString("en-US"),
+      end: new Date().toLocaleDateString("en-US"),
+    },
+  };
+
   await queryClient.prefetchQuery({
-    queryKey: [
-      "movements",
-      wallets_Ids,
-      { page: 1, limit: 10, month: new Date().getMonth() + 1 },
-    ],
+    queryKey: ["movements", wallets_Ids, { page: 1, limit: 10, query }],
     queryFn: () =>
       getMovementsService({
         walletId: wallets_Ids as string[],
-        query: {
+        pagination: {
           page: 1,
           limit: 10,
-          month: new Date().getMonth() + 1,
         },
+        query,
       }),
   });
 
