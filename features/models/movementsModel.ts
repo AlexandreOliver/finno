@@ -1,12 +1,27 @@
 import "server-only";
+
 import db from "@/infra/database";
 import { movements } from "@/infra/database/schemas/movements";
-import { createInsertSchema } from "drizzle-zod";
+
 import zod from "zod";
+import { createInsertSchema } from "drizzle-zod";
 import { and, between, eq, SQL, desc, or, inArray } from "drizzle-orm";
-import { categories } from "@/infra/database/schemas/categories";
 import { PgColumn, PgSelect } from "drizzle-orm/pg-core";
+
 import { cache } from "react";
+
+import { categories } from "@/infra/database/schemas/categories";
+import {
+  ColumnsTypesMovement,
+  TypeMovementsCreate,
+  FunctionFindAllMoviments,
+  TReturnFindAllMovements,
+  FunctionCountMovements,
+  FunctionFindByIdWithCategory,
+  TReturnFindByIdWithCategory,
+  FunctionFindByWalletIdWithCategory,
+  TReturnFindByWalletIdWithCategory,
+} from "./types/movements";
 
 export const movementsSchema = createInsertSchema(movements, {
   amount: (schema) =>
@@ -29,38 +44,11 @@ export const movementsSchema = createInsertSchema(movements, {
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
 });
 
-export type ColumnsTypes = typeof movements.$inferSelect;
-
-type TypeMovementsCreate = Omit<
-  zod.infer<typeof movementsSchema>,
-  "id" | "dueDate"
->;
-
 const create = cache(async (movObject: TypeMovementsCreate) => {
   const newMovement = movementsSchema.parse(movObject);
 
   await db.insert(movements).values(newMovement);
 });
-
-export type QueryParamsMovements = {
-  limit?: number;
-  page?: number;
-  month?: number;
-  year?: number;
-};
-
-export type ArgsFindAllMovements<K extends keyof ColumnsTypes> = {
-  walletId: string | string[];
-  returnFields: readonly K[];
-  query?: QueryParamsMovements;
-  include?: {
-    category?: true;
-  };
-};
-
-export type FunctionFindAllMoviments = <K extends keyof ColumnsTypes>(
-  args: ArgsFindAllMovements<K>,
-) => Promise<Pick<ColumnsTypes, K>[]>;
 
 /**
  * Pesquisa todas as movimentações de uma ou mais wallets
@@ -142,16 +130,16 @@ const findByWalletIdForQuery: FunctionFindAllMoviments = cache(
     }
 
     let movementsResult = {};
+
     if (include?.category) {
       movementsResult = await withCategory(consulta);
     } else {
       movementsResult = await execute(consulta);
     }
 
-    return movementsResult as unknown as Pick<
-      ColumnsTypes,
+    return movementsResult as unknown as TReturnFindAllMovements<
       (typeof returnFields)[number]
-    >[];
+    >;
 
     async function withCategory<T extends PgSelect>(qb: T) {
       return qb.leftJoin(categories, eq(categories.id, movements.categoryId));
@@ -199,56 +187,45 @@ const deleteById = cache(async (movementId: string) => {
  * count(["019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
  *        "019e1dc7-df44-7810-afb6-5e56ac7becf1"]);
  */
-const count = cache(
-  async (
-    walletId?: string | string[],
-    query?: Pick<QueryParamsMovements, "month">,
-  ) => {
-    let count;
+const count: FunctionCountMovements = cache(async (walletId, query) => {
+  let count;
 
-    const filtersQuery: SQL[] = [];
-    if (query?.month) {
-      const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
-      const endDate = new Date(new Date().getFullYear(), query.month, 0);
-      filtersQuery.push(between(movements.executedAt, startDate, endDate));
-    }
+  const filtersQuery: SQL[] = [];
+  if (query?.month) {
+    const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
+    const endDate = new Date(new Date().getFullYear(), query.month, 0);
+    filtersQuery.push(between(movements.executedAt, startDate, endDate));
+  }
 
-    if (Array.isArray(walletId)) {
-      if (walletId.length === 0) return 0;
+  if (Array.isArray(walletId)) {
+    if (walletId.length === 0) return 0;
 
-      const filters: SQL[] = [];
+    const filters: SQL[] = [];
 
-      walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
+    walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
 
-      count = await db.$count(
-        movements,
-        and(
-          or(...filters),
-          filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
-        ),
-      );
-      return count;
-    }
-
-    if (walletId) {
-      count = await db.$count(movements, eq(movements.walletId, walletId));
-      return count;
-    }
-
-    count = await db.$count(movements);
-
+    count = await db.$count(
+      movements,
+      and(
+        or(...filters),
+        filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
+      ),
+    );
     return count;
-  },
-);
+  }
 
-const findByIdWithCategory = cache(
-  async <K extends keyof Omit<ColumnsTypes, "categoryId">>({
-    id,
-    returnFields,
-  }: {
-    id: string;
-    returnFields: readonly K[];
-  }) => {
+  if (walletId) {
+    count = await db.$count(movements, eq(movements.walletId, walletId));
+    return count;
+  }
+
+  count = await db.$count(movements);
+
+  return count;
+});
+
+const findByIdWithCategory: FunctionFindByIdWithCategory = cache(
+  async (id, returnFields) => {
     if (!id || returnFields.length === 0) return null;
 
     const selectCollumns = returnFields.reduce(
@@ -266,25 +243,14 @@ const findByIdWithCategory = cache(
       .where(eq(movements.id, id))
       .leftJoin(categories, eq(categories.id, movements.categoryId));
 
-    return category[0] as unknown as Pick<
-      ColumnsTypes,
-      (typeof returnFields)[number]
+    return category[0] as unknown as TReturnFindByIdWithCategory<
+      keyof Omit<ColumnsTypesMovement, "categoryId">
     >;
   },
 );
 
-const findByWalletIdWithCategory = cache(
-  async <K extends keyof Omit<ColumnsTypes, "categoryId">>({
-    walletId,
-    returnFields,
-  }: {
-    walletId: string | string[];
-    returnFields: readonly K[];
-  }): Promise<
-    | (Pick<ColumnsTypes, (typeof returnFields)[number]>[] &
-        { labelCategory: string; categoryId: string }[])
-    | []
-  > => {
+const findByWalletIdWithCategory: FunctionFindByWalletIdWithCategory = cache(
+  async ({ walletId, returnFields }) => {
     if (returnFields.length === 0) return [];
     if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
       return [];
@@ -315,11 +281,9 @@ const findByWalletIdWithCategory = cache(
       .orderBy(movements.executedAt, movements.amount)
       .leftJoin(categories, eq(categories.id, movements.categoryId));
 
-    return category as unknown as Pick<
-      ColumnsTypes,
+    return category as unknown as TReturnFindByWalletIdWithCategory<
       (typeof returnFields)[number]
-    >[] &
-      { labelCategory: string; categoryId: string }[];
+    >;
   },
 );
 

@@ -2,7 +2,7 @@
 
 import { verifySession } from "@/features/authorization/services/verifysession";
 import movementsModel from "@/features/models/movementsModel";
-import { QueryParamsMovements } from "@/features/models/movementsModel";
+import { QueryParamsMovements } from "@/features/models/types/movements";
 import { cookies } from "next/headers";
 
 type IPayload = {
