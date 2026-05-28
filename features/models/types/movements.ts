@@ -10,16 +10,15 @@ export type TypeMovementsCreate = Omit<
 >;
 
 export type QueryParamsMovements = {
-  limit?: number;
-  page?: number;
-  month?: number;
-  year?: number;
+  date: {
+    start?: Date;
+    end?: Date;
+  };
 };
 
 export type Pagination = {
   limit: number;
   page: number;
-  pageSize: number;
 };
 
 export type TWithCategory = {
@@ -35,7 +34,8 @@ export type FunctionFindAllMoviments = <
 >(args: {
   walletId: string | string[];
   returnFields: readonly K[];
-  query?: QueryParamsMovements;
+  query?: Partial<QueryParamsMovements>;
+  pagination?: Pagination;
   include?: {
     category?: true;
   };
@@ -43,7 +43,7 @@ export type FunctionFindAllMoviments = <
 
 export type FunctionCountMovements = (
   walletId?: string | string[],
-  query?: Pick<QueryParamsMovements, "month">,
+  query?: Pick<QueryParamsMovements, "date">,
 ) => Promise<number>;
 
 export type TReturnFindByIdWithCategory<

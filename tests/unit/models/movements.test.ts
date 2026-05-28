@@ -63,7 +63,12 @@ describe("Model Movements", () => {
           "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
           "019e1dc7-df44-7810-afb6-5e56ac7becf1",
         ],
-        { month: 4 },
+        {
+          date: {
+            start: new Date(2026, 3, 1, 0, 0),
+            end: new Date(2026, 4, 0, 23, 59, 59),
+          },
+        },
       );
 
       const countMov = seed_movements.reduce((acc, m) => {
@@ -156,7 +161,7 @@ describe("Model Movements", () => {
       const result = await movementsModel.findByWalletIdForQuery({
         walletId: "019e1dc7-df44-7810-afb6-5e56ac7becf1",
         returnFields: ["description"],
-        query: {
+        pagination: {
           limit: 1,
           page: 1,
         },
@@ -172,7 +177,7 @@ describe("Model Movements", () => {
       const result = await movementsModel.findByWalletIdForQuery({
         walletId: "019e1dc7-df44-7810-afb6-5e56ac7becf1",
         returnFields: ["description"],
-        query: {
+        pagination: {
           limit: 1,
           page: 1,
         },
@@ -191,7 +196,7 @@ describe("Model Movements", () => {
       const page1 = await movementsModel.findByWalletIdForQuery({
         walletId: "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
         returnFields: ["description"],
-        query: {
+        pagination: {
           limit: 1,
           page: 1,
         },
@@ -203,7 +208,7 @@ describe("Model Movements", () => {
       const page2 = await movementsModel.findByWalletIdForQuery({
         walletId: "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
         returnFields: ["description"],
-        query: {
+        pagination: {
           limit: 1,
           page: 2,
         },
@@ -258,7 +263,7 @@ describe("Model Movements", () => {
           "019e1dc7-df44-7810-afb6-5e56ac7becf1",
         ],
         returnFields: ["description"],
-        query: {
+        pagination: {
           limit: 2,
           page: 1,
         },
@@ -275,7 +280,7 @@ describe("Model Movements", () => {
           "019e1dc7-df44-7810-afb6-5e56ac7becf1",
         ],
         returnFields: ["description"],
-        query: {
+        pagination: {
           limit: 2,
           page: 2,
         },

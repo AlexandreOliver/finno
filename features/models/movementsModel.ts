@@ -5,7 +5,7 @@ import { movements } from "@/infra/database/schemas/movements";
 
 import zod from "zod";
 import { createInsertSchema } from "drizzle-zod";
-import { and, between, eq, SQL, desc, or, inArray } from "drizzle-orm";
+import { and, eq, SQL, desc, or, inArray, gte, lt } from "drizzle-orm";
 import { PgColumn, PgSelect } from "drizzle-orm/pg-core";
 
 import { cache } from "react";
@@ -77,7 +77,7 @@ const create = cache(async (movObject: TypeMovementsCreate) => {
  * ]
  */
 const findByWalletIdForQuery: FunctionFindAllMoviments = cache(
-  async ({ walletId, returnFields, query, include }) => {
+  async ({ walletId, returnFields, query, pagination, include }) => {
     if (returnFields.length === 0) return [];
     if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
       return [];
@@ -98,27 +98,21 @@ const findByWalletIdForQuery: FunctionFindAllMoviments = cache(
       filters.push(eq(movements.walletId, walletId));
     }
 
-    if (query?.month) {
-      const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
-      const endDate = new Date(new Date().getFullYear(), query.month, 0);
-      filters.push(between(movements.executedAt, startDate, endDate));
-    }
-    if (query?.year) {
-      const startDate = new Date(query.year, new Date().getMonth());
-      const endDate = new Date(query.year + 1, new Date().getMonth());
-      filters.push(between(movements.executedAt, startDate, endDate));
+    if (query?.date && query.date.start && query.date.end) {
+      filters.push(gte(movements.executedAt, query.date.start));
+      filters.push(lt(movements.executedAt, query.date.end));
     }
 
     let consulta;
 
-    if (query?.limit) {
+    if (pagination) {
       consulta = db
         .select(selectCollumns)
         .from(movements)
         .where(and(...filters))
         .orderBy(movements.executedAt, desc(movements.amount))
-        .offset(((query?.page ?? 1) - 1) * query.limit)
-        .limit(query.limit)
+        .offset(((pagination.page ?? 1) - 1) * pagination.limit)
+        .limit(pagination.limit)
         .$dynamic();
     } else {
       consulta = db
@@ -191,10 +185,9 @@ const count: FunctionCountMovements = cache(async (walletId, query) => {
   let count;
 
   const filtersQuery: SQL[] = [];
-  if (query?.month) {
-    const startDate = new Date(new Date().getFullYear(), query.month - 1, 1);
-    const endDate = new Date(new Date().getFullYear(), query.month, 0);
-    filtersQuery.push(between(movements.executedAt, startDate, endDate));
+  if (query?.date && query.date.start && query.date.end) {
+    filtersQuery.push(gte(movements.executedAt, query.date.start));
+    filtersQuery.push(lt(movements.executedAt, query.date.end));
   }
 
   if (Array.isArray(walletId)) {
