@@ -57,6 +57,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function DetalhamentoReceita() {
+  return null; // -- Desabilitado
+
   const id = "pie-interactive";
   const hoje = new Date();
   const [activeIncome, setActiveIncome] = React.useState<string | null>(
@@ -109,6 +111,7 @@ export function DetalhamentoReceita() {
             {/*`${format(currentInterval?.from as Date, "LLLL", { locale: ptBR })} - 
             ${format(currentInterval?.to as Date, "LLLL", { locale: ptBR })} ${currentInterval?.from?.getFullYear()}`*/}
             <DateRangeComponent
+              limitar={true}
               interval={currentInterval}
               setInterval={setInterval}
             />
