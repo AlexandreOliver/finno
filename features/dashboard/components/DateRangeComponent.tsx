@@ -16,9 +16,11 @@ import { ptBR } from "date-fns/locale";
 export function DateRangeComponent({
   interval,
   setInterval,
+  limitar = true,
 }: {
   interval: DateRange | undefined;
   setInterval: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  limitar: boolean;
 }) {
   const hoje = new Date();
   return (
@@ -54,10 +56,12 @@ export function DateRangeComponent({
           <Calendar
             locale={ptBR}
             mode="range"
-            startMonth={new Date(hoje.getFullYear(), 0, 1)}
-            endMonth={hoje}
+            startMonth={
+              limitar ? new Date(hoje.getFullYear(), 0, 1) : undefined
+            }
+            endMonth={limitar ? hoje : new Date(2036, 0, 0)}
             hidden={[
-              {
+              limitar && {
                 after: hoje,
               },
             ]}
@@ -66,6 +70,9 @@ export function DateRangeComponent({
             selected={interval}
             onSelect={setInterval}
             numberOfMonths={1}
+            classNames={{
+              selected: "bg-blue-500",
+            }}
           />
         </PopoverContent>
       </Popover>

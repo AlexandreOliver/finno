@@ -13,13 +13,29 @@ import { typesEnum } from "@/infra/database/schemas/Enums";
 
 import clsx from "clsx";
 
-import { CreateMovementAction } from "../actions/createMovements";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { CreateAction } from "../actions/createMovements";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+} from "@/components/ui/field";
 import { findCategories } from "../services/findCategories";
 import { findWallets } from "../services/findWallets";
 import { useSession } from "@/hooks/useSession";
 import { SelectField } from "./SelectField";
 import { useQuery } from "@tanstack/react-query";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { DateRangeComponent } from "@/features/dashboard/components";
+import { DateRange } from "react-day-picker";
 
 type FormProps = {
   variant: "Renda" | "Despesa" | "Investimento";
@@ -30,11 +46,12 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
   const [type, setType] = useState(
     variant === "Renda" ? typesEnum.enumValues[1] : typesEnum.enumValues[0],
   );
-  const [stateForm, formAction, isPedding] = useActionState(
-    CreateMovementAction,
-    { sucess: false },
-  );
+  const [stateForm, formAction, isPedding] = useActionState(CreateAction, {
+    sucess: false,
+  });
   const [amount, setAmount] = useState("");
+  const [isReccurent, setIsReccurent] = useState(false);
+  const [startEnd, setStartEnd] = useState<DateRange | undefined>();
 
   const { data: dataWallets } = useQuery({
     queryKey: ["wallets", { userId: user?.id }],
@@ -91,12 +108,17 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
   };
 
   const normalizedAmount = normalizeCurrencyString(amount);
+  console.log(startEnd);
+  console.log("Is Reccurent: " + isReccurent);
 
   return (
     <form
       aria-describedby="aria-form"
       action={formAction}
-      className={cn("grid items-start gap-6", className)}
+      className={cn(
+        "grid items-start gap-6 overflow-y-auto no-scrollbar h-120",
+        className,
+      )}
       {...rest}
     >
       <div className="grid grid-cols-2 gap-3 px-2">
@@ -130,13 +152,15 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
       </div>
       <Field>
         <FieldLabel htmlFor="description">Descrição:</FieldLabel>
-        <Input
-          id="description"
-          type="text"
-          name="description"
-          placeholder="Insira aqui uma breve descrição"
-          aria-invalid={stateForm.errors?.description ? "true" : "false"}
-        />
+        <FieldContent>
+          <Textarea
+            id="description"
+            name="description"
+            maxLength={100}
+            aria-invalid={stateForm.errors?.description ? "true" : "false"}
+            placeholder="Insira aqui uma breve descrição"
+          />
+        </FieldContent>
         <FieldDescription className="text-red-500">
           {stateForm.errors?.description}
         </FieldDescription>
@@ -146,7 +170,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
         <Input
           id="amount"
           type="text"
-          placeholder="R$ 1232,56"
+          placeholder="R$ 1.232,56"
           autoComplete="off"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
@@ -188,6 +212,148 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
           />
         </div>
       </div>
+      <Field orientation="horizontal">
+        <Checkbox
+          id="isReccurent"
+          name="isReccurent"
+          checked={isReccurent ?? false}
+          uncheckedValue="off"
+          onCheckedChange={() => setIsReccurent(!isReccurent)}
+        />
+        <FieldLabel htmlFor="isReccurent" className="text-md">
+          É Recorrente?
+        </FieldLabel>
+      </Field>
+      <FieldSeparator hidden={!isReccurent} />
+      <FieldSet hidden={!isReccurent}>
+        <FieldLegend>Transação Recorrente</FieldLegend>
+        <FieldDescription>Forneça algumas informações extras</FieldDescription>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="status-checkbox">
+              Status<span className="text-destructive text-lg">*</span>
+            </FieldLabel>
+            <RadioGroup id="status-checkbox" defaultValue="ativo" name="status">
+              <div className="flex">
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="ativo" id="ativo-status" />
+                  <FieldLabel htmlFor="ativo-status">Ativo</FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="pausado" id="pausado-status" />
+                  <FieldLabel htmlFor="pausado-status">Pausado</FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="terminado" id="terminado-status" />
+                  <FieldLabel htmlFor="terminado-status">Terminado</FieldLabel>
+                </Field>
+              </div>
+            </RadioGroup>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="freq-checkbox">
+              Frequência<span className="text-destructive text-lg">*</span>
+            </FieldLabel>
+            <RadioGroup
+              id="freq-checkbox"
+              defaultValue="monthly"
+              name="frequency"
+            >
+              <div className="flex">
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="daily" id="daily-freq" />
+                  <FieldLabel htmlFor="daily-freq">Diário</FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="weekly" id="weekly-freq" />
+                  <FieldLabel htmlFor="pausado-freq">Semanal</FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="monthly" id="monthly-freq" />
+                  <FieldLabel htmlFor="monthly-freq">Mensal</FieldLabel>
+                </Field>
+                <Field orientation="horizontal">
+                  <RadioGroupItem value="yearly" id="yearly-freq" />
+                  <FieldLabel htmlFor="yearly-freq">Anual</FieldLabel>
+                </Field>
+              </div>
+            </RadioGroup>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="interval-input">
+              Intervalo<span className="text-destructive text-lg">*</span>
+            </FieldLabel>
+            <FieldDescription className="">
+              Dada uma frequência, defina qual o intervalo.
+              <br /> Ex: a cada 1 mês, a cada 5 dias, a cada 3 meses.
+            </FieldDescription>
+            <Input id="interval-input" type="number" name="interval" min={1} />
+            <FieldError
+              errors={stateForm.errors?.interval?.map((a) => {
+                if (a) {
+                  return { message: a };
+                }
+              })}
+            ></FieldError>
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="installments-input">Parcelas</FieldLabel>
+            <Input
+              id="installments-input"
+              name="installments"
+              type="number"
+              min={0}
+            />
+            <FieldDescription>Se não houver, deixe vazio</FieldDescription>
+            <FieldError
+              errors={stateForm.errors?.installments?.map((a) => {
+                if (a) {
+                  return { message: a };
+                }
+              })}
+            ></FieldError>
+          </Field>
+          <Field>
+            <input
+              id="input-start"
+              name="start_date"
+              type="datetime-local"
+              defaultValue={startEnd?.from?.toISOString().slice(0, 16)}
+              hidden
+            />
+            <input
+              id="input-end"
+              name="end_date"
+              type="datetime-local"
+              defaultValue={startEnd?.to?.toISOString().slice(0, 16)}
+              hidden
+            />
+            <FieldLabel htmlFor="installments-input">
+              Duração<span className="text-destructive text-lg">*</span>
+            </FieldLabel>
+            <DateRangeComponent
+              interval={startEnd}
+              setInterval={setStartEnd}
+              limitar={false}
+            />
+            <FieldDescription>Inicio e fim </FieldDescription>
+            <FieldError
+              errors={stateForm.errors?.start_date?.map((a) => {
+                if (a) {
+                  return { message: a };
+                }
+              })}
+            ></FieldError>
+            <FieldError
+              errors={stateForm.errors?.end_date?.map((a) => {
+                if (a) {
+                  return { message: a };
+                }
+              })}
+            ></FieldError>
+          </Field>
+        </FieldGroup>
+      </FieldSet>
       {stateForm.message && (
         <p
           id="aria-form"
