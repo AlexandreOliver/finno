@@ -10,7 +10,7 @@
     "dev:web": "next dev",
     "test": "pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
     "test:watch": "jest --runInBand --watch",
-    "build": "next build",
+    "build": "next build && pnpm db:push && pnpm db:seed",
     "lint": "eslint",
     "service:db:up": "docker compose -f infra/compose.yaml up -d",
     "service:db:down": "docker compose -f infra/compose.yaml down",
