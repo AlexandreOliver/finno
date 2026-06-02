@@ -110,7 +110,7 @@ const findByWalletIdForQuery: FunctionFindAllMoviments = cache(
         .select(selectCollumns)
         .from(movements)
         .where(and(...filters))
-        .orderBy(movements.executedAt, desc(movements.amount))
+        .orderBy(desc(movements.executedAt), desc(movements.amount))
         .offset(((pagination.page ?? 1) - 1) * pagination.limit)
         .limit(pagination.limit)
         .$dynamic();
@@ -119,7 +119,7 @@ const findByWalletIdForQuery: FunctionFindAllMoviments = cache(
         .select(selectCollumns)
         .from(movements)
         .where(and(...filters))
-        .orderBy(movements.executedAt, desc(movements.amount))
+        .orderBy(desc(movements.executedAt), desc(movements.amount))
         .$dynamic();
     }
 
