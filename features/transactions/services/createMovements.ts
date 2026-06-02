@@ -13,11 +13,10 @@ import reccurentModel, {
   reccurentSchema,
 } from "@/features/models/recurentModel";
 
-import { revalidatePath } from "next/cache";
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { cookies } from "next/headers";
 
-interface StateForm {
+export interface StateForm {
   errors?: {
     type?: string[] | null;
     description?: string[] | null;
@@ -36,10 +35,7 @@ interface StateForm {
   sucess: boolean;
 }
 
-export async function CreateAction(
-  prevState: StateForm,
-  formData: FormData,
-): Promise<StateForm> {
+export async function CreateAction(formData: FormData): Promise<StateForm> {
   const { isAuth } = await verifySession(
     (await cookies()).get("session_token")?.value as string,
   );
@@ -61,12 +57,10 @@ export async function CreateAction(
     end_date: formData.get("end_date"),
   };
 
-  console.log(rawData);
   if (rawData.isReccurent === "on" || !rawData.isReccurent) {
     const objtReccurent = reccurentSchema.safeParse(rawData);
 
     if (!objtReccurent.success) {
-      console.log(zod.flattenError(objtReccurent.error).fieldErrors);
       return {
         errors: zod.flattenError(objtReccurent.error).fieldErrors,
         sucess: false,
@@ -74,8 +68,6 @@ export async function CreateAction(
       };
     }
 
-    console.log("Formatado: ");
-    console.log(objtReccurent);
     try {
       await reccurentModel.create(objtReccurent.data);
     } catch {
@@ -103,9 +95,6 @@ export async function CreateAction(
       };
     }
   }
-
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/transaction");
 
   return { message: "Transação Salva com sucesso", sucess: true };
 }

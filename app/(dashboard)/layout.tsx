@@ -9,7 +9,7 @@ import ClientProvider from "@/features/Provider/ClientProvider";
 import getQueryClient from "@/features/Provider/QueryClientServer";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { findWallets } from "@/features/transactions/services/findWallets";
+import { walletsQuerys } from "@/features/Provider/queryKeys";
 
 export default async function DashboardLayout({
   children,
@@ -23,14 +23,7 @@ export default async function DashboardLayout({
 
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["wallets", { userId: authUser.user.id }],
-    queryFn: () =>
-      findWallets({
-        ownerId: authUser.user.id,
-        returnFields: ["id", "balance", "createdAt", "labelName", "updatedAt"],
-      }),
-  });
+  await queryClient.prefetchQuery(walletsQuerys.owned(authUser.user.id));
 
   return (
     <SessionProvider value={authUser}>

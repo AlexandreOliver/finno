@@ -17,6 +17,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeftIcon,
@@ -26,26 +36,19 @@ import {
   Settings2Icon,
 } from "lucide-react";
 
-import { getMovementsService } from "../services/getMovements";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import clsx from "clsx";
 import { formatCurrency } from "@/lib/utils";
 import { DelButtonMovement } from "./buttons";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@/hooks/useSession";
-import { findWallets } from "../services/findWallets";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import clsx from "clsx";
+
+import { useSession } from "@/hooks/useSession";
+import { useDeleteMovement } from "../hooks/useDeleteMovement";
+
+import { movementsQuerys, walletsQuerys } from "../../Provider/queryKeys";
 
 export function TableMovements() {
   const { user } = useSession();
@@ -61,12 +64,7 @@ export function TableMovements() {
   const [selectWallet, setWallet] = useState(() => "todas");
 
   const { data: wallets } = useQuery({
-    queryKey: ["wallets", { userId: user?.id }],
-    queryFn: () =>
-      findWallets({
-        ownerId: user?.id as string,
-        returnFields: ["id", "balance", "createdAt", "labelName", "updatedAt"],
-      }),
+    ...walletsQuerys.owned(user?.id as string),
     enabled: !!user?.id,
   });
 
@@ -82,24 +80,11 @@ export function TableMovements() {
 
   const limit = 10;
   const { data: movements } = useQuery({
-    queryKey: [
-      "movements",
-      wallets_Ids,
-      { page, limit, query: { date: rangeDate } },
-    ],
-    queryFn: () =>
-      getMovementsService({
-        walletId: wallets_Ids as string[],
-        pagination: {
-          page,
-          limit,
-        },
-        query: {
-          date: rangeDate,
-        },
-      }),
+    ...movementsQuerys
+      .owned(wallets_Ids as string[])
+      ._ctx.query({ date: rangeDate })
+      ._ctx.pagination(limit, page),
     placeholderData: (previousData) => previousData,
-    enabled: !!wallets_Ids,
   });
 
   const totalPages = useMemo(
@@ -119,6 +104,17 @@ export function TableMovements() {
       ) ?? [],
     [movements?.payload, seletorType, selectWallet],
   );
+
+  const mutationDelete = useDeleteMovement(
+    movementsQuerys
+      .owned(wallets_Ids as string[])
+      ._ctx.query({ date: rangeDate })
+      ._ctx.pagination(limit, page).queryKey,
+  );
+
+  const deleteMovment = (id: string) => {
+    mutationDelete.mutate(id);
+  };
 
   return (
     <div className="min-h-147.25">
@@ -307,7 +303,11 @@ export function TableMovements() {
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem className="flex justify-center items-center">
-                            <DelButtonMovement MovementsId={mov.id as string} />
+                            <DelButtonMovement
+                              functionDelete={() =>
+                                deleteMovment(mov.id as string)
+                              }
+                            />
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

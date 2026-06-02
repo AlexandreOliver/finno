@@ -2,18 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-import { Loader2 } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { ComponentProps, useMemo, useCallback } from "react";
-import { useActionState, useState } from "react";
-
-import { typesEnum } from "@/infra/database/schemas/Enums";
-
-import clsx from "clsx";
-
-import { CreateAction } from "../actions/createMovements";
 import {
   Field,
   FieldContent,
@@ -24,18 +12,33 @@ import {
   FieldLegend,
   FieldSeparator,
   FieldSet,
-  FieldTitle,
 } from "@/components/ui/field";
-import { findCategories } from "../services/findCategories";
-import { findWallets } from "../services/findWallets";
-import { useSession } from "@/hooks/useSession";
-import { SelectField } from "./SelectField";
-import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+import { SelectField } from "./SelectField";
 import { DateRangeComponent } from "@/features/dashboard/components";
+
+import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
+import { Loader2 } from "lucide-react";
+import clsx from "clsx";
+
+import { useState } from "react";
+import { ComponentProps, useMemo, useCallback } from "react";
+
+import { typesEnum } from "@/infra/database/schemas/Enums";
+import { useQuery } from "@tanstack/react-query";
+
+import {
+  movementsQuerys,
+  categoriasQuerys,
+  walletsQuerys,
+} from "../../Provider/queryKeys";
+
+import { useSession } from "@/hooks/useSession";
+import { useCriarMovement } from "../hooks/useCriarMovement";
 
 type FormProps = {
   variant: "Renda" | "Despesa" | "Investimento";
@@ -46,37 +49,47 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
   const [type, setType] = useState(
     variant === "Renda" ? typesEnum.enumValues[1] : typesEnum.enumValues[0],
   );
-  const [stateForm, formAction, isPedding] = useActionState(CreateAction, {
-    sucess: false,
-  });
   const [amount, setAmount] = useState("");
   const [isReccurent, setIsReccurent] = useState(false);
-  const [startEnd, setStartEnd] = useState<DateRange | undefined>();
+  const [selectDateRange, setDateRange] = useState<DateRange | undefined>();
 
+  // ----------- Tanstack -----------
   const { data: dataWallets } = useQuery({
-    queryKey: ["wallets", { userId: user?.id }],
-    queryFn: () =>
-      findWallets({
-        ownerId: user?.id as string,
-        returnFields: ["id", "balance", "createdAt", "labelName", "updatedAt"],
-      }),
+    ...walletsQuerys.owned(user?.id as string),
     enabled: !!user?.id,
   });
 
   const { data: categories } = useQuery({
-    queryKey: ["categorias", { userId: user?.id }],
-    queryFn: () =>
-      findCategories({
-        userId: user?.id as string,
-        returnFields: ["id", "label", "type"],
-      }),
+    ...categoriasQuerys.withOwned(user?.id as string),
     enabled: !!user?.id,
   });
 
+  const {
+    mutate,
+    data: stateForm,
+    isPending,
+  } = useCriarMovement(
+    movementsQuerys
+      .owned(dataWallets?.map((w) => w.id) as string[])
+      ._ctx.query({
+        date: {
+          start: new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            1,
+          ).toLocaleDateString("en-US"),
+          end: new Date().toLocaleDateString("en-US"),
+        },
+      })
+      ._ctx.pagination(10, 1).queryKey,
+  );
+
+  // ----------- Memos ----------------
   const categoriesBytype = useMemo(() => {
     return categories?.filter((ctg) => ctg.type === type);
   }, [categories, type]);
 
+  // ------------ useCallback -----------
   const normalizeCurrencyString = useCallback((input: string) => {
     if (typeof input !== "string" || input === "") return "";
     let strInput = input;
@@ -108,15 +121,13 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
   };
 
   const normalizedAmount = normalizeCurrencyString(amount);
-  console.log(startEnd);
-  console.log("Is Reccurent: " + isReccurent);
 
   return (
     <form
       aria-describedby="aria-form"
-      action={formAction}
+      action={mutate}
       className={cn(
-        "grid items-start gap-6 overflow-y-auto no-scrollbar h-120",
+        "grid items-start gap-6 overflow-y-auto no-scrollbar h-135",
         className,
       )}
       {...rest}
@@ -157,12 +168,12 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
             id="description"
             name="description"
             maxLength={100}
-            aria-invalid={stateForm.errors?.description ? "true" : "false"}
+            aria-invalid={stateForm?.errors?.description ? "true" : "false"}
             placeholder="Insira aqui uma breve descrição"
           />
         </FieldContent>
         <FieldDescription className="text-red-500">
-          {stateForm.errors?.description}
+          {stateForm?.errors?.description}
         </FieldDescription>
       </Field>
       <Field>
@@ -175,11 +186,11 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           onBlur={handleAmountBlur}
-          aria-invalid={stateForm.errors?.amount ? "true" : "false"}
+          aria-invalid={stateForm?.errors?.amount ? "true" : "false"}
         />
         <input type="hidden" name="amount" value={normalizedAmount} />
         <FieldDescription className="text-red-500">
-          {stateForm.errors?.amount}
+          {stateForm?.errors?.amount}
         </FieldDescription>
       </Field>
       <div className="flex gap-6">
@@ -289,7 +300,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
             </FieldDescription>
             <Input id="interval-input" type="number" name="interval" min={1} />
             <FieldError
-              errors={stateForm.errors?.interval?.map((a) => {
+              errors={stateForm?.errors?.interval?.map((a) => {
                 if (a) {
                   return { message: a };
                 }
@@ -306,7 +317,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
             />
             <FieldDescription>Se não houver, deixe vazio</FieldDescription>
             <FieldError
-              errors={stateForm.errors?.installments?.map((a) => {
+              errors={stateForm?.errors?.installments?.map((a) => {
                 if (a) {
                   return { message: a };
                 }
@@ -318,34 +329,34 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
               id="input-start"
               name="start_date"
               type="datetime-local"
-              defaultValue={startEnd?.from?.toISOString().slice(0, 16)}
+              defaultValue={selectDateRange?.from?.toISOString().slice(0, 16)}
               hidden
             />
             <input
               id="input-end"
               name="end_date"
               type="datetime-local"
-              defaultValue={startEnd?.to?.toISOString().slice(0, 16)}
+              defaultValue={selectDateRange?.to?.toISOString().slice(0, 16)}
               hidden
             />
             <FieldLabel htmlFor="installments-input">
               Duração<span className="text-destructive text-lg">*</span>
             </FieldLabel>
             <DateRangeComponent
-              interval={startEnd}
-              setInterval={setStartEnd}
+              interval={selectDateRange}
+              setInterval={setDateRange}
               limitar={false}
             />
             <FieldDescription>Inicio e fim </FieldDescription>
             <FieldError
-              errors={stateForm.errors?.start_date?.map((a) => {
+              errors={stateForm?.errors?.start_date?.map((a) => {
                 if (a) {
                   return { message: a };
                 }
               })}
             ></FieldError>
             <FieldError
-              errors={stateForm.errors?.end_date?.map((a) => {
+              errors={stateForm?.errors?.end_date?.map((a) => {
                 if (a) {
                   return { message: a };
                 }
@@ -354,18 +365,18 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
           </Field>
         </FieldGroup>
       </FieldSet>
-      {stateForm.message && (
+      {stateForm?.message && (
         <p
           id="aria-form"
           aria-atomic="true"
           aria-live="polite"
-          className={`${stateForm.sucess ? "text-green-500" : "text-red-500"}  text-sm`}
+          className={`${stateForm?.sucess ? "text-green-500" : "text-red-500"}  text-sm`}
         >
-          {stateForm.message}
+          {stateForm?.message}
         </p>
       )}
       <Button type="submit">
-        {isPedding ? <Loader2 className="animate-spin" /> : "Save changes"}
+        {isPending ? <Loader2 className="animate-spin" /> : "Save changes"}
       </Button>
     </form>
   );

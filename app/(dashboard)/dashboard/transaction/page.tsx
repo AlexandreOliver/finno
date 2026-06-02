@@ -4,8 +4,9 @@ import walletsModel from "@/features/models/walletsModel";
 import getQueryClient from "@/features/Provider/QueryClientServer";
 import { CreateDialog } from "@/features/transactions/components";
 import { TableMovements } from "@/features/transactions/components/TableMovements";
-import { getMovementsService } from "@/features/transactions/services/getMovements";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
+import { movementsQuerys } from "@/features/Provider/queryKeys";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
@@ -47,18 +48,12 @@ export default async function Page() {
     },
   };
 
-  await queryClient.prefetchQuery({
-    queryKey: ["movements", wallets_Ids, { page: 1, limit: 10, query }],
-    queryFn: () =>
-      getMovementsService({
-        walletId: wallets_Ids as string[],
-        pagination: {
-          page: 1,
-          limit: 10,
-        },
-        query,
-      }),
-  });
+  await queryClient.prefetchQuery(
+    movementsQuerys
+      .owned(wallets_Ids as string[])
+      ._ctx.query(query)
+      ._ctx.pagination(10, 1),
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
