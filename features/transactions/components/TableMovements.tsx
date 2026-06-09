@@ -119,37 +119,8 @@ export function TableMovements() {
   return (
     <div className="min-h-147.25">
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-center">
-          <div className="p-2 rounded-md border border-card flex gap-2 items-center ">
-            <span className="text-md ml-2">Carteiras:</span>
-            <Select
-              defaultValue={{ value: "todas", label: "Todas" }}
-              onValueChange={(e: { value: string; label: string } | null) =>
-                setWallet(e?.value as string)
-              }
-            >
-              <SelectTrigger className="w-35">
-                <SelectValue placeholder="Carteiras" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {wallets &&
-                    wallets.map((w) => (
-                      <SelectItem
-                        key={w.id}
-                        value={{ value: w.id, label: w.labelName }}
-                      >
-                        {w.labelName}
-                      </SelectItem>
-                    ))}
-                  <SelectItem value={{ value: "todas", label: "Todas" }}>
-                    Todas
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="border border-[#2A3040] rounded-md h-full flex gap-3 p-1 items-center">
+        <div className="flex flex-col md:flex-row md:gap-4 md:justify-between md:items-end">
+          <div className="justify-center border border-[#2A3040] rounded-md h-full flex gap-3 p-1 items-center">
             <button
               className="hover:bg-[#2A3040] h-12"
               onClick={() => {
@@ -201,57 +172,102 @@ export function TableMovements() {
               />
             </button>
           </div>
-          <div className="flex justify-end">
-            <ToggleGroup
-              key={seletorType}
-              defaultValue={[seletorType]}
-              onValueChange={(e) => setType(e[0] as typeof seletorType)}
-              variant="outline"
-              spacing={2}
-            >
-              <ToggleGroupItem
-                size="lg"
-                value="todas"
-                aria-label="Toggle todas"
-                className="text-lg font-light data-pressed:bg-[#0e1738] hover:bg-gray-900"
+          <div className="flex gap-2 items-center justify-center">
+            <div className="p-1 rounded-md border border-card flex flex-col gap-1 items-center">
+              <span className="text-sm md:text-md md:ml-2">Carteira:</span>
+              <Select
+                defaultValue={{ value: "todas", label: "Todas" }}
+                onValueChange={(e: { value: string; label: string } | null) =>
+                  setWallet(e?.value as string)
+                }
               >
-                Todas
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                size="lg"
-                value="credito"
-                aria-label="Toggle entradas"
-                className="data-pressed:bg-green-600 hover:bg-green-600/40 text-lg font-light"
+                <SelectTrigger className="w-24 md:w-35">
+                  <SelectValue placeholder="Carteiras" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {wallets &&
+                      wallets.map((w) => (
+                        <SelectItem
+                          key={w.id}
+                          value={{ value: w.id, label: w.labelName }}
+                          className="sm:text-sm md:text-md"
+                        >
+                          {w.labelName}
+                        </SelectItem>
+                      ))}
+                    <SelectItem value={{ value: "todas", label: "Todas" }}>
+                      Todas
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col justify-center rounded-md border p-1 gap-1 border-card items-center">
+              <span className="text-sm md:text-md">Tipo:</span>
+              <ToggleGroup
+                key={seletorType}
+                defaultValue={[seletorType]}
+                onValueChange={(e) => setType(e[0] as typeof seletorType)}
+                variant="outline"
+                spacing={2}
               >
-                Entradas
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                size="lg"
-                value="debito"
-                aria-label="Toggle saidas"
-                className="data-pressed:bg-red-600 hover:bg-red-600/40 text-lg font-light"
-              >
-                Saidas
-              </ToggleGroupItem>
-            </ToggleGroup>
+                <ToggleGroupItem
+                  size="default"
+                  value="todas"
+                  aria-label="Toggle todas"
+                  className="text-md font-light data-pressed:bg-[#0e1738] hover:bg-gray-900"
+                >
+                  Todas
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  size="default"
+                  value="credito"
+                  aria-label="Toggle entradas"
+                  className="data-pressed:bg-green-600 hover:bg-green-600/40 text-md font-light"
+                >
+                  Entradas
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  size="default"
+                  value="debito"
+                  aria-label="Toggle saidas"
+                  className="data-pressed:bg-red-600 hover:bg-red-600/40 text-md font-light"
+                >
+                  Saidas
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
           </div>
         </div>
         <div className="rounded-md overflow-hidden border border-[#3a3f4d]">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-[15px]">
-                <TableHead className="w-15 p-3 text-center">DATA</TableHead>
-                <TableHead className="w-100 p-3">DESCRIÇÃO</TableHead>
-                <TableHead className="w-20 text-center p-3">TIPO</TableHead>
-                <TableHead className="w-12 text-center p-3">CARTEIRA</TableHead>
-                <TableHead className="w-42 text-center p-3">
+                <TableHead className="w-15 p-3 text-center text-sm md:text-md">
+                  DATA
+                </TableHead>
+                <TableHead className="w-80 p-3 text-sm md:text-md">
+                  DESCRIÇÃO
+                </TableHead>
+                <TableHead className="w-20 text-center p-3 text-sm md:text-md">
+                  TIPO
+                </TableHead>
+                <TableHead className="w-12 text-center p-3 text-sm md:text-md">
+                  CARTEIRA
+                </TableHead>
+                <TableHead className="w-42 text-center p-3 text-sm md:text-md">
                   CATEGORIA
                 </TableHead>
-                <TableHead className="w-24 text-right p-3">VALOR</TableHead>
-                <TableHead className="w-25 text-center p-3">AÇÕES</TableHead>
+                <TableHead className="w-24 text-right p-3 text-sm md:text-md">
+                  VALOR
+                </TableHead>
+                <TableHead className="w-25 text-center p-3 text-sm md:text-md">
+                  AÇÕES
+                </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className=" bg-[#2A3040]/20 text-base">
+            <TableBody className=" bg-[#2A3040]/20 text-sm">
               {payloadFiltred.length > 0 ? (
                 payloadFiltred.map((mov) => (
                   <TableRow key={mov.id} className="border-[#323A4D]">
@@ -260,7 +276,9 @@ export function TableMovements() {
                         locale: ptBR,
                       })}
                     </TableCell>
-                    <TableCell className="p-2">{mov.description}</TableCell>
+                    <TableCell className="p-2 ">
+                      <span className="text-balance">{mov.description}</span>
+                    </TableCell>
                     <TableCell>
                       <div className="flex justify-center items-center">
                         {mov.type === "debito" ? (

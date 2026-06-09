@@ -57,12 +57,14 @@ export default async function Page() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <section className="flex flex-col gap-3 w-full">
-        <div className="p-3 flex justify-between items-center">
+      <section className="flex flex-col gap-2 w-full">
+        <div className="p-3 flex flex-col justify-center items-center gap-3 md:flex-row md:justify-between">
           <div>
             <p className="text-muted-foreground text-md">{dateFormated}</p>
-            <p className="text-3xl tracking-tight font-medium">Transações</p>
-            <div className="flex gap-2 mt-1">
+            <p className="text-3xl tracking-tight font-medium text-center md:text-start">
+              Transações
+            </p>
+            <div className="flex gap-2 mt-4 md:mt-1">
               <Badge className="dark:bg-green-800 dark:text-green-200 bg-green-400/30 text-green-800">
                 Entradas
               </Badge>
@@ -74,7 +76,7 @@ export default async function Page() {
               </Badge>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2 justify-center flex-row md:gap-4">
             <CreateDialog type="Renda" label="Nova Receita" />
             <CreateDialog type="Despesa" label="Nova Despesa" />
           </div>

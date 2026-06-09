@@ -58,7 +58,7 @@ export function NavBar() {
                 `}
               >
                 {navlink.icon}
-                <span>{navlink.label}</span>
+                <span className="hidden md:block">{navlink.label}</span>
               </div>
             </Link>
             <Separator

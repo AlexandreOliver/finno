@@ -127,7 +127,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
       aria-describedby="aria-form"
       action={mutate}
       className={cn(
-        "grid items-start gap-6 overflow-y-auto no-scrollbar h-135",
+        "grid items-start gap-2 overflow-y-auto no-scrollbar h-115",
         className,
       )}
       {...rest}
