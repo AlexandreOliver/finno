@@ -17,6 +17,7 @@ interface SelectFieldProps {
     id: string;
     label: string;
   }[];
+  type?: string;
 }
 
 export function SelectField(props: SelectFieldProps) {

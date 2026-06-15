@@ -197,7 +197,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
         <div className="grid gap-3">
           <label htmlFor="categoryId">Categoria: </label>
           <SelectField
-            key={type}
+            type={type}
             nameForm="categoryId"
             data={categoriesBytype ?? [{ id: "noFound", label: "" }]}
             isError={stateForm?.errors?.categoryId ? true : false}

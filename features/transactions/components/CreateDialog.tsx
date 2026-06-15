@@ -48,7 +48,7 @@ export function CreateDialog(props: CreateFormProps) {
     );
   }
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen} modal={false}>
       <DrawerTrigger asChild>
         <ButtonCreate variant={props.type} label={props.label} />
       </DrawerTrigger>
