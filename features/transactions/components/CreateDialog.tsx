@@ -56,7 +56,9 @@ export function CreateDialog(props: CreateFormProps) {
         <DrawerHeader className="text-left">
           <DrawerTitle>{props.label}</DrawerTitle>
         </DrawerHeader>
-        <CreateForm variant={props.type} />
+        <div className="px-2">
+          <CreateForm variant={props.type} />
+        </div>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancelar</Button>

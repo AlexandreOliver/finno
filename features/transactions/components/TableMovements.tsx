@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -166,7 +165,7 @@ export function TableMovements() {
               <ChevronRight
                 size={30}
                 className={clsx({
-                  "text-background":
+                  "text-white/20":
                     dateEnd.toDateString() === new Date().toDateString(),
                 })}
               />
@@ -243,61 +242,47 @@ export function TableMovements() {
         <div className="rounded-md overflow-hidden border border-[#3a3f4d]">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
-              <TableRow className="font-bold text-[15px]">
-                <TableHead className="w-15 p-3 text-center text-sm md:text-md">
-                  DATA
-                </TableHead>
-                <TableHead className="w-80 p-3 text-sm md:text-md">
+              <TableRow className="font-bold text-xs md:text-lg">
+                <TableHead className="flex p-2 justify-center items-center">
                   DESCRIÇÃO
                 </TableHead>
-                <TableHead className="w-20 text-center p-3 text-sm md:text-md">
-                  TIPO
-                </TableHead>
-                <TableHead className="w-12 text-center p-3 text-sm md:text-md">
-                  CARTEIRA
-                </TableHead>
-                <TableHead className="w-42 text-center p-3 text-sm md:text-md">
-                  CATEGORIA
-                </TableHead>
-                <TableHead className="w-24 text-right p-3 text-sm md:text-md">
-                  VALOR
-                </TableHead>
-                <TableHead className="w-25 text-center p-3 text-sm md:text-md">
-                  AÇÕES
-                </TableHead>
+                <TableHead className="text-center p-2">CATEGORIA</TableHead>
+                <TableHead className="text-right p-2">VALOR</TableHead>
+                <TableHead className="text-center p-2">AÇÕES</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className=" bg-[#2A3040]/20 text-sm">
+            <TableBody className=" bg-[#2A3040]/20 text-xs md:text-lg">
               {payloadFiltred.length > 0 ? (
                 payloadFiltred.map((mov) => (
                   <TableRow key={mov.id} className="border-[#323A4D]">
-                    <TableCell className="p-2">
-                      {format(mov.executedAt as Date, "d 'de' MMM", {
-                        locale: ptBR,
-                      })}
-                    </TableCell>
-                    <TableCell className="p-2 ">
-                      <span className="text-balance">{mov.description}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-center items-center">
-                        {mov.type === "debito" ? (
-                          <Badge className="dark:bg-red-800 ">Saida</Badge>
-                        ) : (
-                          <Badge className="dark:bg-green-800 ">Entrada</Badge>
-                        )}
+                    <TableCell className="text-xs md:text-lg w-17 md:w-auto">
+                      <div className="flex gap-4 ml-4">
+                        <div className="md:flex justify-center items-center hidden"></div>
+                        <div className="flex flex-col">
+                          <div className="text-xs md:text-sm text-white/60">
+                            {format(mov.executedAt as Date, "d 'de' MMMM", {
+                              locale: ptBR,
+                            })}
+                          </div>
+                          <p className="text-balance">{mov.description}</p>
+                        </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-center p-2">
-                      {wallets?.find((w) => w.id === mov.walletId)?.labelName}
+                    <TableCell className="text-center w-22 md:w-32">
+                      <p className="text-balance">{mov.labelCategory}</p>
                     </TableCell>
-                    <TableCell className="text-center p-2">
-                      {mov.labelCategory}
+                    <TableCell className="text-right w-18">
+                      {mov.type === "debito" ? (
+                        <span className="dark:text-red-400 ">
+                          {`- ${formatCurrency(Number(mov.amount))}`}
+                        </span>
+                      ) : (
+                        <span className="dark:text-green-400 ">
+                          {`+ ${formatCurrency(Number(mov.amount))}`}
+                        </span>
+                      )}
                     </TableCell>
-                    <TableCell className="text-right p-2">
-                      {formatCurrency(Number(mov.amount))}
-                    </TableCell>
-                    <TableCell className="text-center p-2">
+                    <TableCell className="text-center w-15 md:w-25">
                       <DropdownMenu>
                         <DropdownMenuTrigger
                           render={
@@ -308,7 +293,7 @@ export function TableMovements() {
                         />
                         <DropdownMenuContent
                           align="center"
-                          className="min-w-17"
+                          className="min-w-22"
                         >
                           <DropdownMenuItem className="flex justify-center items-center h-8">
                             <Link
