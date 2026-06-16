@@ -38,7 +38,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import clsx from "clsx";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { DelButtonMovement } from "./buttons";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -48,6 +48,7 @@ import { useSession } from "@/hooks/useSession";
 import { useDeleteMovement } from "../hooks/useDeleteMovement";
 
 import { movementsQuerys, walletsQuerys } from "../../Provider/queryKeys";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function TableMovements() {
   const { user } = useSession();
@@ -61,6 +62,8 @@ export function TableMovements() {
     "todas",
   );
   const [selectWallet, setWallet] = useState(() => "todas");
+
+  const isMobile = useIsMobile();
 
   const { data: wallets } = useQuery({
     ...walletsQuerys.owned(user?.id as string),
@@ -118,124 +121,130 @@ export function TableMovements() {
   return (
     <div className="min-h-147.25">
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col md:flex-row md:gap-4 md:justify-between md:items-end">
-          <div className="justify-center border border-[#2A3040] rounded-md h-full flex gap-3 p-1 items-center">
-            <button
-              className="hover:bg-[#2A3040] h-12"
-              onClick={() => {
-                setEnd(
-                  (endPrev) =>
-                    new Date(endPrev.getFullYear(), endPrev.getMonth(), 0),
-                );
-                setStart(
-                  (datePrev) =>
-                    new Date(
-                      datePrev.getFullYear(),
-                      datePrev.getMonth() - 1,
-                      1,
-                    ),
-                );
-              }}
-            >
-              <ChevronLeft size={30} />
-            </button>
-            <div className="w-35 text-center">
-              {format(dateStart, "MMMM 'de' yyyy ", { locale: ptBR })}
-            </div>
-            <button
-              disabled={dateEnd.toDateString() === new Date().toDateString()}
-              className=" h-12 not-disabled:hover:bg-[#2A3040]"
-              onClick={() => {
-                setStart(
-                  (datePrev) =>
-                    new Date(
-                      datePrev.getFullYear(),
-                      datePrev.getMonth() + 1,
-                      1,
-                    ),
-                );
-                setEnd((d) =>
-                  d.getMonth() + 1 === new Date().getMonth() &&
-                  d.getFullYear() === new Date().getFullYear()
-                    ? new Date()
-                    : new Date(d.getFullYear(), d.getMonth() + 2, 0),
-                );
-              }}
-            >
-              <ChevronRight
-                size={30}
-                className={clsx({
-                  "text-white/20":
-                    dateEnd.toDateString() === new Date().toDateString(),
-                })}
-              />
-            </button>
-          </div>
-          <div className="flex gap-2 items-center justify-center">
-            <div className="p-1 rounded-md border border-card flex flex-col gap-1 items-center">
-              <span className="text-sm md:text-md md:ml-2">Carteira:</span>
-              <Select
-                defaultValue={{ value: "todas", label: "Todas" }}
-                onValueChange={(e: { value: string; label: string } | null) =>
-                  setWallet(e?.value as string)
-                }
+        <div className="mx-auto md:mx-0">
+          <div className="grid grid-cols-1 md:flex md:flex-row md:gap-4 md:justify-between md:items-end">
+            <div className="order-last md:order-first justify-center border border-[#2A3040] w-full md:w-max h-16.5 rounded-md flex gap-3 items-center">
+              <button
+                className="hover:bg-[#2A3040] h-6 md:h-12"
+                onClick={() => {
+                  setEnd(
+                    (endPrev) =>
+                      new Date(endPrev.getFullYear(), endPrev.getMonth(), 0),
+                  );
+                  setStart(
+                    (datePrev) =>
+                      new Date(
+                        datePrev.getFullYear(),
+                        datePrev.getMonth() - 1,
+                        1,
+                      ),
+                  );
+                }}
               >
-                <SelectTrigger className="w-24 md:w-35">
-                  <SelectValue placeholder="Carteiras" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {wallets &&
-                      wallets.map((w) => (
-                        <SelectItem
-                          key={w.id}
-                          value={{ value: w.id, label: w.labelName }}
-                          className="sm:text-sm md:text-md"
-                        >
-                          {w.labelName}
+                <ChevronLeft className="size-5 md:size-7" />
+              </button>
+              <div className="w-full md:w-35 h-full flex justify-center items-center">
+                <p className="text-md text-center">
+                  {format(dateStart, "MMMM 'de' yyyy ", { locale: ptBR })}
+                </p>
+              </div>
+              <button
+                disabled={dateEnd.toDateString() === new Date().toDateString()}
+                className="h-6 md:h-12 not-disabled:hover:bg-[#2A3040]"
+                onClick={() => {
+                  setStart(
+                    (datePrev) =>
+                      new Date(
+                        datePrev.getFullYear(),
+                        datePrev.getMonth() + 1,
+                        1,
+                      ),
+                  );
+                  setEnd((d) =>
+                    d.getMonth() + 1 === new Date().getMonth() &&
+                    d.getFullYear() === new Date().getFullYear()
+                      ? new Date()
+                      : new Date(d.getFullYear(), d.getMonth() + 2, 0),
+                  );
+                }}
+              >
+                <ChevronRight
+                  className={cn(
+                    clsx({
+                      "text-white/20":
+                        dateEnd.toDateString() === new Date().toDateString(),
+                    }),
+                    "size-5 md:size-7",
+                  )}
+                />
+              </button>
+            </div>
+            <div className="flex gap-2 md:gap-4 items-center justify-center">
+              <div className="py-1 rounded-md border border-card flex flex-col gap-1 items-center">
+                <p className="text-xs md:text-sm md:ml-2">Carteira:</p>
+                <div className="mx-1">
+                  <Select
+                    defaultValue={{ value: "todas", label: "Todas" }}
+                    onValueChange={(
+                      e: { value: string; label: string } | null,
+                    ) => setWallet(e?.value as string)}
+                  >
+                    <SelectTrigger className="text-xs w-20 md:w-35 md:text-sm">
+                      <SelectValue placeholder="Carteiras" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {wallets &&
+                          wallets.map((w) => (
+                            <SelectItem
+                              key={w.id}
+                              value={{ value: w.id, label: w.labelName }}
+                              className="sm:text-sm md:text-md"
+                            >
+                              {w.labelName}
+                            </SelectItem>
+                          ))}
+                        <SelectItem value={{ value: "todas", label: "Todas" }}>
+                          Todas
                         </SelectItem>
-                      ))}
-                    <SelectItem value={{ value: "todas", label: "Todas" }}>
-                      Todas
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex flex-col justify-center rounded-md border p-1 gap-1 border-card items-center">
-              <span className="text-sm md:text-md">Tipo:</span>
-              <ToggleGroup
-                key={seletorType}
-                defaultValue={[seletorType]}
-                onValueChange={(e) => setType(e[0] as typeof seletorType)}
-                variant="outline"
-                spacing={2}
-              >
-                <ToggleGroupItem
-                  size="default"
-                  value="todas"
-                  aria-label="Toggle todas"
-                  className="text-md font-light data-pressed:bg-[#0e1738] hover:bg-gray-900"
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="py-1 flex flex-col justify-center rounded-md border gap-1 border-card items-center">
+                <p className="text-sm md:text-md">Tipo:</p>
+                <ToggleGroup
+                  key={seletorType}
+                  defaultValue={[seletorType]}
+                  onValueChange={(e) => setType(e[0] as typeof seletorType)}
+                  variant="default"
+                  spacing={isMobile ? 0.5 : 2}
+                  className="mx-1"
                 >
-                  Todas
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  size="default"
-                  value="credito"
-                  aria-label="Toggle entradas"
-                  className="data-pressed:bg-green-600 hover:bg-green-600/40 text-md font-light"
-                >
-                  Entradas
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  size="default"
-                  value="debito"
-                  aria-label="Toggle saidas"
-                  className="data-pressed:bg-red-600 hover:bg-red-600/40 text-md font-light"
-                >
-                  Saidas
-                </ToggleGroupItem>
-              </ToggleGroup>
+                  <ToggleGroupItem
+                    value="todas"
+                    aria-label="Toggle todas"
+                    className="text-xs md:text-sm font-light data-pressed:bg-[#0e1738] hover:bg-gray-900"
+                  >
+                    Todas
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="credito"
+                    aria-label="Toggle entradas"
+                    className="data-pressed:bg-green-400/50 hover:bg-green-600/40 text-xs md:text-sm font-light"
+                  >
+                    Entradas
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="debito"
+                    aria-label="Toggle saidas"
+                    className="data-pressed:bg-red-600/50 hover:bg-red-600/40 text-xs md:text-sm font-light"
+                  >
+                    Saidas
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
             </div>
           </div>
         </div>
@@ -333,7 +342,7 @@ export function TableMovements() {
             </TableBody>
           </Table>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-2">
           <span>{movements?.totalMovementsFromDb} Transações</span>
           <div className="flex gap-5 justify-center items-center">
             <span>{`Pagina ${movements?.page} de ${totalPages}`}</span>
