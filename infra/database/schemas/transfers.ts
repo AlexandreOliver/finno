@@ -1,14 +1,11 @@
 import { check, decimal, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
-import { v7 as uuid7 } from "uuid";
 import { wallets } from "./wallets";
 import { sql } from "drizzle-orm";
 
 export const transfers = pgTable(
   "transfers",
   {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => uuid7()),
+    id: uuid().primaryKey(),
     debited_wallet: uuid()
       .references(() => wallets.id, {
         onDelete: "cascade",

@@ -6,7 +6,6 @@ import {
   timestamp,
   check,
 } from "drizzle-orm/pg-core";
-import { v7 as uuid7 } from "uuid";
 import { typesEnum } from "./Enums";
 import { categories } from "./categories";
 import { wallets } from "./wallets";
@@ -16,9 +15,7 @@ import { sql } from "drizzle-orm";
 export const movements = pgTable(
   "movements",
   {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => uuid7()),
+    id: uuid().primaryKey(),
     type: typesEnum().notNull(),
     description: text().notNull(),
     amount: decimal({ scale: 2, precision: 12 }).notNull(),

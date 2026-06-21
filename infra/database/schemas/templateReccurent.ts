@@ -7,7 +7,6 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { v7 as uuid7 } from "uuid";
 import { typesEnum, statusEnum, frequencyEnum } from "./Enums";
 import { categories } from "./categories";
 import { wallets } from "./wallets";
@@ -16,9 +15,7 @@ import { sql } from "drizzle-orm";
 export const templateReccurent = pgTable(
   "template_reccurent",
   {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => uuid7()),
+    id: uuid().primaryKey(),
     type: typesEnum().notNull(),
     status: statusEnum().notNull(),
     description: text().notNull(),
