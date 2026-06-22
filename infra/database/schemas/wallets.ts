@@ -13,12 +13,10 @@ export const wallets = pgTable(
   {
     id: uuid().primaryKey(),
     labelName: varchar({ length: 20 }).notNull(),
-    ownerId: uuid()
-      .references(() => users.id, { onDelete: "cascade" })
-      .notNull(),
-    balance: decimal({ precision: 12, scale: 2 }).default("0"),
-    updatedAt: timestamp({ withTimezone: true }).defaultNow(),
-    createdAt: timestamp({ withTimezone: true }).defaultNow(),
+    ownerId: uuid().references(() => users.id, { onDelete: "cascade" }),
+    balance: decimal({ precision: 12, scale: 2 }).default("0").notNull(),
+    updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [index("idx_labelName").on(table.labelName)],
 );
