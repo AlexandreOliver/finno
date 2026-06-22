@@ -26,7 +26,7 @@ export const movements = pgTable(
       .references(() => wallets.id)
       .notNull(),
     reccurentId: uuid().references(() => templateReccurent.id),
-    executedAt: timestamp({ withTimezone: true }).defaultNow(),
+    executedAt: timestamp({ withTimezone: true }).notNull(),
     dueDate: timestamp({ withTimezone: true }),
   },
   (table) => [check("chck_amount_gt0", sql`${table.amount} > 0`)],
