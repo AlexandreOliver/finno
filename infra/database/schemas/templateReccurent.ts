@@ -22,14 +22,15 @@ export const templateReccurent = pgTable(
     amount: decimal({ scale: 2, precision: 12 }).notNull(),
     frequency: frequencyEnum().notNull(),
     interval: integer().notNull(),
-    installments: integer().default(0),
+    installments: integer(),
+    countPaid: integer().notNull().default(0),
     categoryId: uuid()
       .references(() => categories.id)
       .notNull(),
     walletId: uuid()
       .references(() => wallets.id)
       .notNull(),
-    start_date: timestamp({ withTimezone: true }).defaultNow(),
+    start_date: timestamp({ withTimezone: true }).notNull(),
     end_date: timestamp({ withTimezone: true }),
     next_due_date: timestamp({ withTimezone: true }),
   },

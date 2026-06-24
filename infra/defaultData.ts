@@ -213,6 +213,7 @@ const seed_templateReccurent = [
     frequency: frequencyEnum.enumValues[2],
     interval: 1,
     installments: 12,
+    countPaid: 0,
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
     start_date: new Date(
@@ -224,12 +225,6 @@ const seed_templateReccurent = [
     end_date: new Date(
       hoje.getFullYear(),
       hoje.getMonth() + 11,
-      hoje.getDate(),
-      hoje.getHours(),
-    ),
-    next_due_date: new Date(
-      hoje.getFullYear(),
-      hoje.getMonth() + 1,
       hoje.getDate(),
       hoje.getHours(),
     ),
