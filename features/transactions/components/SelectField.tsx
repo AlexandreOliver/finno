@@ -23,6 +23,7 @@ interface SelectFieldProps {
 export function SelectField(props: SelectFieldProps) {
   return (
     <Select
+      key={props.type}
       name={props.nameForm}
       itemToStringValue={(item: (typeof props.data)[number]) =>
         item ? item.id : ""

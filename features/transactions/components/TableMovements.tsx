@@ -49,6 +49,7 @@ import { useDeleteMovement } from "../hooks/useDeleteMovement";
 
 import { movementsQuerys, walletsQuerys } from "../../Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTransacoes } from "../hooks/useTransactions";
 
 export function TableMovements() {
   const { user } = useSession();
@@ -81,13 +82,11 @@ export function TableMovements() {
   }, [dateEnd, dateStart]);
 
   const limit = 10;
-  const { data: movements } = useQuery({
-    ...movementsQuerys
-      .owned(wallets_Ids as string[])
-      ._ctx.query({ date: rangeDate })
-      ._ctx.pagination(limit, page),
-    placeholderData: (previousData) => previousData,
-  });
+  const { data: movements, isPending } = useTransacoes(
+    wallets_Ids as string[],
+    { limit, page },
+    { date: rangeDate },
+  );
 
   const totalPages = useMemo(
     () =>
@@ -110,11 +109,10 @@ export function TableMovements() {
   const mutationDelete = useDeleteMovement(
     movementsQuerys
       .owned(wallets_Ids as string[])
-      ._ctx.query({ date: rangeDate })
-      ._ctx.pagination(limit, page).queryKey,
+      ._ctx.query({ date: rangeDate }).queryKey,
   );
 
-  const deleteMovment = (id: string) => {
+  const deleteMovement = (id: string) => {
     mutationDelete.mutate(id);
   };
 
@@ -252,12 +250,16 @@ export function TableMovements() {
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-xs md:text-lg">
-                <TableHead className="flex p-2 justify-center items-center">
+                <TableHead className="flex p-2 justify-center items-center w-17 md:w-auto">
                   DESCRIÇÃO
                 </TableHead>
-                <TableHead className="text-center p-2">CATEGORIA</TableHead>
-                <TableHead className="text-right p-2">VALOR</TableHead>
-                <TableHead className="text-center p-2">AÇÕES</TableHead>
+                <TableHead className="text-center p-2 w-22 md:w-32">
+                  CATEGORIA
+                </TableHead>
+                <TableHead className="text-right p-2 w-18">VALOR</TableHead>
+                <TableHead className="text-center p-2 w-15 md:w-25">
+                  AÇÕES
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className=" bg-[#2A3040]/20 text-xs md:text-lg">
@@ -278,7 +280,9 @@ export function TableMovements() {
                       </div>
                     </TableCell>
                     <TableCell className="text-center w-22 md:w-32">
-                      <p className="text-balance">{mov.labelCategory}</p>
+                      <p className="text-balance">
+                        {mov.category?.label ?? "-"}
+                      </p>
                     </TableCell>
                     <TableCell className="text-right w-18">
                       {mov.type === "debito" ? (
@@ -317,7 +321,7 @@ export function TableMovements() {
                           <DropdownMenuItem className="flex justify-center items-center">
                             <DelButtonMovement
                               functionDelete={() =>
-                                deleteMovment(mov.id as string)
+                                deleteMovement(mov.id as string)
                               }
                             />
                           </DropdownMenuItem>
@@ -328,12 +332,19 @@ export function TableMovements() {
                 ))
               ) : (
                 <TableRow className="border-[#323A4D] hover:bg-bg-[#2A3040]/20">
-                  <TableCell colSpan={7} className="h-55 text-center">
+                  <TableCell colSpan={4} className="h-55 text-center">
                     <div className="flex justify-center items-center gap-3">
                       <DatabaseSearch />
-                      <span>Sem dados</span>
+                      {isPending ? (
+                        <span className="text-gray-400">Pesquisando...</span>
+                      ) : (
+                        <span>Sem dados</span>
+                      )}
                     </div>
-                    <div className="text-sm mt-1 text-muted-foreground">
+                    <div
+                      className="text-sm mt-1 text-muted-foreground"
+                      hidden={isPending}
+                    >
                       Tente mudar os filtros
                     </div>
                   </TableCell>

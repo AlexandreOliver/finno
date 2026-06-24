@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteMovement } from "../services/deleteMovements";
+import { deleteMovement } from "@/app/(dashboard)/dashboard/transaction/actions/deleteMovements";
 
 export function useDeleteMovement(queryKey: unknown) {
   const queryClient = useQueryClient();

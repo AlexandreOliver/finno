@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { CreateAction } from "../services/createMovements";
+import { CreateAction } from "@/app/(dashboard)/dashboard/transaction/actions/createMovements";
 
 export function useCriarMovement(queryKey: unknown) {
   const queryClient = useQueryClient();

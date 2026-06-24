@@ -29,16 +29,13 @@ import { useState } from "react";
 import { ComponentProps, useMemo, useCallback } from "react";
 
 import { typesEnum } from "@/infra/database/schemas/Enums";
-import { useQuery } from "@tanstack/react-query";
 
-import {
-  movementsQuerys,
-  categoriasQuerys,
-  walletsQuerys,
-} from "../../Provider/queryKeys";
+import { movementsQuerys } from "../../Provider/queryKeys";
 
 import { useSession } from "@/hooks/useSession";
 import { useCriarMovement } from "../hooks/useCriarMovement";
+import { useCategories } from "../hooks/useCategories";
+import { useWallets } from "../hooks/useWallets";
 
 type FormProps = {
   variant: "Renda" | "Despesa" | "Investimento";
@@ -54,14 +51,11 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
   const [selectDateRange, setDateRange] = useState<DateRange | undefined>();
 
   // ----------- Tanstack -----------
-  const { data: dataWallets } = useQuery({
-    ...walletsQuerys.owned(user?.id as string),
-    enabled: !!user?.id,
-  });
+  const { data: dataWallets } = useWallets(user?.id as string);
 
-  const { data: categories } = useQuery({
-    ...categoriasQuerys.withOwned(user?.id as string),
-    enabled: !!user?.id,
+  const { data: categories } = useCategories({
+    userId: user?.id,
+    returnFields: ["id", "label", "type"],
   });
 
   const {
@@ -80,14 +74,15 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
           ).toLocaleDateString("en-US"),
           end: new Date().toLocaleDateString("en-US"),
         },
-      })
-      ._ctx.pagination(10, 1).queryKey,
+      }).queryKey,
   );
 
   // ----------- Memos ----------------
   const categoriesBytype = useMemo(() => {
     return categories?.filter((ctg) => ctg.type === type);
   }, [categories, type]);
+
+  console.log(categoriesBytype);
 
   // ------------ useCallback -----------
   const normalizeCurrencyString = useCallback((input: string) => {
@@ -328,15 +323,15 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
             <input
               id="input-start"
               name="start_date"
-              type="datetime-local"
-              defaultValue={selectDateRange?.from?.toISOString().slice(0, 16)}
+              type="date"
+              defaultValue={selectDateRange?.from?.toISOString().slice(0, 10)}
               hidden
             />
             <input
               id="input-end"
               name="end_date"
-              type="datetime-local"
-              defaultValue={selectDateRange?.to?.toISOString().slice(0, 16)}
+              type="date"
+              defaultValue={selectDateRange?.to?.toISOString().slice(0, 10)}
               hidden
             />
             <FieldLabel htmlFor="installments-input">
