@@ -23,7 +23,7 @@ type resultCreate =
   | { success: true; data: Session };
 
 export class Session {
-  static #expirationInMs = 100 * 60 * 60 * 24 * 30;
+  static #expirationInMs = 1000 * 60 * 60 * 24 * 30;
   static #sizeTokenBytes = 48;
 
   private constructor(private readonly props: SessionProps) {}
