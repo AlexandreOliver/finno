@@ -1,32 +1,74 @@
 import { wallets } from "@/infra/database/schemas/wallets";
 import { v7 as uuidV7 } from "uuid";
+import { z } from "zod";
 
 export type WalletsFromDb = typeof wallets.$inferSelect;
+export type WalletsFromD = typeof wallets.$inferInsert;
+
+const walletSchema = z.object({
+  id: z.uuidv7().optional(),
+  labelName: z
+    .string()
+    .max(20, { error: "O nome da conta nao pode ultrapassar 20 caracteres" })
+    .optional()
+    .default("Principal"),
+  ownerId: z.uuidv7({ error: "Forneça um uuid valido" }),
+  createdAt: z.date().optional().default(new Date()),
+  updatedAt: z.date().optional().default(new Date()),
+});
 
 export type WalletsProps = {
   id: string;
   labelName: string;
-  ownerId: string | null;
-  balance: string;
+  ownerId: string;
+  balance: number;
   updatedAt: Date;
   createdAt: Date;
 };
 
+type resultCreate =
+  | {
+      success: false;
+      errors: {
+        labelName?: string[] | undefined;
+        ownerId?: string[] | undefined;
+      };
+    }
+  | {
+      success: true;
+      data: Wallet;
+    };
 export class Wallet {
   private constructor(private readonly props: WalletsProps) {}
 
-  public static create(props: Omit<WalletsProps, "id" | "balance">) {
+  public static create(
+    props: Omit<WalletsProps, "id" | "balance" | "createdAt" | "updatedAt">,
+  ): resultCreate {
+    const dataValid = walletSchema.safeParse(props);
+
+    if (!dataValid.success) {
+      return {
+        success: false,
+        errors: z.flattenError(dataValid.error).fieldErrors,
+      };
+    }
+
     const aWallet = {
       id: uuidV7(),
-      balance: "0",
-      ...props,
+      balance: 0,
+      ...dataValid.data,
     };
 
-    return new Wallet(aWallet);
+    const walletInst = new Wallet(aWallet);
+
+    return {
+      success: true,
+      data: walletInst,
+    };
   }
 
   public static with(props: WalletsFromDb) {
-    return new Wallet(props);
+    return new Wallet({ ...props, balance: Number.parseFloat(props.balance) });
   }
 
   //#region Getters
