@@ -26,7 +26,21 @@ export const userSchema = createInsertSchema(users, {
     schema.min(6, { error: "A senha precisa ter mais que 6 digitos" }),
   createdAt: (schema) => schema.nonoptional().default(new Date()),
   updatedAt: (schema) => schema.nonoptional().default(new Date()),
-});
+})
+  .safeExtend({
+    cfm_password: zod.string().optional(),
+  })
+  .refine(
+    (user) => {
+      if (!user.cfm_password) return true;
+
+      return user.password === user.cfm_password;
+    },
+    {
+      error: "As senhas não conferem",
+      path: ["cfm_password"],
+    },
+  );
 
 export type UserFromDb = typeof users.$inferSelect;
 
@@ -56,6 +70,7 @@ type resultCreate =
         lastName?: string[] | undefined;
         email?: string[] | undefined;
         password?: string[] | undefined;
+        cfm_password?: string[] | undefined;
         createdAt?: string[] | undefined;
         updatedAt?: string[] | undefined;
         features?: string[] | undefined;
@@ -130,7 +145,7 @@ export class User {
     return this.props.email;
   }
 
-  private get password() {
+  public get password() {
     return this.props.password;
   }
 

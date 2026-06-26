@@ -5,6 +5,6 @@ export interface IUserGateway {
   save: FunctionSave<User, boolean>;
   list: () => Promise<User[]>;
   getById: () => Promise<User[]>;
-  getByEmail: ({}: { email: string }) => Promise<User[]>;
+  getByEmail: (props: { email: string }) => Promise<User | null>;
   deleteById: () => Promise<boolean>;
 }
