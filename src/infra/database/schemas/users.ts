@@ -7,14 +7,11 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { v7 as uuidv7 } from "uuid";
 
 export const users = pgTable(
   "users",
   {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => uuidv7()),
+    id: uuid().primaryKey(),
     firstName: varchar({ length: 30 }).notNull(),
     lastName: varchar({ length: 50 }).notNull(),
     email: varchar({ length: 255 }).notNull().unique(),
@@ -23,8 +20,8 @@ export const users = pgTable(
       .array()
       .notNull()
       .default(sql`'{}'::text[]`),
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp({ withTimezone: true }).notNull(),
+    updatedAt: timestamp({ withTimezone: true }).notNull(),
   },
   (table) => [
     index("name_idx").on(table.firstName, table.lastName),
