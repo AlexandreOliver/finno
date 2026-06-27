@@ -1,5 +1,5 @@
 import { categoriesProps } from "@/domain/entity/categories.entity";
-import { categoriesGateway } from "@/domain/categories/categories.gateway";
+import { categoriesGateway } from "@/domain/repositories/categories.gateway";
 
 export class GetCategoriesUseCase {
   private constructor(

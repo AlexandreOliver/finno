@@ -1,21 +1,21 @@
 "use server";
 
-import { GetTransactionsUseCase } from "@/features/statement/get-statement/get-statement.handler";
+import { GetStatementHandler } from "@/features/statement/get-statement/get-statement.handler";
 
 import db from "@/infrastructure/database";
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { cookies } from "next/headers";
-import { TransactionsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-transactions.repository";
+import { StatementRepositoryDrizzle } from "@/infrastructure/repositories/queries/drizzle-statement.repository";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
 
 // Instancia as dependências
 
-const getTransacoesUseCase = GetTransactionsUseCase.create(
-  TransactionsRepositoryDrizzle.create(db),
+const getTransacoesUseCase = GetStatementHandler.create(
+  StatementRepositoryDrizzle.create(db),
   MovementsRepositoryDrizzle.create(db),
 );
 
-export async function getTransactions({
+export async function getStatement({
   walletId,
   pagination,
   query,

@@ -1,4 +1,4 @@
-import { ISessionGateway } from "@/domain/session/session.gateway";
+import { ISessionGateway } from "@/domain/repositories/session.gateway";
 import { sessions } from "@/infrastructure/database/schemas/sessions";
 import db from "@/infrastructure/database";
 

@@ -3,7 +3,6 @@ import db from "@/infrastructure/database";
 import { users } from "@/infrastructure/database/schemas/users";
 import { createInsertSchema } from "drizzle-zod";
 import zod from "zod";
-import passwordModel from "./password";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 
@@ -23,36 +22,34 @@ export const userSchema = createInsertSchema(users, {
 
 export type UserType = zod.infer<typeof userSchema>;
 
-type UserCreateType = Omit<UserType, "id" | "createdAt" | "updatedAt">;
-
 const getAll = cache(async function getAll() {
   const result = await db.select().from(users);
 
   return result;
 });
 
-const create = cache(async (dataReceived: UserCreateType) => {
-  const dataValidated = userSchema.parse(dataReceived);
+// const create = cache(async (dataReceived: UserCreateType) => {
+//   const dataValidated = userSchema.parse(dataReceived);
 
-  const userExists = await findByEmail(dataValidated.email);
-  if (userExists) throw new Error("Esse usuario ja existe");
+//   const userExists = await findByEmail(dataValidated.email);
+//   if (userExists) throw new Error("Esse usuario ja existe");
 
-  const passwordHashed = await passwordModel.passwordHashed(
-    dataReceived.password,
-  );
+//   const passwordHashed = await passwordModel.passwordHashed(
+//     dataReceived.password,
+//   );
 
-  const newUser = {
-    ...dataReceived,
-    password: passwordHashed,
-  };
+//   const newUser = {
+//     ...dataReceived,
+//     password: passwordHashed,
+//   };
 
-  const result = await db
-    .insert(users)
-    .values(newUser)
-    .returning({ id: users.id });
+//   const result = await db
+//     .insert(users)
+//     .values(newUser)
+//     .returning({ id: users.id });
 
-  return result[0];
-});
+//   return result[0];
+// });
 
 const findByEmail = cache(async (email: string) => {
   try {
@@ -82,7 +79,6 @@ const findById = cache(async function findById(id: string) {
 
 const userModel = {
   getAll,
-  create,
   findByEmail,
   findById,
 };

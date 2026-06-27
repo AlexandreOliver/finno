@@ -1,7 +1,6 @@
 "use server";
 
 import zod from "zod";
-import user from "@/features/models/user";
 import { redirect } from "next/navigation";
 
 const registerSchema = zod
@@ -64,7 +63,6 @@ export async function registerAction(
   }
 
   try {
-    await user.create(dataValidated.data);
     redirect("/auth/signin");
   } catch (err) {
     const error = err as Error;

@@ -14,7 +14,7 @@ export interface IReccurentGateway {
   count: FunctionCount;
 }
 
-export type FunctionGet<T, R> = (id: T | T[]) => Promise<R>;
+export type FunctionGet<T, R> = (id: T | T[]) => Promise<R | R[]>;
 
 export type FunctionList<R> = (args: {
   walletId: string | string[];

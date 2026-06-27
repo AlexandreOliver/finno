@@ -1,5 +1,4 @@
-import { ITransactionGateway } from "@/domain/transactions/transactions.gateway";
-import { Transaction } from "@/domain/transactions/transactions.gateway";
+import { ITransactionRepository } from "@/features/statement/get-statement/transactions.interface";
 
 import db from "@/infrastructure/database";
 import { movements } from "@/infrastructure/database/schemas/movements";
@@ -8,14 +7,14 @@ import { categories } from "@/infrastructure/database/schemas/categories";
 import { eq, inArray, SQL, and, gte, lt, sql, desc } from "drizzle-orm";
 import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
 
-export class TransactionsRepositoryDrizzle implements ITransactionGateway {
+export class StatementRepositoryDrizzle implements ITransactionRepository {
   private constructor(private readonly dbInstance: typeof db) {}
 
   public static create(dbInstance: typeof db) {
-    return new TransactionsRepositoryDrizzle(dbInstance);
+    return new StatementRepositoryDrizzle(dbInstance);
   }
 
-  public getStatement: ITransactionGateway["getStatement"] = async ({
+  public getStatement: ITransactionRepository["getStatement"] = async ({
     walletId,
     pagination,
     query,
@@ -49,6 +48,7 @@ export class TransactionsRepositoryDrizzle implements ITransactionGateway {
           status: templateReccurent.status,
           frequency: templateReccurent.frequency,
           interval: templateReccurent.interval,
+          countPaid: templateReccurent.countPaid,
           installments: templateReccurent.installments,
           start_date: templateReccurent.start_date,
           end_date: templateReccurent.end_date,
@@ -67,6 +67,6 @@ export class TransactionsRepositoryDrizzle implements ITransactionGateway {
       .limit(pagination.limit)
       .orderBy(desc(movements.executedAt), desc(movements.amount));
 
-    return resultDb as Transaction[];
+    return resultDb;
   };
 }

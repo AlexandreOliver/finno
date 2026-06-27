@@ -14,7 +14,10 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
   public save: IWalletsGateway["save"] = async (props) => {
     const result = await this.dbInstance
       .insert(wallets)
-      .values(props.toJson())
+      .values({
+        ...props.toJson({ omit: ["balance"] }),
+        balance: props.balance.toString(),
+      })
       .returning();
 
     return !!result[0]?.id;

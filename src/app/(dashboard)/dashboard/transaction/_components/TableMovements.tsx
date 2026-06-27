@@ -49,7 +49,7 @@ import { useDeleteMovement } from "@/features/statement/hooks/useDeleteMovement"
 
 import { movementsQuerys, walletsQuerys } from "@/features/Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useTransacoes } from "@/features/statement/hooks/useTransactions";
+import { useStatement } from "@/features/statement/hooks/useTransactions";
 
 export function TableMovements() {
   const { user } = useSession();
@@ -82,7 +82,7 @@ export function TableMovements() {
   }, [dateEnd, dateStart]);
 
   const limit = 10;
-  const { data: movements, isPending } = useTransacoes(
+  const { data: movements, isPending } = useStatement(
     wallets_Ids as string[],
     { limit, page },
     { date: rangeDate },

@@ -1,5 +1,5 @@
 import { categoriesProps, Categories } from "@/domain/entity/categories.entity";
-import { categoriesGateway } from "@/domain/categories/categories.gateway";
+import { categoriesGateway } from "@/domain/repositories/categories.gateway";
 
 import { categories } from "@/infrastructure/database/schemas/categories";
 
