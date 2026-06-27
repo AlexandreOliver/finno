@@ -218,6 +218,7 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
           />
         </div>
       </div>
+      {/**
       <Field orientation="horizontal">
         <Checkbox
           id="isReccurent"
@@ -359,13 +360,13 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
             ></FieldError>
           </Field>
         </FieldGroup>
-      </FieldSet>
+      </FieldSet>*/}
       {stateForm?.message && (
         <p
           id="aria-form"
           aria-atomic="true"
           aria-live="polite"
-          className={`${stateForm?.sucess ? "text-green-500" : "text-red-500"}  text-sm`}
+          className={`${stateForm?.success ? "text-green-500" : "text-red-500"}  text-sm`}
         >
           {stateForm?.message}
         </p>

@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { CreateAction } from "@/app/(dashboard)/dashboard/transaction/actions/createMovements";
+import { CreateAction } from "@/app/(dashboard)/dashboard/transaction/actions/createMovement.action";
 
 export function useCriarMovement(queryKey: unknown) {
   const queryClient = useQueryClient();
@@ -11,7 +11,7 @@ export function useCriarMovement(queryKey: unknown) {
     mutationKey: ["refetch movements - Criação"],
     mutationFn: CreateAction,
     onSuccess: (data) => {
-      if (data.sucess) {
+      if (data.success) {
         queryClient.invalidateQueries({
           queryKey: queryKey as string[],
         });

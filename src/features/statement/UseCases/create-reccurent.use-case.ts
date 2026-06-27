@@ -33,7 +33,7 @@ export type outputDTO = {
   };
   message: string;
   movement?: { id: string };
-  sucess: boolean;
+  success: boolean;
 };
 
 export class CreateReccurentUseCase {
@@ -50,7 +50,7 @@ export class CreateReccurentUseCase {
 
     if (!response.sucess) {
       return {
-        sucess: false,
+        success: false,
         errors: response.errors,
         message: "Ha Campos com erros",
       };
@@ -62,11 +62,11 @@ export class CreateReccurentUseCase {
 
     if (result) {
       return {
-        sucess: true,
+        success: true,
         message: "Transação salva com sucesso",
       };
     }
 
-    return { sucess: false, message: "Um erro aconteceu tente novamente" };
+    return { success: false, message: "Um erro aconteceu tente novamente" };
   }
 }

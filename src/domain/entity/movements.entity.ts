@@ -19,36 +19,24 @@ export type MovementsCreateProps = {
   walletId: string;
   type: string;
   description: string;
-  amount: string;
+  amount: number;
   categoryId: string;
   reccurentId: string | null;
   executedAt: Date;
-  dueDate: string | null;
+  dueDate: Date | null;
 };
 
 export type MovementsFromDb = typeof movements.$inferSelect;
 
 export const movementsSchema = createInsertSchema(movements, {
   amount: () =>
-    zod
-      .preprocess(
-        (val) => {
-          if (typeof val !== "string") return val;
-
-          const valor = val.trim();
-
-          if (valor.includes(","))
-            return valor.replace(/\./g, "").replace(",", ".");
-
-          return Number.parseFloat(valor);
-        },
-        zod.number({ error: "O Valor precisa ser um Número" }),
-      )
-      .refine((value) => value > 0, {
-        error: "O Valor Precisa ser maior do que 0",
-      }),
+    zod.number().refine((value) => value > 0, {
+      error: "O Valor Precisa ser maior do que 0",
+    }),
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
-  reccurentId: (schema) => schema.nonoptional(),
+  walletId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
+  reccurentId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
+  categoryId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
   executedAt: (schema) => schema.nonoptional().default(new Date()),
   dueDate: (schema) => schema.nonoptional(),
 });
@@ -72,7 +60,7 @@ export class Movement {
     const movement = new Movement(dataValid.data);
 
     return {
-      sucess: true,
+      success: true,
       movement: movement,
     };
   }
