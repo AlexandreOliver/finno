@@ -1,6 +1,6 @@
 import "server-only";
-import db from "@/infra/database";
-import { users } from "@/infra/database/schemas/users";
+import db from "@/infrastructure/database";
+import { users } from "@/infrastructure/database/schemas/users";
 import { createInsertSchema } from "drizzle-zod";
 import zod from "zod";
 import passwordModel from "./password";

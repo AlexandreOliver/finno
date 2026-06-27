@@ -1,4 +1,4 @@
-import db, { runMigrations } from "@/infra/database";
+import db, { runMigrations } from "@/infrastructure/database";
 import { sql } from "drizzle-orm";
 import retry from "async-retry";
 import { execSync } from "node:child_process";

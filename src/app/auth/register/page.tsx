@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import RegisterForm from "@/features/auth/components/RegisterForm";
+import RegisterForm from "@/app/auth/_components/RegisterForm";
 import Link from "next/link";
 
 export default function Page() {

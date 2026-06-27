@@ -2,9 +2,9 @@
 
 import { verifySession } from "@/features/authorization/services/verifysession";
 
-import { WalletsRepositoryDrizzle } from "@/infra/repositories/drizzle/drizzle-wallets.repository";
-import { GetWalletsUseCase } from "@/features/transactions/UseCases/get-wallets.use-case";
-import db from "@/infra/database";
+import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
+import { GetWalletsUseCase } from "@/features/statement/UseCases/get-wallets.use-case";
+import db from "@/infrastructure/database";
 
 import { cookies } from "next/headers";
 

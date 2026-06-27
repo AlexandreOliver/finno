@@ -2,8 +2,8 @@ import "server-only";
 
 import zod from "zod";
 
-import db from "@/infra/database";
-import { templateReccurent } from "@/infra/database/schemas/templateReccurent";
+import db from "@/infrastructure/database";
+import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
 
 import { createInsertSchema } from "drizzle-zod";
 

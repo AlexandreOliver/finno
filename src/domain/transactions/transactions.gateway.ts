@@ -1,6 +1,6 @@
-import { Pagination, QueryParams } from "../movements/types";
+import { Pagination, QueryParams } from "../entity/types";
 
-import { ReccurentProps } from "../reccurents/reccurent.entity";
+import { ReccurentProps } from "../entity/reccurent.entity";
 
 export type Transaction = {
   id: string;

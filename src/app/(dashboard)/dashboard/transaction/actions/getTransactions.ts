@@ -1,12 +1,12 @@
 "use server";
 
-import { GetTransactionsUseCase } from "@/features/transactions/UseCases/get-transactions.use-case";
+import { GetTransactionsUseCase } from "@/features/statement/get-statement/get-statement.handler";
 
-import db from "@/infra/database";
+import db from "@/infrastructure/database";
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { cookies } from "next/headers";
-import { TransactionsRepositoryDrizzle } from "@/infra/repositories/drizzle/drizzle-transactions.repository";
-import { MovementsRepositoryDrizzle } from "@/infra/repositories/drizzle/drizzle-movements.repository";
+import { TransactionsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-transactions.repository";
+import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
 
 // Instancia as dependências
 
@@ -38,5 +38,9 @@ export async function getTransactions({
       payload: [],
     };
 
-  return await getTransacoesUseCase.execute({ walletId, pagination, query });
+  return await getTransacoesUseCase.execute({
+    walletId,
+    pagination,
+    filters: query,
+  });
 }

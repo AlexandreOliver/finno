@@ -3,9 +3,9 @@
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { cookies } from "next/headers";
 
-import db from "@/infra/database";
-import { MovementsRepositoryDrizzle } from "@/infra/repositories/drizzle/drizzle-movements.repository";
-import { DeleteMovementsUseCase } from "@/features/transactions/UseCases/delete-movements.use-case";
+import db from "@/infrastructure/database";
+import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
+import { DeleteMovementsUseCase } from "@/features/statement/UseCases/delete-movements.use-case";
 
 const movementsRepository = MovementsRepositoryDrizzle.create(db);
 const deleteMovementsUseCase =

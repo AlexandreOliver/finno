@@ -1,8 +1,4 @@
-import {
-  CardsKpis,
-  ChartTransactions,
-  FonteRenda,
-} from "@/features/dashboard/components";
+import { CardsKpis, ChartTransactions, FonteRenda } from "./_components";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { SessionProvider } from "@/features/authorization/contexts/SessionProvider";
-import { HeaderDashboard, NavBar } from "@/features/dashboard/components";
+import { HeaderDashboard, NavBar } from "./dashboard/_components";
 
 import ClientProvider from "@/features/Provider/ClientProvider";
 import getQueryClient from "@/features/Provider/QueryClientServer";

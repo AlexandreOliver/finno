@@ -1,6 +1,6 @@
 import "server-only";
-import db from "@/infra/database";
-import { sessions } from "@/infra/database/schemas/sessions";
+import db from "@/infrastructure/database";
+import { sessions } from "@/infrastructure/database/schemas/sessions";
 import { and, eq, gt } from "drizzle-orm";
 import { cache } from "react";
 

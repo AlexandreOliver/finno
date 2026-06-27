@@ -1,0 +1,369 @@
+import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
+import { createInsertSchema } from "drizzle-zod";
+import { v7 as uuid7 } from "uuid";
+import zod from "zod";
+
+import {
+  addDays,
+  addWeeks,
+  addMonths,
+  addYears,
+  set,
+  isBefore,
+  isEqual,
+} from "date-fns";
+import { Movement } from "./movements.entity";
+
+export const reccurentSchema = createInsertSchema(templateReccurent, {
+  description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
+  interval: (schema) =>
+    zod.preprocess(
+      (val) => (typeof val === "string" ? Number.parseInt(val) : val),
+      schema.gt(0, {
+        error: "O Intervalo precisa ser maior do que 0",
+      }),
+    ),
+  countPaid: (schema) => schema.default(0),
+  installments: (schema) =>
+    zod.preprocess(
+      (val) => {
+        if (typeof val !== "string") return val;
+
+        return val.length > 0 ? Number.parseFloat(val) : 0;
+      },
+      schema.gte(0, {
+        error: "As parcelas não podem ser menores que 0",
+      }),
+    ),
+  amount: () =>
+    zod
+      .preprocess(
+        (val) => {
+          if (typeof val !== "string") return val;
+          const valor = val.trim();
+          if (valor.includes(",")) {
+            return valor.replace(/\./g, "").replace(",", ".");
+          }
+          return Number.parseFloat(valor);
+        },
+        zod.number({ error: "O Valor precisa ser um Número" }),
+      )
+      .refine((value) => value > 0, {
+        error: "O Valor Precisa ser maior do que 0",
+      }),
+  start_date: (schema) =>
+    zod.preprocess((val) => {
+      if (typeof val !== "string") return val;
+
+      if (val.length === 10) {
+        const dateData = new Date(val);
+
+        //Converte o start_date para as 6 horas
+        const dateReceived = new Date(
+          dateData.getFullYear(),
+          dateData.getMonth(),
+          dateData.getDate() + 1,
+          6,
+        ); // +3
+
+        return dateReceived;
+      }
+
+      return val;
+    }, schema),
+  end_date: (schema) =>
+    zod
+      .preprocess((val) => {
+        if (typeof val !== "string") return val;
+
+        if (val.length === 10) {
+          const dateData = new Date(val);
+
+          //Converte o end_date para as 18 horas
+          const dateReceived = new Date(
+            dateData.getFullYear(),
+            dateData.getMonth(),
+            dateData.getDate() + 1,
+            18,
+          ); // +3
+
+          return dateReceived;
+        }
+
+        return val;
+      }, schema.nullable().default(null))
+      .refine(
+        (data) => {
+          if (data) return data.toDateString() !== new Date().toDateString();
+
+          return true;
+        },
+        { error: "A data final nao pode ser hoje" },
+      ),
+  next_due_date: (schema) => schema.nullable().default(null),
+}).refine(
+  (data) => {
+    if (data.end_date) {
+      return (
+        new Date(data.start_date.toDateString()) <
+        new Date(data.end_date.toDateString())
+      );
+    }
+    return true;
+  },
+  {
+    error: "A Data Final não pode ser anterior ou igual a Data Final",
+    path: ["end_date"],
+  },
+);
+
+export type ReccurentFromDbSelect = typeof templateReccurent.$inferSelect;
+
+export type ReccurentCreateProps = {
+  type: string;
+  status: string;
+  description: string;
+  amount: string;
+  frequency: string;
+  interval: number | string;
+  installments?: number | string | null;
+  countPaid?: number | null;
+  categoryId: string;
+  walletId: string;
+  start_date: string | Date;
+  end_date?: string | Date | null;
+};
+
+export type ReccurentOutput = zod.output<typeof reccurentSchema>;
+export type ReccurentInput = zod.input<typeof reccurentSchema>;
+
+export type ReccurentProps = {
+  id: string;
+  type: "debito" | "credito" | "investimento";
+  status: "ativo" | "pausado" | "terminado";
+  description: string;
+  amount: number;
+  frequency: "daily" | "weekly" | "monthly" | "yearly";
+  interval: number;
+  categoryId: string;
+  walletId: string;
+  installments: number | null;
+  countPaid: number;
+  start_date: Date;
+  end_date: Date | null;
+  next_due_date: Date | null;
+};
+
+export class Reccurent {
+  readonly #startHour = 6;
+  readonly #endHour = 18;
+
+  private constructor(private readonly props: ReccurentProps) {}
+
+  public static create(data: ReccurentCreateProps) {
+    const fullData = {
+      id: uuid7(),
+      ...data,
+    };
+
+    const dataFormated = reccurentSchema.safeParse(fullData);
+
+    if (!dataFormated.success) {
+      return {
+        sucess: false,
+        errors: zod.flattenError(dataFormated.error).fieldErrors,
+      };
+    }
+
+    if (!dataFormated.data.next_due_date) {
+      const nextDue = this.calculateNextDueDate({
+        interval: dataFormated.data.interval,
+        frequency: dataFormated.data.frequency,
+        startDate: dataFormated.data.start_date,
+        endDate: dataFormated.data.end_date as Date,
+        countPaid: dataFormated.data.countPaid,
+      });
+
+      dataFormated["data"]["next_due_date"] = nextDue;
+    }
+
+    // console.log("Saiu: ");
+    // console.log(dataFormated.data);
+
+    const reccurent = new Reccurent(dataFormated.data);
+
+    return {
+      sucess: true,
+      reccurent: reccurent,
+    };
+  }
+
+  public static with(props: ReccurentFromDbSelect) {
+    return new Reccurent({
+      ...props,
+      amount: Number.parseFloat(props.amount),
+      installments: props.installments as number,
+      start_date: props.start_date as Date,
+    });
+  }
+
+  public static calculateNextDueDate({
+    interval,
+    startDate,
+    endDate,
+    frequency,
+    installments,
+    countPaid,
+  }: {
+    startDate: Date;
+    endDate?: Date;
+    interval: number;
+    frequency: "daily" | "weekly" | "monthly" | "yearly";
+    installments?: number;
+    countPaid: number | null;
+  }): Date | null {
+    let nextDate = set(startDate, { hours: 6 });
+
+    if (installments && (countPaid ?? 0) >= installments) return null;
+
+    const salto = ((countPaid ?? 0) + 1) * interval;
+
+    switch (frequency) {
+      case "daily":
+        nextDate = addDays(nextDate, salto);
+        break;
+
+      case "weekly":
+        nextDate = addWeeks(nextDate, salto);
+        break;
+
+      case "monthly":
+        nextDate = addMonths(nextDate, salto);
+        break;
+
+      case "yearly":
+        nextDate = addYears(nextDate, salto);
+        break;
+    }
+
+    if (endDate && !isBefore(nextDate, endDate)) return null;
+
+    return nextDate;
+  }
+
+  public generateMovement(): Movement | null {
+    if (
+      this.nextDueDate &&
+      isEqual(this.nextDueDate, set(new Date(), { hours: this.#startHour })) &&
+      (this.installments ?? 0) > this.countPaid
+    ) {
+      const rawData = {
+        ...this.toJson({
+          omit: [
+            "countPaid",
+            "end_date",
+            "frequency",
+            "id",
+            "installments",
+            "interval",
+            "next_due_date",
+            "amount",
+          ],
+        }),
+        amount: this.amount.toString(),
+        reccurentId: this.id,
+        executedAt: this.nextDueDate,
+        dueDate: this.nextDueDate.toISOString(),
+      };
+
+      const movement = Movement.create(rawData);
+
+      if (!movement.sucess) return null;
+
+      this.countPaid++;
+
+      return movement.movement as Movement;
+    }
+
+    return null;
+  }
+
+  private set countPaid(newValue: number) {
+    if (newValue < 0 || newValue === this.countPaid) return;
+
+    this.countPaid = newValue;
+  }
+
+  //#region Getters
+  public get id() {
+    return this.props.id;
+  }
+  public get type() {
+    return this.props.type;
+  }
+
+  public get status() {
+    return this.props.status;
+  }
+
+  public get description() {
+    return this.props.description;
+  }
+
+  public get amount() {
+    return this.props.amount;
+  }
+
+  public get walletId() {
+    return this.props.walletId;
+  }
+
+  public get categoryId() {
+    return this.props.categoryId;
+  }
+
+  public get installments() {
+    return this.props.installments;
+  }
+
+  public get countPaid() {
+    return this.props.countPaid;
+  }
+
+  public get interval() {
+    return this.props.interval;
+  }
+
+  public get frequency() {
+    return this.props.frequency;
+  }
+
+  public get startDate() {
+    return this.props.start_date as Date;
+  }
+
+  public get endDate() {
+    return this.props.end_date;
+  }
+
+  public get nextDueDate() {
+    return this.props.next_due_date;
+  }
+  //#endregion
+
+  public toJson<K extends keyof ReccurentProps = never>(options?: {
+    omit: K[];
+  }): Omit<ReccurentProps, K> {
+    const data = this.props;
+
+    if (!options || Object.keys(options.omit).length === 0) {
+      return data as unknown as ReccurentProps;
+    }
+
+    options.omit.forEach((key) => {
+      delete data[key];
+    });
+
+    return data as unknown as Omit<ReccurentProps, K>;
+  }
+}

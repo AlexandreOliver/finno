@@ -1,4 +1,4 @@
-import { HeaderHome, InfoCards } from "@/features/home/components";
+import { HeaderHome, InfoCards } from "@/app/_components";
 import { TrendingUp, Coins } from "lucide-react";
 import Link from "next/link";
 

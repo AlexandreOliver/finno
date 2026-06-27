@@ -8,12 +8,12 @@ zod.config(pt());
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { cookies } from "next/headers";
 
-import db from "@/infra/database";
-import { MovementsRepositoryDrizzle } from "@/infra/repositories/drizzle/drizzle-movements.repository";
-import { ReccurentRepositoryDrizzle } from "@/infra/repositories/drizzle/drizzle-reccurent.repository";
+import db from "@/infrastructure/database";
+import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
+import { ReccurentRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-reccurent.repository";
 
-import { CreateReccurentUseCase } from "@/features/transactions/UseCases/create-reccurent.use-case";
-import { CreateMovementsUseCase } from "@/features/transactions/UseCases/create-movements.use-case";
+import { CreateReccurentUseCase } from "@/features/statement/UseCases/create-reccurent.use-case";
+import { CreateMovementsUseCase } from "@/features/statement/UseCases/create-movements.use-case";
 
 export interface StateForm {
   errors?: {
