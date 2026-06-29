@@ -40,16 +40,16 @@ import { ptBR } from "date-fns/locale";
 import clsx from "clsx";
 import { cn, formatCurrency } from "@/lib/utils";
 import { DelButtonMovement } from "./buttons";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { useSession } from "@/hooks/useSession";
-import { useDeleteMovement } from "@/features/statement/hooks/useDeleteMovement";
+import { useDeleteMovement } from "@/features/dashboard/statement/hooks/useDeleteMovement";
 
-import { movementsQuerys, walletsQuerys } from "@/features/Provider/queryKeys";
+import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useStatement } from "@/features/statement/hooks/useTransactions";
+import { useStatement } from "@/features/dashboard/statement/hooks/useTransactions";
+import { useWallets } from "@/features/dashboard/statement/hooks/useWallets";
 
 export function TableMovements() {
   const { user } = useSession();
@@ -66,10 +66,7 @@ export function TableMovements() {
 
   const isMobile = useIsMobile();
 
-  const { data: wallets } = useQuery({
-    ...walletsQuerys.owned(user?.id as string),
-    enabled: !!user?.id,
-  });
+  const { data: wallets } = useWallets(user?.id ?? "");
 
   const wallets_Ids = useMemo(() => wallets?.map((w) => w.id), [wallets]);
 

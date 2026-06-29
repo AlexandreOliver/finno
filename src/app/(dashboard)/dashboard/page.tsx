@@ -1,13 +1,23 @@
-import { CardsKpis, ChartTransactions, FonteRenda } from "./_components";
+import { verifySession } from "@/features/authorization/services/verifysession";
+import { CardsKpis } from "./_components/CardsKpis";
+import { FonteRenda } from "./_components/FonteRenda";
+import { ChartTransactions } from "./_components/ChartTransactions";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { cookies } from "next/headers";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Dashboard",
 };
 
 export default async function Page() {
+  const cookieStore = await cookies();
+
+  const auth = await verifySession(
+    cookieStore.get("session_token")?.value as string,
+  );
   const dateFormated = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
   });
@@ -24,7 +34,9 @@ export default async function Page() {
 
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-12">
         <div className="xl:col-span-6">
-          <CardsKpis />
+          <Suspense fallback={<div>ddd</div>}>
+            <CardsKpis userId={auth.user.id} />
+          </Suspense>
         </div>
         <div className="xl:col-span-6">
           <FonteRenda />

@@ -30,6 +30,5 @@ export const categoriasQuerys = createQueryKeys("categorias", {
 export const walletsQuerys = createQueryKeys("wallets", {
   owned: (userId: string) => ({
     queryKey: [userId],
-    queryFn: () => findWallets(userId),
   }),
 });

@@ -3,6 +3,7 @@ import { Wallet } from "@/domain/entity/wallets.entity";
 import { wallets } from "@/infrastructure/database/schemas/wallets";
 import db from "@/infrastructure/database";
 import { eq, and, SQL } from "drizzle-orm";
+import { cache } from "react";
 
 export class WalletsRepositoryDrizzle implements IWalletsGateway {
   private constructor(private readonly dbInstance: typeof db) {}
@@ -11,7 +12,7 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
     return new WalletsRepositoryDrizzle(dbInstance);
   }
 
-  public save: IWalletsGateway["save"] = async (props) => {
+  public save: IWalletsGateway["save"] = cache(async (props) => {
     const result = await this.dbInstance
       .insert(wallets)
       .values({
@@ -21,9 +22,9 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
       .returning();
 
     return !!result[0]?.id;
-  };
+  });
 
-  public async list(ownerId?: string) {
+  public list: IWalletsGateway["list"] = cache(async (ownerId?: string) => {
     const filters: SQL[] = [];
 
     if (ownerId) {
@@ -36,9 +37,9 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
       .where(and(...filters));
 
     return walletsDb.map((w) => Wallet.with(w));
-  }
+  });
 
-  public async findById(id: string) {
+  public findById: IWalletsGateway["findById"] = cache(async (id: string) => {
     const result = await this.dbInstance
       .select()
       .from(wallets)
@@ -47,14 +48,16 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
     if (!result || result.length === 0) return null;
 
     return Wallet.with(result[0]);
-  }
+  });
 
-  public async deleteById(id: string) {
-    const result = await this.dbInstance
-      .delete(wallets)
-      .where(eq(wallets.id, id))
-      .returning();
+  public deleteById: IWalletsGateway["deleteById"] = cache(
+    async (id: string) => {
+      const result = await this.dbInstance
+        .delete(wallets)
+        .where(eq(wallets.id, id))
+        .returning();
 
-    return result.length > 0;
-  }
+      return result.length > 0;
+    },
+  );
 }

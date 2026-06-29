@@ -33,9 +33,9 @@ import { typesEnum } from "@/infrastructure/database/schemas/Enums";
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 
 import { useSession } from "@/hooks/useSession";
-import { useCriarMovement } from "@/features/statement/hooks/useCriarMovement";
-import { useCategories } from "@/features/statement/hooks/useCategories";
-import { useWallets } from "@/features/statement/hooks/useWallets";
+import { useCriarMovement } from "@/features/dashboard/statement/hooks/useCriarMovement";
+import { useCategories } from "@/features/dashboard/statement/hooks/useCategories";
+import { useWallets } from "@/features/dashboard/statement/hooks/useWallets";
 
 type FormProps = {
   variant: "Renda" | "Despesa" | "Investimento";

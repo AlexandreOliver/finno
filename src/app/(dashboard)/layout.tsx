@@ -3,10 +3,18 @@ import { redirect } from "next/navigation";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { SessionProvider } from "@/features/authorization/contexts/SessionProvider";
-import { HeaderDashboard, NavBar } from "./dashboard/_components";
+import { HeaderDashboard } from "./dashboard/_components/HeaderDashboard";
+import { NavBar } from "./dashboard/_components/NavBar";
 
 import ClientProvider from "@/features/Provider/ClientProvider";
 import getQueryClient from "@/features/Provider/QueryClientServer";
+
+import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
+import { GetWalletsUseCase } from "@/features/dashboard/statement/UseCases/get-wallets.use-case";
+import db from "@/infrastructure/database";
+
+const WalletsRepository = WalletsRepositoryDrizzle.create(db);
+const getWallets = GetWalletsUseCase.create(WalletsRepository);
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { walletsQuerys } from "@/features/Provider/queryKeys";
@@ -23,7 +31,10 @@ export default async function DashboardLayout({
 
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery(walletsQuerys.owned(authUser.user.id));
+  await queryClient.prefetchQuery({
+    queryKey: walletsQuerys.owned(authUser.user.id).queryKey,
+    queryFn: () => getWallets.execute({ ownerId: authUser.user.id }),
+  });
 
   return (
     <SessionProvider value={authUser}>

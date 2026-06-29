@@ -26,11 +26,13 @@ const seed_wallets = [
     id: "019e1dc7-df44-7810-afb6-5e56ac7becf1",
     labelName: "Patrimônio",
     ownerId: seed_users[0].id,
+    balance: "-700.86",
   },
   {
     id: "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
     labelName: "Principal",
     ownerId: seed_users[0].id,
+    balance: "2743.52",
   },
 ];
 

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { CreateDialog } from "@/app/(dashboard)/dashboard/transaction/_components";
+import { CreateDialog } from "@/app/(dashboard)/dashboard/transaction/_components/CreateDialog";
 import { TableMovements } from "@/app/(dashboard)/dashboard/transaction/_components/TableMovements";
 
 import { format } from "date-fns";

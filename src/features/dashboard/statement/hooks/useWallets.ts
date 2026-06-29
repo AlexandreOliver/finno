@@ -6,6 +6,5 @@ export function useWallets(ownerId: string) {
   return useQuery({
     queryKey: walletsQuerys.owned(ownerId).queryKey,
     queryFn: () => findWallets(ownerId),
-    enabled: !!ownerId,
   });
 }

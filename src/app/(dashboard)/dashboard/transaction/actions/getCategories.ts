@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import db from "@/infrastructure/database";
 
 import { CategoriesRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-categories.repository";
-import { GetCategoriesUseCase } from "@/features/statement/UseCases/get-categories.use-case";
+import { GetCategoriesUseCase } from "@/features/dashboard/statement/UseCases/get-categories.use-case";
 import { categoriesProps } from "@/domain/entity/categories.entity";
 
 const categoriesRepository = CategoriesRepositoryDrizzle.create(db);
