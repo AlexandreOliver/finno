@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { schemas } from "./schemas";
 import "dotenv/config";
+import { AsyncLocalStorage } from "async_hooks";
 
 const configConnection = {
   connectionString: process.env.DATABASE_URL!,
@@ -14,16 +15,20 @@ const pool = new Pool({
   idleTimeoutMillis: 3000,
 });
 
-const database = drizzle({
+export const transactionStorage = new AsyncLocalStorage();
+
+export const databaseGlobal = drizzle({
   client: pool,
   casing: "snake_case",
   schema: schemas,
 });
 
-export default database;
-
-process.on("SIGTERM", async () => {
-  console.log("Encerrando conexões...");
-  await database.$client.end();
-  process.exit(0);
+export const db = new Proxy(databaseGlobal, {
+  get(target, prop, receiver) {
+    const activeTransaction = transactionStorage.getStore();
+    const currentInstance = activeTransaction ?? target;
+    return Reflect.get(currentInstance, prop, receiver);
+  },
 });
+
+export default db;

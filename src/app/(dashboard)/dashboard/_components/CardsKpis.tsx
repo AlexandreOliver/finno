@@ -48,10 +48,11 @@ export async function CardsKpis(props: CardsKpisProps) {
   const wallets = await getWallets.execute({ ownerId: props.userId });
 
   const sumary = await sumaryHandler.execute({
-    walletId: wallets[1].id,
+    walletId: wallets.find((w) => w.labelName === "Principal")?.id as string,
     currentDate: new Date(),
   });
 
+  console.log(sumary);
   return (
     <div className="overflow-hidden rounded-xl">
       <div className="grid grid-cols-1 xl:grid-cols-8">

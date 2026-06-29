@@ -85,7 +85,7 @@ export class Wallet {
   }
 
   public get balance() {
-    return Number.parseFloat(this.props.balance as unknown as string);
+    return this.props.balance;
   }
 
   public get updatedAt() {

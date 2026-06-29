@@ -53,8 +53,8 @@ export class DrizzleFinanceSumaryRepsitory implements GetFinanceSumaryRepository
     ]);
 
     return {
-      entradaMensal: entradas[0].value,
-      gastoMensal: saidas[0].value,
+      entradaMensal: entradas[0].value ?? 0,
+      gastoMensal: saidas[0].value ?? 0,
       saldoMensal: entradas[0].value - saidas[0].value,
       saldoGeral: saldoGeral[0].value,
     };

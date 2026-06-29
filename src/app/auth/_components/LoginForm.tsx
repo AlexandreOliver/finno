@@ -13,6 +13,9 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useActionState, useState } from "react";
 
 export default function LoginForm() {
+  const [email, setEmail] = useState("coroa@itaca.ageu");
+  const [senha, setSenha] = useState("rei-de-itaca");
+
   const [view, setView] = useState(false);
   const [errorMessage, sigInAction, isPending] = useActionState(
     loginAction,
@@ -35,7 +38,8 @@ export default function LoginForm() {
           name="email"
           type="text"
           placeholder="finno-admin@finno.com"
-          defaultValue="coroa@itaca.ageu"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           autoComplete="off"
           aria-describedby="aria-email"
           className="placeholder:text-md md:text-md"
@@ -62,6 +66,8 @@ export default function LoginForm() {
             type={view ? "text" : "password"}
             placeholder="password123"
             defaultValue="rei-de-itaca"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
             autoComplete="off"
             className="placeholder:text-md md:text-md"
           />

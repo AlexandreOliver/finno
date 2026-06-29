@@ -13,10 +13,16 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useActionState, useState } from "react";
 
 export default function LoginForm() {
+  const [nome, setNome] = useState("");
+  const [sobrenome, setSobrenome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [cfm_senha, setCfm] = useState("");
+
   const [view1, setView1] = useState(false);
   const [view2, setView2] = useState(false);
 
-  const stateInitial: State = {};
+  const stateInitial: State = { message: "", errors: {} };
   const [stateForm, siginUpAction, isPending] = useActionState(
     registerAction,
     stateInitial,
@@ -36,7 +42,8 @@ export default function LoginForm() {
           id="input-name"
           name="nome"
           type="text"
-          defaultValue={stateForm.data?.firstName}
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
           placeholder="Odisseu"
           autoComplete="off"
           aria-describedby="aria-name"
@@ -57,7 +64,8 @@ export default function LoginForm() {
           id="input-sobrenome"
           name="sobrenome"
           type="text"
-          defaultValue={stateForm.data?.lastName}
+          value={sobrenome}
+          onChange={(e) => setSobrenome(e.target.value)}
           placeholder="Filho de Atreus"
           autoComplete="off"
           aria-describedby="aria-sobrenome"
@@ -78,7 +86,8 @@ export default function LoginForm() {
           id="input-email"
           name="email"
           type="text"
-          defaultValue={stateForm.data?.email}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="coroa@itaca.net"
           autoComplete="off"
           aria-describedby="aria-email"
@@ -100,7 +109,8 @@ export default function LoginForm() {
             id="input-password"
             name="password"
             type={view1 ? "text" : "password"}
-            defaultValue={stateForm.data?.password}
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
             placeholder="password123"
             autoComplete="off"
           />
@@ -131,7 +141,8 @@ export default function LoginForm() {
             id="input-cfm-password"
             name="cfm_password"
             type={view2 ? "text" : "password"}
-            defaultValue={stateForm.data?.cfm_password}
+            value={cfm_senha}
+            onChange={(e) => setCfm(e.target.value)}
             placeholder="password123"
             autoComplete="off"
           />

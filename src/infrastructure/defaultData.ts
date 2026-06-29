@@ -16,8 +16,8 @@ const seed_users = [
     email: "coroa@itaca.ageu",
     password: hash("rei-de-itaca"),
     features: ["demo"],
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date(hoje.getFullYear() - 1, 2, 12),
+    updatedAt: new Date(hoje.getFullYear() - 1, 2, 12),
   },
 ];
 
