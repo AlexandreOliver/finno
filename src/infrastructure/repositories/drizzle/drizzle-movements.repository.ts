@@ -111,6 +111,17 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
     return result.length > 0;
   };
 
+  public getById: IMovementGateway["getById"] = async (id) => {
+    const movementDTO = await this.dbInstance
+      .select()
+      .from(movements)
+      .where(eq(movements.id, id));
+
+    const movement = Movement.with(movementDTO[0]);
+
+    return movement;
+  };
+
   public save: IMovementGateway["save"] = async (movement) => {
     const valuesObject = movement.toJson();
 

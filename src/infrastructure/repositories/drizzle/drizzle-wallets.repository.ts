@@ -2,7 +2,7 @@ import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
 import { Wallet } from "@/domain/entity/wallets.entity";
 import { wallets } from "@/infrastructure/database/schemas/wallets";
 import db from "@/infrastructure/database";
-import { eq, and, SQL } from "drizzle-orm";
+import { eq, and, SQL, sql } from "drizzle-orm";
 import { cache } from "react";
 
 export class WalletsRepositoryDrizzle implements IWalletsGateway {
@@ -12,19 +12,29 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
     return new WalletsRepositoryDrizzle(dbInstance);
   }
 
-  public save: IWalletsGateway["save"] = cache(async (props) => {
-    const aWallet = {
-      ...props.toJson(),
-      balance: String(props.balance),
-    };
+  public saveOrUpdate: IWalletsGateway["saveOrUpdate"] = cache(
+    async (props) => {
+      const aWallet = {
+        ...props.toJson(),
+        balance: String(props.balance),
+      };
 
-    const result = await this.dbInstance
-      .insert(wallets)
-      .values(aWallet)
-      .returning();
+      const result = await this.dbInstance
+        .insert(wallets)
+        .values(aWallet)
+        .onConflictDoUpdate({
+          target: wallets.id,
+          set: {
+            labelName: sql`excluded.label_name`,
+            balance: sql`excluded.balance`,
+            updatedAt: sql`excluded.updated_at`,
+          },
+        })
+        .returning();
 
-    return !!result[0]?.id;
-  });
+      return !!result[0]?.id;
+    },
+  );
 
   public list: IWalletsGateway["list"] = cache(async (ownerId?: string) => {
     const filters: SQL[] = [];

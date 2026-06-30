@@ -97,6 +97,16 @@ export class Wallet {
   }
   //#endregion
 
+  public debito(amount: number) {
+    this.props.balance -= amount;
+    this.props.updatedAt = new Date();
+  }
+
+  public credito(amount: number) {
+    this.props.balance += amount;
+    this.props.updatedAt = new Date();
+  }
+
   public toJson<K extends keyof WalletsProps = never>(options?: {
     omit: readonly K[];
   }): Omit<WalletsProps, K> {

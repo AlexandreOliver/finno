@@ -5,11 +5,17 @@ import { cookies } from "next/headers";
 
 import db from "@/infrastructure/database";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
-import { DeleteMovementsUseCase } from "@/features/transactions/statement/UseCases/delete-movements.use-case";
+import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
+import { DeleteMovementHandler } from "@/features/transactions/delete-movement/delete-movement.handler";
+import { DrizzleUnitOfWork } from "@/infrastructure/repositories/drizzle/drizzle-unitOfWork";
 
 const movementsRepository = MovementsRepositoryDrizzle.create(db);
-const deleteMovementsUseCase =
-  DeleteMovementsUseCase.create(movementsRepository);
+const walletsRepository = WalletsRepositoryDrizzle.create(db);
+const deleteMovementsUseCase = DeleteMovementHandler.create(
+  movementsRepository,
+  walletsRepository,
+  new DrizzleUnitOfWork(),
+);
 
 export const deleteMovement = async (id: string) => {
   const { isAuth } = await verifySession(
@@ -18,5 +24,5 @@ export const deleteMovement = async (id: string) => {
 
   if (!isAuth) throw new Error("Não autorizado");
 
-  await deleteMovementsUseCase.execute(id);
+  await deleteMovementsUseCase.execute({ id });
 };
