@@ -1,5 +1,5 @@
 import { createQueryKeys } from "@lukemorales/query-key-factory";
-import { findWallets } from "@/app/(dashboard)/dashboard/transaction/actions/findWallets";
+import { findWallets } from "@/app/(dashboard)/dashboard/transaction/actions/getWallets.action";
 
 export const movementsQuerys = createQueryKeys("movements", {
   owned: (walelletsId: string[]) => ({

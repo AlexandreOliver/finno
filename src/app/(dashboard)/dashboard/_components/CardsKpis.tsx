@@ -5,14 +5,14 @@ import db from "@/infrastructure/database";
 
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
 import { GetFinanceSumaryHandler } from "@/features/dashboard/get-finance-sumary/get-finance-sumary.handler";
-import { GetWalletsUseCase } from "@/features/transactions/statement/UseCases/get-wallets.use-case";
+import { GetWalletsHandler } from "@/features/dashboard/get-wallets/get-wallets.handler";
 import { DrizzleFinanceSumaryRepsitory } from "@/infrastructure/repositories/queries/drizzle-finance-suamary.repository";
 
 const sumaryRepository = new DrizzleFinanceSumaryRepsitory();
 const sumaryHandler = GetFinanceSumaryHandler.create(sumaryRepository);
 
 const WalletsRepository = WalletsRepositoryDrizzle.create(db);
-const getWallets = GetWalletsUseCase.create(WalletsRepository);
+const getWallets = GetWalletsHandler.create(WalletsRepository);
 
 const card_Patrimonio = {
   totalPatrimonio: 34343.0,

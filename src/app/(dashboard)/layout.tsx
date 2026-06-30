@@ -10,11 +10,11 @@ import ClientProvider from "@/features/Provider/ClientProvider";
 import getQueryClient from "@/features/Provider/QueryClientServer";
 
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
-import { GetWalletsUseCase } from "@/features/transactions/statement/UseCases/get-wallets.use-case";
+import { GetWalletsHandler } from "@/features/dashboard/get-wallets/get-wallets.handler";
 import db from "@/infrastructure/database";
 
 const WalletsRepository = WalletsRepositoryDrizzle.create(db);
-const getWallets = GetWalletsUseCase.create(WalletsRepository);
+const getWallets = GetWalletsHandler.create(WalletsRepository);
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { walletsQuerys } from "@/features/Provider/queryKeys";

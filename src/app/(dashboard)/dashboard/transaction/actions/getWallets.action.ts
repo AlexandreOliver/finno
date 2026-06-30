@@ -3,14 +3,13 @@
 import { verifySession } from "@/features/authorization/services/verifysession";
 
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
-import { GetWalletsUseCase } from "@/features/transactions/statement/UseCases/get-wallets.use-case";
+import { GetWalletsHandler } from "@/features/dashboard/get-wallets/get-wallets.handler";
 import db from "@/infrastructure/database";
 
 import { cookies } from "next/headers";
 
 const WalletsRepository = WalletsRepositoryDrizzle.create(db);
-const GetWallets = GetWalletsUseCase.create(WalletsRepository);
-
+const walletsHandler = GetWalletsHandler.create(WalletsRepository);
 export type Wallet = {
   id: string;
   label: string;
@@ -23,9 +22,7 @@ export const findWallets = async (ownerId: string) => {
 
   if (!isAuth) throw new Error("Não autorizado");
 
-  const result = await GetWallets.execute({
-    ownerId,
-  });
+  const aWallets = await walletsHandler.execute({ ownerId });
 
-  return result;
+  return aWallets;
 };
