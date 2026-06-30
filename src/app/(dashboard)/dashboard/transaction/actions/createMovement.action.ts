@@ -10,6 +10,8 @@ import { cookies } from "next/headers";
 
 import db from "@/infrastructure/database";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
+import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
+import { DrizzleUnitOfWork } from "@/infrastructure/repositories/drizzle/drizzle-unitOfWork";
 import { CreateMovementHandler } from "@/features/transactions/create-movement/create-movement.handler";
 
 export interface StateForm {
@@ -41,7 +43,13 @@ export async function CreateAction(formData: FormData): Promise<StateForm> {
   let result: StateForm = { success: false };
 
   const MovementsRepository = MovementsRepositoryDrizzle.create(db);
-  const createMovement = CreateMovementHandler.create(MovementsRepository);
+  const WalletsRepository = WalletsRepositoryDrizzle.create(db);
+
+  const createMovement = CreateMovementHandler.create(
+    MovementsRepository,
+    WalletsRepository,
+    new DrizzleUnitOfWork(),
+  );
 
   const createMovementCommand = {
     type: formData.get("type")?.toString() as string,
