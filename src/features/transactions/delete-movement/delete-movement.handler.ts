@@ -24,7 +24,6 @@ export class DeleteMovementHandler {
   }
 
   public async execute(props: DeleteMovementCommand) {
-    console.log("Entrei");
     const movement = await this.MovementsRepository.getById(props.id);
     const wallet = await this.IWalletsRepository.findById(movement.walletId);
 
