@@ -46,12 +46,12 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { useSession } from "@/hooks/useSession";
-import { useDeleteMovement } from "@/features/dashboard/statement/hooks/useDeleteMovement";
+import { useDeleteMovement } from "@/features/transactions/hooks/useDeleteMovement";
 
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useStatement } from "@/features/dashboard/statement/hooks/useTransactions";
-import { useWallets } from "@/features/dashboard/statement/hooks/useWallets";
+import { useStatement } from "@/features/transactions/hooks/useTransactions";
+import { useWallets } from "@/features/dashboard/hooks/useWallets";
 import {
   HoverCard,
   HoverCardContent,

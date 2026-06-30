@@ -10,7 +10,7 @@ import { cookies } from "next/headers";
 
 import db from "@/infrastructure/database";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
-import { CreateMovementHandler } from "@/features/movements/create-movement/create-movement.handler";
+import { CreateMovementHandler } from "@/features/transactions/create-movement/create-movement.handler";
 
 export interface StateForm {
   errors?: {

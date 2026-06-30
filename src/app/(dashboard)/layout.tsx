@@ -10,7 +10,7 @@ import ClientProvider from "@/features/Provider/ClientProvider";
 import getQueryClient from "@/features/Provider/QueryClientServer";
 
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
-import { GetWalletsUseCase } from "@/features/dashboard/statement/UseCases/get-wallets.use-case";
+import { GetWalletsUseCase } from "@/features/transactions/statement/UseCases/get-wallets.use-case";
 import db from "@/infrastructure/database";
 
 const WalletsRepository = WalletsRepositoryDrizzle.create(db);

@@ -3,7 +3,7 @@
 import { verifySession } from "@/features/authorization/services/verifysession";
 
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
-import { GetWalletsUseCase } from "@/features/dashboard/statement/UseCases/get-wallets.use-case";
+import { GetWalletsUseCase } from "@/features/transactions/statement/UseCases/get-wallets.use-case";
 import db from "@/infrastructure/database";
 
 import { cookies } from "next/headers";

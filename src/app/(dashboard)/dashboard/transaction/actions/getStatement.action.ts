@@ -1,6 +1,6 @@
 "use server";
 
-import { GetStatementHandler } from "@/features/dashboard/statement/get-statement/get-statement.handler";
+import { GetStatementHandler } from "@/features/transactions/statement/get-statement/get-statement.handler";
 
 import db from "@/infrastructure/database";
 import { verifySession } from "@/features/authorization/services/verifysession";

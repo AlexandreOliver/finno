@@ -5,7 +5,7 @@ import db from "@/infrastructure/database";
 
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
 import { GetFinanceSumaryHandler } from "@/features/dashboard/get-finance-sumary/get-finance-sumary.handler";
-import { GetWalletsUseCase } from "@/features/dashboard/statement/UseCases/get-wallets.use-case";
+import { GetWalletsUseCase } from "@/features/transactions/statement/UseCases/get-wallets.use-case";
 import { DrizzleFinanceSumaryRepsitory } from "@/infrastructure/repositories/queries/drizzle-finance-suamary.repository";
 
 const sumaryRepository = new DrizzleFinanceSumaryRepsitory();
