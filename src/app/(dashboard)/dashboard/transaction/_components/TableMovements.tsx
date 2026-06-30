@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ import {
   ChevronsRight,
   DatabaseSearch,
   Edit,
+  RefreshCcwIcon,
   Settings2Icon,
 } from "lucide-react";
 
@@ -50,6 +52,11 @@ import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useStatement } from "@/features/dashboard/statement/hooks/useTransactions";
 import { useWallets } from "@/features/dashboard/statement/hooks/useWallets";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 export function TableMovements() {
   const { user } = useSession();
@@ -268,9 +275,71 @@ export function TableMovements() {
                         <div className="md:flex justify-center items-center hidden"></div>
                         <div className="flex flex-col">
                           <div className="text-xs md:text-sm text-white/60">
-                            {format(mov.executedAt as Date, "d 'de' MMMM", {
-                              locale: ptBR,
-                            })}
+                            <span>
+                              {format(mov.executedAt as Date, "d 'de' MMMM", {
+                                locale: ptBR,
+                              })}
+                            </span>
+                            {mov.reccurent && (
+                              <HoverCard>
+                                <HoverCardTrigger
+                                  delay={10}
+                                  closeDelay={100}
+                                  render={
+                                    <Badge className="ml-1 w-7">
+                                      <RefreshCcwIcon />
+                                    </Badge>
+                                  }
+                                />
+                                <HoverCardContent
+                                  className="flex w-64 flex-col gap-0.5"
+                                  side="right"
+                                >
+                                  <div className="font-medium">
+                                    Transação Recorrente
+                                  </div>
+                                  {mov.reccurent.installments !== null ? (
+                                    <div>{`Parcelas restantes ${mov.reccurent.installments - mov.reccurent.countPaid}`}</div>
+                                  ) : (
+                                    <div>{`${mov.reccurent.countPaid} parcelas executadas`}</div>
+                                  )}
+                                  <div className="mt-1 text-xs text-muted-foreground">
+                                    {mov.reccurent.start_date &&
+                                    mov.reccurent.end_date ? (
+                                      <p>
+                                        Prazo:{" "}
+                                        {format(
+                                          mov.reccurent.start_date,
+                                          "MM'/'yyyy",
+                                          {
+                                            locale: ptBR,
+                                          },
+                                        )}{" "}
+                                        até{" "}
+                                        {format(
+                                          mov.reccurent.end_date,
+                                          "MM'/'yyyy",
+                                          {
+                                            locale: ptBR,
+                                          },
+                                        )}
+                                      </p>
+                                    ) : (
+                                      <p>
+                                        Iniciado em $
+                                        {format(
+                                          mov.reccurent.start_date,
+                                          "MMMM 'de' yyyy",
+                                          {
+                                            locale: ptBR,
+                                          },
+                                        )}
+                                      </p>
+                                    )}
+                                  </div>
+                                </HoverCardContent>
+                              </HoverCard>
+                            )}
                           </div>
                           <p className="text-balance">{mov.description}</p>
                         </div>
