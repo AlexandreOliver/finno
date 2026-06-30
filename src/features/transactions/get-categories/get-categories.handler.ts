@@ -1,22 +1,20 @@
 import { categoriesProps } from "@/domain/entity/categories.entity";
 import { categoriesGateway } from "@/domain/repositories/categories.gateway";
+import { GetCategoriesQuery } from "./get-categories.query";
 
-export class GetCategoriesUseCase {
+export class GetCategoriesHandler {
   private constructor(
     private readonly categoriesRepository: categoriesGateway,
   ) {}
 
   public static create(transactionRepository: categoriesGateway) {
-    return new GetCategoriesUseCase(transactionRepository);
+    return new GetCategoriesHandler(transactionRepository);
   }
 
   public async execute<K extends keyof categoriesProps>({
     userId,
     returnFields,
-  }: {
-    userId?: string;
-    returnFields: readonly K[];
-  }): Promise<Pick<categoriesProps, K>[]> {
+  }: GetCategoriesQuery<K>): Promise<Pick<categoriesProps, K>[]> {
     const categorias = await this.categoriesRepository.list(userId);
 
     const obj1 = categorias.map((ctg) => {

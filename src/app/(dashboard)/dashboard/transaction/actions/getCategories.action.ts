@@ -6,11 +6,11 @@ import { cookies } from "next/headers";
 import db from "@/infrastructure/database";
 
 import { CategoriesRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-categories.repository";
-import { GetCategoriesUseCase } from "@/features/transactions/statement/UseCases/get-categories.use-case";
+import { GetCategoriesHandler } from "@/features/transactions/get-categories/get-categories.handler";
 import { categoriesProps } from "@/domain/entity/categories.entity";
 
 const categoriesRepository = CategoriesRepositoryDrizzle.create(db);
-const GetCategories = GetCategoriesUseCase.create(categoriesRepository);
+const GetCategories = GetCategoriesHandler.create(categoriesRepository);
 
 export const getCategories = async <K extends keyof categoriesProps>({
   userId,

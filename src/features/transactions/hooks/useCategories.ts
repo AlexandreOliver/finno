@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "@/app/(dashboard)/dashboard/transaction/actions/getCategories";
+import { getCategories } from "@/app/(dashboard)/dashboard/transaction/actions/getCategories.action";
 import { categoriasQuerys } from "@/features/Provider/queryKeys";
 import { categoriesProps } from "@/domain/entity/categories.entity";
 
