@@ -89,7 +89,7 @@ export class CreateUserHandler {
 
     await this.execTransaction.runInTransaction(async () => {
       await this.UserRepository.save(userOrError.user);
-      await this.WalletRepository.save(WalletOrError.data);
+      await this.WalletRepository.saveOrUpdate(WalletOrError.data);
     });
 
     return {
