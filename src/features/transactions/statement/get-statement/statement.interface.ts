@@ -1,7 +1,7 @@
 import { Pagination, QueryParams } from "@/domain/entity/types";
 import { TransactionDTO } from "./get-statement.handler";
 
-export interface ITransactionRepository {
+export interface IStatementRepository {
   getStatement: FunctionStatement;
 }
 

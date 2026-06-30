@@ -1,4 +1,4 @@
-import { ITransactionRepository } from "@/features/statement/get-statement/transactions.interface";
+import { IStatementRepository } from "@/features/transactions/statement/get-statement/statement.interface";
 
 import db from "@/infrastructure/database";
 import { movements } from "@/infrastructure/database/schemas/movements";
@@ -7,14 +7,14 @@ import { categories } from "@/infrastructure/database/schemas/categories";
 import { eq, inArray, SQL, and, gte, lt, sql, desc } from "drizzle-orm";
 import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
 
-export class StatementRepositoryDrizzle implements ITransactionRepository {
+export class StatementRepositoryDrizzle implements IStatementRepository {
   private constructor(private readonly dbInstance: typeof db) {}
 
   public static create(dbInstance: typeof db) {
     return new StatementRepositoryDrizzle(dbInstance);
   }
 
-  public getStatement: ITransactionRepository["getStatement"] = async ({
+  public getStatement: IStatementRepository["getStatement"] = async ({
     walletId,
     pagination,
     query,
