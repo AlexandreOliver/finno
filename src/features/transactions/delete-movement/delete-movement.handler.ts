@@ -2,7 +2,7 @@ import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
 import { DeleteMovementCommand } from "./delete-movement.command";
 import { Wallet } from "@/domain/entity/wallets.entity";
-import { IUnitOfWork } from "@/features/unitOfWork";
+import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 
 export class DeleteMovementHandler {
   private constructor(

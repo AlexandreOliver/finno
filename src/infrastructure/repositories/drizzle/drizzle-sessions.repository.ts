@@ -34,7 +34,7 @@ export class SessionsRepositoryDrizzle implements ISessionGateway {
       .from(sessions)
       .where(eq(sessions.token, token));
 
-    const session = Session.with(result[0]);
+    const session = result.length > 0 ? Session.with(result[0]) : null;
 
     return session;
   };

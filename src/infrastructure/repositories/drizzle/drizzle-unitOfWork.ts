@@ -1,4 +1,4 @@
-import { IUnitOfWork } from "@/features/unitOfWork";
+import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 import { databaseGlobal, transactionStorage } from "@/infrastructure/database";
 
 export class DrizzleUnitOfWork implements IUnitOfWork {

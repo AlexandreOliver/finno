@@ -4,7 +4,7 @@ import { Session } from "@/domain/entity/session.entity";
 
 import { IUserGateway } from "@/domain/repositories/user.gateway";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
-import { IUnitOfWork } from "@/features/unitOfWork";
+import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 import { CreateUserCommand } from "./create-user.command";
 
 export type CreateUserOutput =

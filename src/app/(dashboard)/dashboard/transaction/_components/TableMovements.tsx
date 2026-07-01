@@ -50,7 +50,7 @@ import { useDeleteMovement } from "@/features/transactions/hooks/useDeleteMoveme
 
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useStatement } from "@/features/transactions/hooks/useTransactions";
+import { useStatement } from "@/features/transactions/hooks/useStatement";
 import { useWallets } from "@/features/dashboard/hooks/useWallets";
 import {
   HoverCard,

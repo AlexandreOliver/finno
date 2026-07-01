@@ -5,7 +5,7 @@ import {
   CreateMovementCommandSchema,
 } from "./create-movements.command";
 import z from "zod";
-import { IUnitOfWork } from "@/features/unitOfWork";
+import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
 
 export type MovementOutputDTO =

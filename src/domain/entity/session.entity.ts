@@ -94,7 +94,7 @@ export class Session {
   }
 
   private set expiresAt(newExpiresAt: Date) {
-    if (newExpiresAt <= this.props.expiresAt) return;
+    if (newExpiresAt <= this.expiresAt) return;
 
     this.props.expiresAt = newExpiresAt;
   }

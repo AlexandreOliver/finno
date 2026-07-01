@@ -6,7 +6,7 @@ import {
 import { IUserGateway } from "@/domain/repositories/user.gateway";
 import { User } from "@/domain/entity/user.entity";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
-import { IUnitOfWork } from "@/features/unitOfWork";
+import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 
 describe("Caso de uso - Criação de um usuario", () => {
   let mockUserRepository: jest.Mocked<IUserGateway>;

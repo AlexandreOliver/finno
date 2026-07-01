@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
-import { IUnitOfWork } from "@/features/unitOfWork";
+import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 
