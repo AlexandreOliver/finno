@@ -28,6 +28,23 @@ export type MovementsCreateProps = {
 
 export type MovementsFromDb = typeof movements.$inferSelect;
 
+export type resultCreateMovement =
+  | {
+      success: false;
+      errors: {
+        id?: string[] | undefined;
+        type?: string[] | undefined;
+        description?: string[] | undefined;
+        amount?: string[] | undefined;
+        categoryId?: string[] | undefined;
+        walletId?: string[] | undefined;
+        reccurentId?: string[] | undefined;
+        executedAt?: string[] | undefined;
+        dueDate?: string[] | undefined;
+      };
+    }
+  | { success: true; movement: Movement };
+
 export const movementsSchema = createInsertSchema(movements, {
   amount: () =>
     zod.number().refine((value) => value > 0, {
@@ -44,7 +61,7 @@ export const movementsSchema = createInsertSchema(movements, {
 export class Movement {
   private constructor(private readonly props: MovementsProps) {}
 
-  public static create(data: MovementsCreateProps) {
+  public static create(data: MovementsCreateProps): resultCreateMovement {
     const dataValid = movementsSchema.safeParse({
       id: uuid7(),
       ...data,
@@ -53,7 +70,7 @@ export class Movement {
     if (!dataValid.success) {
       return {
         errors: zod.flattenError(dataValid.error).fieldErrors,
-        sucess: false,
+        success: false,
       };
     }
 

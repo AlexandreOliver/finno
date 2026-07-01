@@ -267,18 +267,16 @@ export class Reccurent {
             "installments",
             "interval",
             "next_due_date",
-            "amount",
           ],
         }),
-        amount: this.amount.toString(),
         reccurentId: this.id,
         executedAt: this.nextDueDate,
-        dueDate: this.nextDueDate.toISOString(),
+        dueDate: this.nextDueDate,
       };
 
       const movement = Movement.create(rawData);
 
-      if (!movement.sucess) return null;
+      if (!movement.success) return null;
 
       this.countPaid++;
 

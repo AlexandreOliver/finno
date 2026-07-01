@@ -3,7 +3,7 @@ import { ISessionGateway } from "@/domain/repositories/session.gateway";
 import { IUserGateway } from "@/domain/repositories/user.gateway";
 import { credentialSchema, LoginCommand } from "./login.command";
 import z from "zod";
-import { resultCreateSession, Session } from "@/domain/entity/session.entity";
+import { Session } from "@/domain/entity/session.entity";
 
 export type LoginHandlerOutput =
   | {

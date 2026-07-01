@@ -1,13 +1,8 @@
 "use server";
 
-import zod from "zod";
-import { credentialSchema } from "./credentials";
-
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import user from "@/features/models/user";
-import passwordModel from "@/features/models/password";
 import session from "@/features/models/sessions";
 
 import { LoginHandler } from "@/features/authorization/login/login.handler";

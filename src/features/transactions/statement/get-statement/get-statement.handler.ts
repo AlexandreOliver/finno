@@ -1,4 +1,4 @@
-import { ITransactionRepository } from "@/features/statement/get-statement/transactions.interface";
+import { IStatementRepository } from "@/features/transactions/statement/get-statement/statement.interface";
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { GetStatementQuery } from "./get-statement.query";
 
@@ -35,12 +35,12 @@ export interface TransactionDTO {
 
 export class GetStatementHandler {
   private constructor(
-    private readonly transactionRepository: ITransactionRepository,
+    private readonly transactionRepository: IStatementRepository,
     private readonly movementsRepository: IMovementGateway,
   ) {}
 
   public static create(
-    transactionRepository: ITransactionRepository,
+    transactionRepository: IStatementRepository,
     movementsRepository: IMovementGateway,
   ) {
     return new GetStatementHandler(transactionRepository, movementsRepository);
