@@ -64,6 +64,10 @@ export class Session {
     this.expiresAt = newExpires;
   }
 
+  public isActive(): boolean {
+    return this.expiresAt > new Date();
+  }
+
   public static get defaultExpireInMs() {
     return this.#expirationInMs;
   }

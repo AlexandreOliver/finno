@@ -25,8 +25,15 @@ export class UserRepositoryDrizzle implements IUserGateway {
   public list: IUserGateway["list"] = async () => {
     throw new Error("Nao implementado");
   };
-  public getById: IUserGateway["getById"] = async () => {
-    throw new Error("Nao implementado");
+  public getById: IUserGateway["getById"] = async (userId) => {
+    const userDTO = await this.dbInstance
+      .select()
+      .from(users)
+      .where(eq(users.id, userId));
+
+    const user = userDTO.length > 0 ? User.with(userDTO[0]) : null;
+
+    return user;
   };
   public getByEmail: IUserGateway["getByEmail"] = async (props) => {
     const result = await this.dbInstance

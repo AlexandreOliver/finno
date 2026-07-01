@@ -3,12 +3,11 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import session from "@/features/models/sessions";
-
 import { LoginHandler } from "@/features/authorization/login/login.handler";
 import { SessionsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-sessions.repository";
 import { UserRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-users.repository";
 import db from "@/infrastructure/database";
+import { Session } from "@/domain/entity/session.entity";
 
 const sessionRepository = SessionsRepositoryDrizzle.create(db);
 const userRepository = UserRepositoryDrizzle.create(db);
@@ -44,7 +43,7 @@ export async function loginAction(
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
+    maxAge: Session.defaultExpireInMs / 1000,
   });
 
   redirect("/dashboard");

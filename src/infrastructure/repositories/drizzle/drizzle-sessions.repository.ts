@@ -26,8 +26,17 @@ export class SessionsRepositoryDrizzle implements ISessionGateway {
     return result.length > 0;
   };
 
-  public findActiveByToken: ISessionGateway["findActiveByToken"] = async () => {
-    throw new Error("Nao implementado");
+  public findActiveByToken: ISessionGateway["findActiveByToken"] = async (
+    token,
+  ) => {
+    const result = await this.dbInstance
+      .select()
+      .from(sessions)
+      .where(eq(sessions.token, token));
+
+    const session = Session.with(result[0]);
+
+    return session;
   };
 
   public findActiveByUserId: ISessionGateway["findActiveByUserId"] = async (

@@ -1,24 +1,34 @@
 import "server-only";
 
-import sessions from "@/features/models/sessions";
-import userModel from "@/features/models/user";
 import { cache } from "react";
+import { SessionsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-sessions.repository";
+import { UserRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-users.repository";
+
+import db from "@/infrastructure/database";
+import { User } from "@/domain/entity/user.entity";
+
+const sessionRepository = SessionsRepositoryDrizzle.create(db);
+const userRepository = UserRepositoryDrizzle.create(db);
 
 export const verifySession = cache(async (sessionToken: string) => {
-  const session = await sessions.findActiveByToken(sessionToken);
-  //console.log(session);
+  const session = await sessionRepository.findActiveByToken(sessionToken);
 
-  const isValid = await sessions.isActive(sessionToken);
+  if (!session) {
+    return {
+      isAuth: false,
+    };
+  }
 
-  const user = await userModel.findById(session?.userId);
-  //console.log(user);
+  const isValid = session.isActive();
+
+  const user = (await userRepository.getById(session.userId)) as User;
 
   return {
     isAuth: isValid,
     user: {
-      id: user?.id,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
     },
   };
 });
