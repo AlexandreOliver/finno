@@ -1,8 +1,8 @@
 import { Session } from "../entity/session.entity";
 
 export interface ISessionGateway {
-  save(session: Session): Promise<boolean>;
+  saveOrUpdate(session: Session): Promise<boolean>;
   findActiveByToken(token: string): Promise<Session | null>;
-  renew(sessionId: string): Promise<boolean>;
+  findActiveByUserId(userId: string): Promise<Session | null>;
   isActive(token: string): Promise<boolean>;
 }

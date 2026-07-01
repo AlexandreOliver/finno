@@ -52,7 +52,6 @@ export async function CardsKpis(props: CardsKpisProps) {
     currentDate: new Date(),
   });
 
-  console.log(sumary);
   return (
     <div className="overflow-hidden rounded-xl">
       <div className="grid grid-cols-1 xl:grid-cols-8">

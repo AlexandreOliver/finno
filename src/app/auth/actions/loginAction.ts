@@ -10,6 +10,16 @@ import user from "@/features/models/user";
 import passwordModel from "@/features/models/password";
 import session from "@/features/models/sessions";
 
+import { LoginHandler } from "@/features/authorization/login/login.handler";
+import { SessionsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-sessions.repository";
+import { UserRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-users.repository";
+import db from "@/infrastructure/database";
+
+const sessionRepository = SessionsRepositoryDrizzle.create(db);
+const userRepository = UserRepositoryDrizzle.create(db);
+
+const login = LoginHandler.create(sessionRepository, userRepository);
+
 interface State {
   errors?: {
     email?: string[];
@@ -23,35 +33,19 @@ export async function loginAction(
   formData: FormData,
 ): Promise<State | null> {
   const cookieJar = await cookies();
-  const dataValidated = credentialSchema.safeParse({
-    password: formData.get("password"),
-    email: formData.get("email"),
+
+  const result = await login.execute({
+    password: formData.get("password") as string,
+    email: formData.get("email") as string,
   });
 
-  if (!dataValidated.success) {
-    return {
-      errors: zod.flattenError(dataValidated.error).fieldErrors,
-      message: null,
-    };
+  if (!result.success) {
+    return result;
   }
 
-  // 1 - Verifica email e senha
-  const userInDb = await user.findByEmail(dataValidated.data.email);
-  if (!userInDb) redirect("/auth/register");
-
-  const passwordMatch = await passwordModel.compareHash(
-    userInDb.password,
-    dataValidated.data.password,
-  );
-  if (!passwordMatch) return { message: "Email ou Senha Inválida" };
-
-  // 2 - Cria a sessão
-  const sessionToken = await session.create(userInDb.id);
-
-  // 3 - Cria o cookie
   cookieJar.set({
     name: "session_token",
-    value: sessionToken.token,
+    value: result.sessionToken,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

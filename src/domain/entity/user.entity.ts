@@ -60,7 +60,7 @@ export type UserProps = {
   updatedAt: Date;
 };
 
-type resultCreate =
+export type resultCreate =
   | { success: true; user: User }
   | {
       success: false;

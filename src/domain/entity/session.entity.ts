@@ -18,7 +18,7 @@ export type SessionProps = {
   updatedAt: Date;
 };
 
-type resultCreate =
+export type resultCreateSession =
   | { success: false; errors: { userId?: string[] } }
   | { success: true; data: Session };
 
@@ -28,7 +28,7 @@ export class Session {
 
   private constructor(private readonly props: SessionProps) {}
 
-  public static create(props: { userId: string }): resultCreate {
+  public static create(props: { userId: string }): resultCreateSession {
     const dataValid = sessionShema.safeParse(props);
 
     if (!dataValid.success) {
@@ -40,7 +40,7 @@ export class Session {
 
     const data = new Session({
       id: uuid7(),
-      token: randomBytes(this.#sizeTokenBytes).toString("hex"),
+      token: randomBytes(this.sizeTokenBytes).toString("hex"),
       userId: dataValid.data.userId,
       expiresAt: new Date(Date.now() + this.#expirationInMs),
       createdAt: new Date(),
@@ -57,10 +57,22 @@ export class Session {
     return new Session(props);
   }
 
+  public renew() {
+    const newExpires = new Date(
+      this.expiresAt.getTime() + Session.#expirationInMs,
+    );
+    this.expiresAt = newExpires;
+  }
+
   public static get defaultExpireInMs() {
     return this.#expirationInMs;
   }
 
+  public static get sizeTokenBytes() {
+    return this.#sizeTokenBytes;
+  }
+
+  //#region Getters
   public get id() {
     return this.props.id;
   }
@@ -77,6 +89,12 @@ export class Session {
     return this.props.expiresAt;
   }
 
+  private set expiresAt(newExpiresAt: Date) {
+    if (newExpiresAt <= this.props.expiresAt) return;
+
+    this.props.expiresAt = newExpiresAt;
+  }
+
   public get createdAt() {
     return this.props.createdAt;
   }
@@ -84,6 +102,7 @@ export class Session {
   public get updatedAt() {
     return this.props.updatedAt;
   }
+  //#endregion
 
   public toJson<K extends keyof SessionProps = never>(options?: {
     omit: readonly K[];
