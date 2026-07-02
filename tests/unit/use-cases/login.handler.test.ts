@@ -8,7 +8,7 @@ import {
 } from "@/features/authorization/login/login.handler";
 import { describe, beforeEach, test, jest, expect } from "@jest/globals";
 
-describe("", () => {
+describe("Caso de uso - Login", () => {
   let mockUserRepository: jest.Mocked<IUserGateway>;
   let mockSessionRepository: jest.Mocked<ISessionGateway>;
 
