@@ -10,7 +10,7 @@ import {
 export interface IMovementGateway {
   save: FunctionSave<Movement, boolean>;
   list: FunctionList<Movement>;
-  getById: (id: string) => Promise<Movement>;
+  getById: (id: string) => Promise<Movement | null>;
   deleteById: FunctionDelete<boolean>;
   count: FunctionCount;
 }

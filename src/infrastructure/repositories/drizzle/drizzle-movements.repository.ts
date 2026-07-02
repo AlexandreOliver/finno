@@ -1,19 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { movements } from "@/infrastructure/database/schemas/movements";
 
 import { and, eq, SQL, desc, inArray, gte, lt, or } from "drizzle-orm";
-import { PgSelect } from "drizzle-orm/pg-core";
-
-// import { cache } from "react";
+import { PgSelect, PgDatabase } from "drizzle-orm/pg-core";
 
 import { categories } from "@/infrastructure/database/schemas/categories";
-import db from "@/infrastructure/database";
 import { Movement } from "@/domain/entity/movements.entity";
 
 export class MovementsRepositoryDrizzle implements IMovementGateway {
-  private constructor(private readonly dbInstance: typeof db) {}
+  private constructor(private readonly dbInstance: PgDatabase<any, any>) {}
 
-  public static create(dbInstance: typeof db) {
+  public static create(dbInstance: PgDatabase<any, any>) {
     return new MovementsRepositoryDrizzle(dbInstance);
   }
 
@@ -64,7 +62,7 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
   };
 
   public count: IMovementGateway["count"] = async ({ query, walletId }) => {
-    let count;
+    let count = 0;
 
     const filtersQuery: SQL[] = [];
     if (query?.date && query.date.start && query.date.end) {
@@ -72,32 +70,22 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
       filtersQuery.push(lt(movements.executedAt, query.date.end));
     }
 
+    const filtersWallet: SQL[] = [];
     if (Array.isArray(walletId)) {
-      if (walletId.length === 0) return 0;
+      if (walletId.length === 0) return count;
 
-      const filters: SQL[] = [];
-
-      walletId.forEach((w) => filters.push(eq(movements.walletId, w)));
-
-      count = await this.dbInstance.$count(
-        movements,
-        and(
-          or(...filters),
-          filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
-        ),
-      );
-      return count;
+      walletId.forEach((w) => filtersWallet.push(eq(movements.walletId, w)));
+    } else if (walletId) {
+      filtersWallet.push(eq(movements.walletId, walletId));
     }
 
-    if (walletId) {
-      count = await this.dbInstance.$count(
-        movements,
-        eq(movements.walletId, walletId),
-      );
-      return count;
-    }
-
-    count = await this.dbInstance.$count(movements);
+    count = await this.dbInstance.$count(
+      movements,
+      and(
+        filtersWallet.length > 0 ? or(...filtersWallet) : undefined,
+        filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
+      ),
+    );
 
     return count;
   };
@@ -117,7 +105,8 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
       .from(movements)
       .where(eq(movements.id, id));
 
-    const movement = Movement.with(movementDTO[0]);
+    const movement =
+      movementDTO.length > 0 ? Movement.with(movementDTO[0]) : null;
 
     return movement;
   };
