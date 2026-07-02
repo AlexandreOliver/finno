@@ -7,7 +7,10 @@ import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { DeleteMovementHandler } from "@/features/transactions/delete-movement/delete-movement.handler";
 import { v7 as uuid7 } from "uuid";
 import { Wallet } from "@/domain/entity/wallets.entity";
-import { Movement } from "@/domain/entity/movements.entity";
+import {
+  Movement,
+  resultCreateMovement,
+} from "@/domain/entity/movements.entity";
 
 describe("Caso de Uso - Apagar uma movimentação", () => {
   let mockWalletRepository: jest.Mocked<IWalletsGateway>;
@@ -56,16 +59,18 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
       ownerId: "019f1aa1-d10c-778a-88e3-25a35ddd83430",
     });
 
-    const movementTest = Movement.create({
-      description: "Mercado do mes",
-      type: "debito",
-      amount: 500.0,
-      categoryId: uuid7(),
-      walletId: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
-      reccurentId: null,
-      executedAt: new Date(),
-      dueDate: null,
-    }).movement as Movement;
+    const movementTest = (
+      Movement.create({
+        description: "Mercado do mes",
+        type: "debito",
+        amount: 500.0,
+        categoryId: uuid7(),
+        walletId: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
+        reccurentId: null,
+        executedAt: new Date(),
+        dueDate: null,
+      }) as resultCreateMovement & { success: true }
+    ).movement;
 
     mockWalletRepository.findById.mockResolvedValue(walletTest);
     mockMovementRepository.getById.mockResolvedValue(movementTest);
@@ -106,16 +111,18 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
       ownerId: "019f1aa1-d10c-778a-88e3-25a35ddd83430",
     });
 
-    const movementTest = Movement.create({
-      description: "Mercado do mes",
-      type: "debito",
-      amount: 500.0,
-      categoryId: uuid7(),
-      walletId: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
-      reccurentId: null,
-      executedAt: new Date(),
-      dueDate: null,
-    }).movement as Movement;
+    const movementTest = (
+      Movement.create({
+        description: "Mercado do mes",
+        type: "debito",
+        amount: 500.0,
+        categoryId: uuid7(),
+        walletId: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
+        reccurentId: null,
+        executedAt: new Date(),
+        dueDate: null,
+      }) as resultCreateMovement & { success: true }
+    ).movement;
 
     mockWalletRepository.findById.mockResolvedValue(walletTest);
     mockMovementRepository.getById.mockResolvedValue(movementTest);

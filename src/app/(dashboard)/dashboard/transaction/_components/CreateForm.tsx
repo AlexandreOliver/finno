@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { SelectField } from "./SelectField";
-import { DateRangeComponent } from "@/app/(dashboard)/dashboard/_components";
+import { DateRangeComponent } from "@/app/(dashboard)/dashboard/_components/DateRangeComponent";
 
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";

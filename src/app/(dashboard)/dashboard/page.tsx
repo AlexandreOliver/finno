@@ -35,7 +35,7 @@ export default async function Page() {
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-12">
         <div className="xl:col-span-6">
           <Suspense fallback={<div>ddd</div>}>
-            <CardsKpis userId={auth.user.id} />
+            <CardsKpis userId={auth.isAuth ? auth.user.id : ""} />
           </Suspense>
         </div>
         <div className="xl:col-span-6">

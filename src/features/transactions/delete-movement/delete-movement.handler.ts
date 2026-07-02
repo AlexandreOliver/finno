@@ -25,6 +25,13 @@ export class DeleteMovementHandler {
 
   public async execute(props: DeleteMovementCommand) {
     const movement = await this.MovementsRepository.getById(props.id);
+
+    if (!movement) {
+      return {
+        message: "Transação inexistente",
+      };
+    }
+
     const wallet = await this.IWalletsRepository.findById(movement.walletId);
 
     switch (movement.type) {

@@ -10,25 +10,40 @@ import { User } from "@/domain/entity/user.entity";
 const sessionRepository = SessionsRepositoryDrizzle.create(db);
 const userRepository = UserRepositoryDrizzle.create(db);
 
-export const verifySession = cache(async (sessionToken: string) => {
-  const session = await sessionRepository.findActiveByToken(sessionToken);
-
-  if (!session) {
-    return {
-      isAuth: false,
+type authObj =
+  | {
+      isAuth: false;
+    }
+  | {
+      isAuth: true;
+      user: {
+        id: string;
+        firstName: string;
+        lastName: string;
+      };
     };
-  }
 
-  const isValid = session.isActive();
+export const verifySession = cache(
+  async (sessionToken: string): Promise<authObj> => {
+    const session = await sessionRepository.findActiveByToken(sessionToken);
 
-  const user = (await userRepository.getById(session.userId)) as User;
+    if (!session) {
+      return {
+        isAuth: false,
+      };
+    }
 
-  return {
-    isAuth: isValid,
-    user: {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    },
-  };
-});
+    const isValid = session.isActive();
+
+    const user = (await userRepository.getById(session.userId)) as User;
+
+    return {
+      isAuth: isValid,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    };
+  },
+);

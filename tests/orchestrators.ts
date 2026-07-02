@@ -1,4 +1,4 @@
-import db, { runMigrations } from "@/infrastructure/database";
+import db from "@/infrastructure/database";
 import { sql } from "drizzle-orm";
 import retry from "async-retry";
 import { execSync } from "node:child_process";
@@ -25,16 +25,10 @@ async function seeding() {
   execSync("pnpm run db:seed", { stdio: "inherit" });
 }
 
-async function runPendingMigrations() {
-  await runMigrations();
-}
-
 const orchestrator = {
   seeding,
   clearDatabase,
-  runMigrations,
   waitForAllServices,
-  runPendingMigrations,
 };
 
 export default orchestrator;

@@ -21,7 +21,18 @@ async function sedding() {
       .values(seed_categorias)
       .onConflictDoNothing();
 
-    await db.insert(schemas.wallets).values(seed_wallets).onConflictDoNothing();
+    await db
+      .insert(schemas.wallets)
+      .values(seed_wallets)
+      .onConflictDoUpdate({
+        target: schemas.wallets.id,
+        set: {
+          createdAt: sql`excluded.created_at`,
+          balance: sql`excluded.balance`,
+          updatedAt: sql`excluded.updated_at`,
+          labelName: sql`excluded.label_name`,
+        },
+      });
 
     await db
       .insert(schemas.templateReccurent)
