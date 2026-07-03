@@ -1,0 +1,146 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IMovementGateway } from "@/domain/repositories/movements.gateway";
+import { movements } from "@/infrastructure/database/schemas/movements";
+
+import { and, eq, SQL, desc, inArray, gte, lt, or } from "drizzle-orm";
+import { PgSelect, PgDatabase } from "drizzle-orm/pg-core";
+
+import { categories } from "@/infrastructure/database/schemas/categories";
+import { Movement } from "@/domain/entity/movements.entity";
+
+export class MovementsRepositoryDrizzle implements IMovementGateway {
+  private constructor(private readonly dbInstance: PgDatabase<any, any>) {}
+
+  public static create(dbInstance: PgDatabase<any, any>) {
+    return new MovementsRepositoryDrizzle(dbInstance);
+  }
+
+  public list: IMovementGateway["list"] = async ({
+    walletId,
+    pagination,
+    query,
+  }) => {
+    //if (returnFields.length === 0) return [];
+    if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
+      return [];
+
+    const filters: SQL[] = [];
+
+    if (Array.isArray(walletId)) {
+      filters.push(inArray(movements.walletId, walletId));
+    } else {
+      filters.push(eq(movements.walletId, walletId));
+    }
+
+    if (query && query.date) {
+      filters.push(gte(movements.executedAt, query.date.start));
+      if (query.date.end)
+        filters.push(lt(movements.executedAt, query.date.end));
+    }
+
+    let resultDb: (typeof movements.$inferSelect)[];
+
+    if (pagination) {
+      resultDb = await this.dbInstance
+        .select()
+        .from(movements)
+        .where(and(...filters))
+        .orderBy(desc(movements.executedAt), desc(movements.amount))
+        .offset(((pagination.page ?? 1) - 1) * pagination.limit)
+        .limit(pagination.limit);
+    } else {
+      resultDb = await this.dbInstance
+        .select()
+        .from(movements)
+        .where(and(...filters))
+        .orderBy(desc(movements.executedAt), desc(movements.amount));
+    }
+
+    const movementList = resultDb.map((mov) => Movement.with(mov));
+
+    return movementList;
+  };
+
+  public count: IMovementGateway["count"] = async ({ query, walletId }) => {
+    let count = 0;
+
+    const filtersQuery: SQL[] = [];
+    if (query?.date && query.date.start && query.date.end) {
+      filtersQuery.push(gte(movements.executedAt, query.date.start));
+      filtersQuery.push(lt(movements.executedAt, query.date.end));
+    }
+
+    const filtersWallet: SQL[] = [];
+    if (Array.isArray(walletId)) {
+      if (walletId.length === 0) return count;
+
+      walletId.forEach((w) => filtersWallet.push(eq(movements.walletId, w)));
+    } else if (walletId) {
+      filtersWallet.push(eq(movements.walletId, walletId));
+    }
+
+    count = await this.dbInstance.$count(
+      movements,
+      and(
+        filtersWallet.length > 0 ? or(...filtersWallet) : undefined,
+        filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
+      ),
+    );
+
+    return count;
+  };
+
+  public deleteById: IMovementGateway["deleteById"] = async (id) => {
+    const result = await this.dbInstance
+      .delete(movements)
+      .where(eq(movements.id, id))
+      .returning();
+
+    return result.length > 0;
+  };
+
+  public getById: IMovementGateway["getById"] = async (id) => {
+    const movementDTO = await this.dbInstance
+      .select()
+      .from(movements)
+      .where(eq(movements.id, id));
+
+    const movement =
+      movementDTO.length > 0 ? Movement.with(movementDTO[0]) : null;
+
+    return movement;
+  };
+
+  public save: IMovementGateway["save"] = async (movement) => {
+    const valuesObject = movement.toJson();
+
+    const result = await this.dbInstance
+      .insert(movements)
+      .values({ ...valuesObject, amount: movement.amount.toString() })
+      .returning();
+
+    return !!result[0].id;
+  };
+
+  //#region Metodos Privados
+  async #whithCategory<T extends PgSelect>(query: T) {
+    return query.leftJoin(categories, eq(categories.id, movements.categoryId));
+  }
+
+  async #execute<T extends PgSelect>(qb: T) {
+    return qb;
+  }
+
+  #collmnsInclude(include?: { category?: true | undefined }) {
+    if (!include) {
+      return {};
+    }
+
+    if (include.category) {
+      return { labelCategory: categories.label, categoryId: categories.id };
+    }
+
+    return {};
+  }
+  //#endregion
+}
