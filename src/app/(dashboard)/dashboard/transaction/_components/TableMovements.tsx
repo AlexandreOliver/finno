@@ -79,8 +79,8 @@ export function TableMovements() {
 
   const rangeDate = useMemo(() => {
     const range = {
-      start: dateStart.toLocaleDateString("en-US"),
-      end: dateEnd.toLocaleDateString("en-US"),
+      start: dateStart.toISOString().slice(0, 10),
+      end: dateEnd.toISOString().slice(0, 10),
     };
     return range;
   }, [dateEnd, dateStart]);

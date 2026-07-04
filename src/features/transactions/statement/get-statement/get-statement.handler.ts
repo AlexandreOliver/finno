@@ -50,8 +50,8 @@ export class GetStatementHandler {
     const { walletId, pagination, filters } = props;
 
     const date = {
-      start: new Date(new Date(filters?.date.start).setHours(0)),
-      end: new Date(new Date(filters?.date.end).setHours(23, 59, 59, 999)),
+      start: new Date(filters?.date.start),
+      end: new Date(filters?.date.end + "T23:59:59.999"),
     };
 
     const transactions = await this.transactionRepository.getStatement({
