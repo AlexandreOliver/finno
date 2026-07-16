@@ -36,12 +36,14 @@ import { useSession } from "@/hooks/useSession";
 import { useCriarMovement } from "@/features/transactions/hooks/useCriarMovement";
 import { useCategories } from "@/features/transactions/hooks/useCategories";
 import { useWallets } from "@/features/dashboard/hooks/useWallets";
+import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
 
 type FormProps = {
   variant: "Renda" | "Despesa" | "Investimento";
 } & ComponentProps<"form">;
 
 export function CreateForm({ className, variant, ...rest }: FormProps) {
+  const { range } = useRangeDate();
   const { user } = useSession();
   const [type, setType] = useState(
     variant === "Renda" ? typesEnum.enumValues[1] : typesEnum.enumValues[0],
@@ -67,12 +69,8 @@ export function CreateForm({ className, variant, ...rest }: FormProps) {
       .owned(dataWallets?.map((w) => w.id) as string[])
       ._ctx.query({
         date: {
-          start: new Date(
-            new Date().getFullYear(),
-            new Date().getMonth(),
-            1,
-          ).toLocaleDateString("en-US"),
-          end: new Date().toLocaleDateString("en-US"),
+          start: range.start.toISOString().slice(0, 10),
+          end: range.end.toISOString().slice(0, 10),
         },
       }).queryKey,
   );

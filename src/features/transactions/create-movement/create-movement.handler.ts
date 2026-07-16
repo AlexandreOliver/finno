@@ -1,4 +1,3 @@
-import { Movement } from "@/domain/entity/movements.entity";
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import {
   CreateMovementCommand,
@@ -7,6 +6,7 @@ import {
 import z from "zod";
 import { IUnitOfWork } from "@/infrastructure/repositories/unitOfWork.interface";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
+import { FunctionNewMovement } from "@/domain/entity/wallets.entity";
 
 export type MovementOutputDTO =
   | {
@@ -48,28 +48,20 @@ export class CreateMovementHandler {
   public async execute(
     dataInput: CreateMovementCommand,
   ): Promise<MovementOutputDTO> {
-    const data = CreateMovementCommandSchema.safeParse(dataInput);
+    const dataReceived = CreateMovementCommandSchema.safeParse(dataInput);
 
-    if (!data.success) {
+    if (!dataReceived.success) {
       return {
         success: false,
         message: "Há campos com erros",
-        errors: z.flattenError(data.error).fieldErrors,
+        errors: z.flattenError(dataReceived.error).fieldErrors,
       };
     }
 
-    const movementOrError = Movement.create(data.data);
-
-    if (!movementOrError.success) {
-      return {
-        success: false,
-        message: "Há campos com erros",
-        errors: movementOrError.errors,
-      };
-    }
+    // const movementOrError = Movement.create(dataReceived.data);
 
     const wallet = await this.walletRepository.findById(
-      movementOrError.movement.walletId,
+      dataReceived.data.walletId,
     );
 
     if (!wallet) {
@@ -79,18 +71,37 @@ export class CreateMovementHandler {
       };
     }
 
-    switch (movementOrError.movement.type) {
+    let movementOrError: ReturnType<FunctionNewMovement>;
+    switch (dataReceived.data.type) {
       case "credito":
-        wallet.credito(movementOrError.movement.amount);
+        movementOrError = wallet.credito({
+          amount: dataReceived.data.amount,
+          movConfig: {
+            ...dataReceived.data,
+          },
+        });
         break;
       case "debito":
-        wallet.debito(movementOrError.movement.amount);
+        movementOrError = wallet.debito({
+          amount: dataReceived.data.amount,
+          movConfig: {
+            ...dataReceived.data,
+          },
+        });
         break;
+    }
+
+    if (!movementOrError.success) {
+      return {
+        success: false,
+        message: movementOrError.message,
+        errors: movementOrError.errors,
+      };
     }
 
     try {
       await this.transactionService.runInTransaction(async () => {
-        await this.movementsRepository.save(movementOrError.movement);
+        await this.movementsRepository.save(movementOrError.data);
         await this.walletRepository.saveOrUpdate(wallet);
       });
     } catch {
@@ -103,7 +114,7 @@ export class CreateMovementHandler {
     return {
       success: true,
       message: "Transação Salva com sucesso",
-      movement: { id: movementOrError.movement?.id as string },
+      movement: { id: movementOrError.data.id },
     };
   }
 }

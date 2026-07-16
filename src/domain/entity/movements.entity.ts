@@ -28,6 +28,18 @@ export type MovementsCreateProps = {
 
 export type MovementsFromDb = typeof movements.$inferSelect;
 
+export type MovementErrorsValidation = {
+  id?: string[] | undefined;
+  type?: string[] | undefined;
+  description?: string[] | undefined;
+  amount?: string[] | undefined;
+  categoryId?: string[] | undefined;
+  walletId?: string[] | undefined;
+  reccurentId?: string[] | undefined;
+  executedAt?: string[] | undefined;
+  dueDate?: string[] | undefined;
+};
+
 export type resultCreateMovement =
   | {
       success: false;

@@ -331,7 +331,10 @@ export function TableMovements() {
                               <span className="sr-only">Editar</span>
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="flex justify-center items-center">
+                          <DropdownMenuItem
+                            className="flex justify-center items-center"
+                            hidden
+                          >
                             <DelButtonMovement
                               functionDelete={() =>
                                 deleteMovement(mov.id as string)

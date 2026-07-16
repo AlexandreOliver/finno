@@ -1,6 +1,12 @@
 import { wallets } from "@/infrastructure/database/schemas/wallets";
 import { v7 as uuidV7 } from "uuid";
 import { z } from "zod";
+import {
+  Movement,
+  MovementErrorsValidation,
+  MovementsCreateProps,
+  resultCreateMovement,
+} from "./movements.entity";
 
 export type WalletsFromDb = typeof wallets.$inferSelect;
 export type WalletsFromD = typeof wallets.$inferInsert;
@@ -16,6 +22,16 @@ const walletSchema = z.object({
   createdAt: z.date().optional().default(new Date()),
   updatedAt: z.date().optional().default(new Date()),
 });
+
+export type FunctionNewMovement = (props: {
+  amount: number;
+  movConfig: Omit<
+    MovementsCreateProps,
+    "walletId" | "amount" | "reccurentId" | "type"
+  >;
+}) =>
+  | { success: true; data: Movement }
+  | { success: false; message: string; errors?: MovementErrorsValidation };
 
 export type WalletsProps = {
   id: string;
@@ -97,15 +113,65 @@ export class Wallet {
   }
   //#endregion
 
-  public debito(amount: number) {
-    this.props.balance -= amount;
-    this.props.updatedAt = new Date();
-  }
+  public debito: FunctionNewMovement = (props) => {
+    const { amount, movConfig } = props;
 
-  public credito(amount: number) {
-    this.props.balance += amount;
+    const movementDTO = {
+      ...movConfig,
+      amount,
+      type: "debito",
+      walletId: this.id,
+      reccurentId: null,
+    };
+
+    const mov = Movement.create(movementDTO);
+
+    if (!mov.success) {
+      return {
+        success: false,
+        message: "Há campos com erros",
+        errors: mov.errors,
+      };
+    }
+
+    this.props.balance -= mov.movement.amount;
     this.props.updatedAt = new Date();
-  }
+
+    return {
+      success: true,
+      data: mov.movement,
+    };
+  };
+
+  public credito: FunctionNewMovement = (props) => {
+    const { amount, movConfig } = props;
+
+    const movementDTO = {
+      ...movConfig,
+      amount,
+      type: "credito",
+      walletId: this.id,
+      reccurentId: null,
+    };
+
+    const mov = Movement.create(movementDTO);
+
+    if (!mov.success) {
+      return {
+        success: false,
+        message: "Há campos com erros",
+        errors: mov.errors,
+      };
+    }
+
+    this.props.balance += mov.movement.amount;
+    this.props.updatedAt = new Date();
+
+    return {
+      success: true,
+      data: mov.movement,
+    };
+  };
 
   public toJson<K extends keyof WalletsProps = never>(options?: {
     omit: readonly K[];

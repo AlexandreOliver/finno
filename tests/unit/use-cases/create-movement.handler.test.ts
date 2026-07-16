@@ -56,16 +56,16 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       }) as { data: Wallet }
     ).data;
 
-    mockWalletRepository.findById.mockResolvedValue(walletTest);
-
     const data = {
       description: "Mercado do mes",
       type: "debito",
       amount: "500.00",
       categoryId: uuid7(),
-      walletId: uuid7(),
+      walletId: walletTest.id,
       reccurentId: null,
     };
+
+    mockWalletRepository.findById.mockResolvedValue(walletTest);
 
     const result = (await createMovement.execute(data)) as MovementOutputDTO & {
       success: true;
@@ -82,14 +82,11 @@ describe("Caso de Uso - Criar uma movimentação", () => {
 
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
 
-    const walletSaved_Expected = Wallet.with({
-      ...WalletAfter,
-      balance: WalletAfter.balance.toString(),
-    });
+    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalled();
 
-    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalledWith(
-      walletSaved_Expected,
-    );
+    const walletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
+
+    expect(walletSaved.toJson()).toStrictEqual(WalletAfter);
 
     expect(mockMovementRepository.save).toHaveBeenCalled();
 
@@ -117,7 +114,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       type: "credito",
       amount: "1500.00",
       categoryId: uuid7(),
-      walletId: uuid7(),
+      walletId: walletTest.id,
       reccurentId: null,
     };
 
@@ -136,14 +133,11 @@ describe("Caso de Uso - Criar uma movimentação", () => {
 
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
 
-    const walletSaved_Expected = Wallet.with({
-      ...WalletAfter,
-      balance: WalletAfter.balance.toString(),
-    });
+    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalled();
 
-    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalledWith(
-      walletSaved_Expected,
-    );
+    const WalletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
+
+    expect(WalletSaved.toJson()).toStrictEqual(WalletAfter);
 
     expect(mockMovementRepository.save).toHaveBeenCalled();
 
