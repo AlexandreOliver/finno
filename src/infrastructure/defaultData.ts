@@ -233,6 +233,31 @@ const seed_templateReccurent = [
       hoje.getHours(),
     ),
   },
+  {
+    id: "019f67dd-92c2-7a2f-b43c-53bc01a3455b",
+    type: typesEnum.enumValues[0],
+    status: statusEnum.enumValues[0],
+    description: "Carro",
+    amount: "325.31",
+    frequency: frequencyEnum.enumValues[2],
+    interval: 1,
+    installments: 24,
+    countPaid: 12,
+    categoryId: seed_categorias[2].id,
+    walletId: seed_wallets[1].id,
+    start_date: new Date(
+      hoje.getFullYear() - 1,
+      hoje.getMonth(),
+      8,
+      hoje.getHours(),
+    ),
+    end_date: new Date(
+      hoje.getFullYear() + 1,
+      hoje.getMonth(),
+      8,
+      hoje.getHours(),
+    ),
+  },
 ];
 
 const seed_movements = [

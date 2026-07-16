@@ -9,4 +9,4 @@ export type FunctionStatement = (args: {
   walletId: string | string[];
   query: QueryParams;
   pagination: Pagination;
-}) => Promise<TransactionDTO[]>;
+}) => Promise<TransactionDTO>;

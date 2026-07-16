@@ -52,19 +52,12 @@ import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useStatement } from "@/features/transactions/hooks/useStatement";
 import { useWallets } from "@/features/dashboard/hooks/useWallets";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
 
 export function TableMovements() {
+  const { range, setRange } = useRangeDate();
   const { user } = useSession();
   const [page, setPage] = useState(1);
-  const [dateEnd, setEnd] = useState(new Date());
-  const [dateStart, setStart] = useState(
-    () => new Date(dateEnd.getFullYear(), dateEnd.getMonth(), 1, 0, 0),
-  );
 
   const [seletorType, setType] = useState<"todas" | "debito" | "credito">(
     "todas",
@@ -78,12 +71,12 @@ export function TableMovements() {
   const wallets_Ids = useMemo(() => wallets?.map((w) => w.id), [wallets]);
 
   const rangeDate = useMemo(() => {
-    const range = {
-      start: dateStart.toISOString().slice(0, 10),
-      end: dateEnd.toISOString().slice(0, 10),
+    const range1 = {
+      start: range.start.toISOString().slice(0, 10),
+      end: range.end.toISOString().slice(0, 10),
     };
-    return range;
-  }, [dateEnd, dateStart]);
+    return range1;
+  }, [range.start, range.end]);
 
   const limit = 10;
   const { data: movements, isPending } = useStatement(
@@ -102,7 +95,7 @@ export function TableMovements() {
 
   const payloadFiltred = useMemo(
     () =>
-      movements?.payload.filter(
+      movements?.payload?.movements.filter(
         (w) =>
           (w.type === seletorType || seletorType === "todas") &&
           (w.walletId === selectWallet || selectWallet === "todas"),
@@ -129,52 +122,61 @@ export function TableMovements() {
               <button
                 className="hover:bg-[#2A3040] h-6 md:h-12"
                 onClick={() => {
-                  setEnd(
-                    (endPrev) =>
-                      new Date(endPrev.getFullYear(), endPrev.getMonth(), 0),
-                  );
-                  setStart(
-                    (datePrev) =>
-                      new Date(
-                        datePrev.getFullYear(),
-                        datePrev.getMonth() - 1,
+                  setRange((prevRange) => {
+                    return {
+                      end: new Date(
+                        prevRange.end.getFullYear(),
+                        prevRange.end.getMonth(),
+                        0,
+                      ),
+                      start: new Date(
+                        prevRange.start.getFullYear(),
+                        prevRange.start.getMonth() - 1,
                         1,
                       ),
-                  );
+                    };
+                  });
                 }}
               >
                 <ChevronLeft className="size-5 md:size-7" />
               </button>
               <div className="w-full md:w-35 h-full flex justify-center items-center">
                 <p className="text-md text-center">
-                  {format(dateStart, "MMMM 'de' yyyy ", { locale: ptBR })}
+                  {format(range.start, "MMMM 'de' yyyy ", { locale: ptBR })}
                 </p>
               </div>
               <button
-                disabled={dateEnd.toDateString() === new Date().toDateString()}
+                disabled={
+                  range.end.toDateString() === new Date().toDateString()
+                }
                 className="h-6 md:h-12 not-disabled:hover:bg-[#2A3040]"
                 onClick={() => {
-                  setStart(
-                    (datePrev) =>
-                      new Date(
-                        datePrev.getFullYear(),
-                        datePrev.getMonth() + 1,
+                  setRange((prevRange) => {
+                    return {
+                      end:
+                        prevRange.end.getMonth() + 1 ===
+                          new Date().getMonth() &&
+                        prevRange.end.getFullYear() === new Date().getFullYear()
+                          ? new Date()
+                          : new Date(
+                              prevRange.end.getFullYear(),
+                              prevRange.end.getMonth() + 2,
+                              0,
+                            ),
+                      start: new Date(
+                        prevRange.start.getFullYear(),
+                        prevRange.start.getMonth() + 1,
                         1,
                       ),
-                  );
-                  setEnd((d) =>
-                    d.getMonth() + 1 === new Date().getMonth() &&
-                    d.getFullYear() === new Date().getFullYear()
-                      ? new Date()
-                      : new Date(d.getFullYear(), d.getMonth() + 2, 0),
-                  );
+                    };
+                  });
                 }}
               >
                 <ChevronRight
                   className={cn(
                     clsx({
                       "text-white/20":
-                        dateEnd.toDateString() === new Date().toDateString(),
+                        range.end.toDateString() === new Date().toDateString(),
                     }),
                     "size-5 md:size-7",
                   )}
@@ -281,64 +283,9 @@ export function TableMovements() {
                               })}
                             </span>
                             {mov.reccurent && (
-                              <HoverCard>
-                                <HoverCardTrigger
-                                  delay={10}
-                                  closeDelay={100}
-                                  render={
-                                    <Badge className="ml-1 w-7">
-                                      <RefreshCcwIcon />
-                                    </Badge>
-                                  }
-                                />
-                                <HoverCardContent
-                                  className="flex w-64 flex-col gap-0.5"
-                                  side="right"
-                                >
-                                  <div className="font-medium">
-                                    Transação Recorrente
-                                  </div>
-                                  {mov.reccurent.installments !== null ? (
-                                    <div>{`Parcelas restantes ${mov.reccurent.installments - mov.reccurent.countPaid}`}</div>
-                                  ) : (
-                                    <div>{`${mov.reccurent.countPaid} parcelas executadas`}</div>
-                                  )}
-                                  <div className="mt-1 text-xs text-muted-foreground">
-                                    {mov.reccurent.start_date &&
-                                    mov.reccurent.end_date ? (
-                                      <p>
-                                        Prazo:{" "}
-                                        {format(
-                                          mov.reccurent.start_date,
-                                          "MM'/'yyyy",
-                                          {
-                                            locale: ptBR,
-                                          },
-                                        )}{" "}
-                                        até{" "}
-                                        {format(
-                                          mov.reccurent.end_date,
-                                          "MM'/'yyyy",
-                                          {
-                                            locale: ptBR,
-                                          },
-                                        )}
-                                      </p>
-                                    ) : (
-                                      <p>
-                                        Iniciado em $
-                                        {format(
-                                          mov.reccurent.start_date,
-                                          "MMMM 'de' yyyy",
-                                          {
-                                            locale: ptBR,
-                                          },
-                                        )}
-                                      </p>
-                                    )}
-                                  </div>
-                                </HoverCardContent>
-                              </HoverCard>
+                              <Badge className="ml-1 w-7">
+                                <RefreshCcwIcon />
+                              </Badge>
                             )}
                           </div>
                           <p className="text-balance">{mov.description}</p>
@@ -420,12 +367,20 @@ export function TableMovements() {
           </Table>
         </div>
         <div className="flex justify-between items-center px-2">
-          <span>{movements?.totalMovementsFromDb} Transações</span>
-          <div className="flex gap-5 justify-center items-center">
+          <span className="text-sm md:text-lg">
+            {movements?.totalMovementsFromDb} Transações
+          </span>
+          <div className="flex gap-5 justify-center items-center text-sm md:text-lg">
             <span>{`Pagina ${movements?.page} de ${totalPages}`}</span>
-            <div className="flex gap-2">
-              <button className="border rounded-md p-1">
-                <ChevronsLeftIcon />
+            <div className="flex gap-2 h-7 md:h-9 ">
+              <button
+                className="border rounded-md p-1"
+                onClick={() => {
+                  if (page === 1) return;
+                  setPage(1);
+                }}
+              >
+                <ChevronsLeftIcon className="size-4 md:size-7" />
               </button>
               <button
                 className="border rounded-md p-1"
@@ -434,7 +389,7 @@ export function TableMovements() {
                   setPage((p) => p - 1);
                 }}
               >
-                <ChevronLeft />
+                <ChevronLeft className="size-4 md:size-7" />
               </button>
               <button
                 className="border rounded-md p-1"
@@ -443,10 +398,16 @@ export function TableMovements() {
                   setPage((p) => p + 1);
                 }}
               >
-                <ChevronRight />
+                <ChevronRight className="size-4 md:size-7" />
               </button>
-              <button className="border rounded-md p-1">
-                <ChevronsRight />
+              <button
+                className="border rounded-md p-1"
+                onClick={() => {
+                  if (page === totalPages) return;
+                  setPage(totalPages);
+                }}
+              >
+                <ChevronsRight className="size-4 md:size-7" />
               </button>
             </div>
           </div>

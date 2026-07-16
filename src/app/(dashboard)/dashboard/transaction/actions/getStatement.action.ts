@@ -35,7 +35,7 @@ export async function getStatement({
       totalMovementsFromDb: 0,
       page: pagination.page as number,
       limit: pagination.limit as number,
-      payload: [],
+      payload: null,
     };
 
   return await getTransacoesUseCase.execute({
