@@ -25,7 +25,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
 
   beforeEach(async () => {
     mockMovementRepository = {
-      save: jest.fn(),
+      saveOrUpdate: jest.fn(),
       list: jest.fn(),
       getById: jest.fn(),
       deleteById: jest.fn(),
@@ -77,13 +77,13 @@ describe("Caso de Uso - Criar uma movimentação", () => {
     expect(mockWalletRepository.findById).toHaveBeenCalled();
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
     expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalled();
-    expect(mockMovementRepository.save).toHaveBeenCalled();
+    expect(mockMovementRepository.saveOrUpdate).toHaveBeenCalled();
 
     const WalletAfter = walletTest.toJson();
     expect(WalletAfter.balance).toBe(-Number(data.amount));
 
     const walletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
-    const movementSaved = mockMovementRepository.save.mock.calls[0][0];
+    const movementSaved = mockMovementRepository.saveOrUpdate.mock.calls[0][0];
 
     expect(walletSaved.toJson()).toStrictEqual(WalletAfter);
     expect(
@@ -92,6 +92,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       ...data,
       amount: Number(data.amount),
       isReversal: false,
+      isRefunded: false,
       reversalOfId: null,
     });
   });
@@ -127,13 +128,13 @@ describe("Caso de Uso - Criar uma movimentação", () => {
     expect(mockWalletRepository.findById).toHaveBeenCalled();
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
     expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalled();
-    expect(mockMovementRepository.save).toHaveBeenCalled();
+    expect(mockMovementRepository.saveOrUpdate).toHaveBeenCalled();
 
     const WalletAfter = walletTest.toJson();
     expect(WalletAfter.balance).toBe(Number(data.amount));
 
     const WalletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
-    const movementSaved = mockMovementRepository.save.mock.calls[0][0];
+    const movementSaved = mockMovementRepository.saveOrUpdate.mock.calls[0][0];
 
     expect(WalletSaved.toJson()).toStrictEqual(WalletAfter);
     expect(
@@ -142,6 +143,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       ...data,
       amount: Number(data.amount),
       isReversal: false,
+      isRefunded: false,
       reversalOfId: null,
     });
   });

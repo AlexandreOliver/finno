@@ -6,11 +6,11 @@ import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 
 import { DeleteMovementHandler } from "@/features/transactions/delete-movement/delete-movement.handler";
 import { v7 as uuid7 } from "uuid";
-import { Wallet } from "@/domain/entity/wallets.entity";
 import {
-  Movement,
-  resultCreateMovement,
-} from "@/domain/entity/movements.entity";
+  FunctionNewMovement,
+  resultCreateWallet,
+  Wallet,
+} from "@/domain/entity/wallets.entity";
 
 describe("Caso de Uso - Apagar uma movimentação", () => {
   let mockWalletRepository: jest.Mocked<IWalletsGateway>;
@@ -26,7 +26,7 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
 
   beforeEach(async () => {
     mockMovementRepository = {
-      save: jest.fn(),
+      saveOrUpdate: jest.fn(),
       list: jest.fn(),
       getById: jest.fn(),
       deleteById: jest.fn(),
@@ -47,107 +47,142 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
     } as unknown as jest.Mocked<IUnitOfWork>;
   });
 
-  test("Ao apagar uma movimentação de debito o valor é adicionado na carteira", async () => {
+  test("Ao reverter uma movimentação de debito é gerado o estorno e salvo o novo valor na carteira", async () => {
     const deleteMovement = startUseCase();
 
-    const walletTest = Wallet.with({
-      id: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
-      balance: "0.0",
+    const { data: walletTest } = Wallet.create({
       labelName: "Principal",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ownerId: "019f1aa1-d10c-778a-88e3-25a35ddd83430",
-    });
+      ownerId: uuid7(),
+    }) as resultCreateWallet & { success: true };
 
-    const movementTest = (
-      Movement.create({
+    const oldBalance = walletTest.balance;
+
+    const { data: movementTest } = walletTest.debito({
+      amount: 500.0,
+      movConfig: {
         description: "Mercado do mes",
-        type: "debito",
-        amount: 500.0,
+        isRefunded: false,
         categoryId: uuid7(),
-        walletId: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
-        reccurentId: null,
-        executedAt: new Date(),
         dueDate: null,
-      }) as resultCreateMovement & { success: true }
-    ).movement;
+        executedAt: new Date(),
+      },
+    }) as ReturnType<FunctionNewMovement> & { success: true };
 
     mockWalletRepository.findById.mockResolvedValue(walletTest);
     mockMovementRepository.getById.mockResolvedValue(movementTest);
 
     await deleteMovement.execute({ id: movementTest.id });
 
-    const WalletAfter = walletTest.toJson();
-
     expect(mockWalletRepository.findById).toHaveBeenCalled();
-
-    expect(WalletAfter.balance).toBe(Number(movementTest.amount));
-
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
+    expect(mockMovementRepository.saveOrUpdate).toHaveBeenCalledTimes(2);
+    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalledWith(walletTest);
 
-    const walletSaved_Expected = Wallet.with({
-      ...WalletAfter,
-      balance: WalletAfter.balance.toString(),
+    expect(walletTest.balance).toBe(oldBalance);
+
+    const estorno = mockMovementRepository.saveOrUpdate.mock.calls[0][0];
+    const movementAlterado =
+      mockMovementRepository.saveOrUpdate.mock.calls[1][0];
+
+    expect(movementAlterado.isRefunded).toBe(true);
+
+    expect(estorno.toJson()).toStrictEqual({
+      ...movementTest.toJson(),
+      id: estorno.id,
+      type: "credito",
+      isRefunded: false,
+      isReversal: true,
+      reversalOfId: movementTest.id,
+      description: `Estorno - ${movementTest.description}`,
+      executedAt: estorno.executedAt,
     });
-
-    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalledWith(
-      walletSaved_Expected,
-    );
-
-    expect(mockMovementRepository.deleteById).toHaveBeenCalledWith(
-      movementTest.id,
-    );
   });
 
-  test("Ao apagar uma movimentação de credito o valor é retirado da carteira", async () => {
+  test("Ao reverter uma movimentação de credito é gerado o estorno e salvo o novo valor na carteira", async () => {
     const deleteMovement = startUseCase();
 
-    const walletTest = Wallet.with({
-      id: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
-      balance: "0.0",
+    const { data: walletTest } = Wallet.create({
       labelName: "Principal",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ownerId: "019f1aa1-d10c-778a-88e3-25a35ddd83430",
-    });
+      ownerId: uuid7(),
+    }) as resultCreateWallet & { success: true };
 
-    const movementTest = (
-      Movement.create({
-        description: "Mercado do mes",
-        type: "debito",
-        amount: 500.0,
+    const oldBalance = walletTest.balance;
+
+    const { data: movementTest } = walletTest.credito({
+      amount: 500.0,
+      movConfig: {
+        description: "Freelancer",
+        isRefunded: false,
         categoryId: uuid7(),
-        walletId: "019f1aa1-d10c-778a-88e3-25a35ddd8960",
-        reccurentId: null,
-        executedAt: new Date(),
         dueDate: null,
-      }) as resultCreateMovement & { success: true }
-    ).movement;
+        executedAt: new Date(),
+      },
+    }) as ReturnType<FunctionNewMovement> & { success: true };
 
     mockWalletRepository.findById.mockResolvedValue(walletTest);
     mockMovementRepository.getById.mockResolvedValue(movementTest);
 
     await deleteMovement.execute({ id: movementTest.id });
 
-    const WalletAfter = walletTest.toJson();
-
     expect(mockWalletRepository.findById).toHaveBeenCalled();
-
-    expect(WalletAfter.balance).toBe(Number(movementTest.amount));
-
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
+    expect(mockMovementRepository.saveOrUpdate).toHaveBeenCalled();
+    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalledWith(walletTest);
 
-    const walletSaved_Expected = Wallet.with({
-      ...WalletAfter,
-      balance: WalletAfter.balance.toString(),
+    const WalletAfter = walletTest.toJson();
+    expect(WalletAfter.balance).toBe(oldBalance);
+
+    const estorno = mockMovementRepository.saveOrUpdate.mock.calls[0][0];
+    const movementAlterado =
+      mockMovementRepository.saveOrUpdate.mock.calls[1][0];
+
+    expect(movementAlterado.isRefunded).toBe(true);
+
+    expect(estorno.toJson()).toStrictEqual({
+      ...movementTest.toJson({
+        omit: ["type", "executedAt"],
+      }),
+      id: estorno.id,
+      executedAt: estorno.executedAt,
+      type: "debito",
+      isReversal: true,
+      isRefunded: false,
+      reversalOfId: movementTest.id,
+      description: `Estorno - ${movementTest.description}`,
     });
+  });
 
-    expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalledWith(
-      walletSaved_Expected,
-    );
+  test("Falha ao tentar reverter uma movimentação que ja foi estornada", async () => {
+    const deleteMovement = startUseCase();
 
-    expect(mockMovementRepository.deleteById).toHaveBeenCalledWith(
-      movementTest.id,
-    );
+    const { data: walletTest } = Wallet.create({
+      labelName: "Principal",
+      ownerId: uuid7(),
+    }) as resultCreateWallet & { success: true };
+
+    // const oldBalance = walletTest.balance;
+
+    const { data: movementTest } = walletTest.credito({
+      amount: 500.0,
+      movConfig: {
+        description: "Freelancer",
+        isRefunded: false,
+        categoryId: uuid7(),
+        dueDate: null,
+        executedAt: new Date(),
+      },
+    }) as ReturnType<FunctionNewMovement> & { success: true };
+
+    movementTest.isRefunded = true;
+
+    mockWalletRepository.findById.mockResolvedValue(walletTest);
+    mockMovementRepository.getById.mockResolvedValue(movementTest);
+
+    const result = await deleteMovement.execute({ id: movementTest.id });
+
+    expect(result).toStrictEqual({
+      success: false,
+      message: "Ja existe um estorno para essa movimentação",
+    });
   });
 });

@@ -167,6 +167,7 @@ describe("Repositorio drizzle Movements", () => {
       type: "debito",
       description: "Teste de save",
       amount: "100.00",
+      isRefunded: false,
       isReversal: false,
       reversalOfId: null,
       categoryId: seed_categorias[13].id,
@@ -185,7 +186,7 @@ describe("Repositorio drizzle Movements", () => {
 
     const movementCreated = movementResult.movement as Movement;
 
-    const result = await movementsRepository.save(movementCreated);
+    const result = await movementsRepository.saveOrUpdate(movementCreated);
 
     expect(result).toBe(true);
 

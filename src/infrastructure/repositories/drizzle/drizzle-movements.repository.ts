@@ -2,7 +2,7 @@
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { movements } from "@/infrastructure/database/schemas/movements";
 
-import { and, eq, SQL, desc, inArray, gte, lt, or } from "drizzle-orm";
+import { and, eq, SQL, desc, inArray, gte, lt, or, sql } from "drizzle-orm";
 import { PgSelect, PgDatabase } from "drizzle-orm/pg-core";
 
 import { categories } from "@/infrastructure/database/schemas/categories";
@@ -111,12 +111,23 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
     return movement;
   };
 
-  public save: IMovementGateway["save"] = async (movement) => {
+  public saveOrUpdate: IMovementGateway["saveOrUpdate"] = async (movement) => {
     const valuesObject = movement.toJson();
 
     const result = await this.dbInstance
       .insert(movements)
       .values({ ...valuesObject, amount: movement.amount.toString() })
+      .onConflictDoUpdate({
+        target: movements.id,
+        set: {
+          executedAt: sql`excluded.executed_at`,
+          categoryId: sql`excluded.category_id`,
+          description: sql`excluded.description`,
+          isRefunded: sql`excluded.is_refunded`,
+          walletId: sql`excluded.wallet_id`,
+        },
+        // setWhere: sql`${movements.reccurentId} IS NULL`,
+      })
       .returning();
 
     return !!result[0].id;

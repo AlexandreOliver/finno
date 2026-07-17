@@ -45,46 +45,67 @@ export function TableReccurent() {
   const dataTable = useMemo(() => {
     const onlyReccurent =
       mov?.payload?.reccurents.map((re) => {
-        let label_reccurent;
+        const labels_reccurent = {
+          label_interval: "",
+          label_installments: "",
+        };
 
         switch (re.frequency) {
           case "monthly": {
+            if (re.installments) {
+              labels_reccurent.label_installments = `por ${re.installments} meses`;
+            }
+
             if (re.interval === 1) {
-              label_reccurent = "A cada mês";
+              labels_reccurent.label_interval = "A cada mês";
+
               break;
             }
-            label_reccurent = `A cada ${re.interval} Meses`;
+            labels_reccurent.label_interval = `A cada ${re.interval} Meses`;
             break;
           }
           case "daily": {
+            if (re.installments) {
+              labels_reccurent.label_installments = `por ${re.installments} dias`;
+            }
+
             if (re.interval === 1) {
-              label_reccurent = "A cada dia";
+              labels_reccurent.label_interval = "A cada dia";
               break;
             }
-            label_reccurent = `A cada ${re.interval} dias`;
+            labels_reccurent.label_interval = `A cada ${re.interval} dias`;
             break;
           }
           case "weekly": {
+            if (re.installments) {
+              labels_reccurent.label_installments = `por ${re.installments} semanas`;
+            }
+
             if (re.interval === 1) {
-              label_reccurent = "A cada semana";
+              labels_reccurent.label_interval = "A cada semana";
               break;
             }
-            label_reccurent = `A cada ${re.interval} semanas`;
+
+            labels_reccurent.label_interval = `A cada ${re.interval} semanas`;
             break;
           }
           case "yearly": {
+            if (re.installments) {
+              labels_reccurent.label_installments = `por ${re.installments} anos`;
+            }
+
             if (re.interval === 1) {
-              label_reccurent = "A cada ano";
+              labels_reccurent.label_interval = "A cada ano";
               break;
             }
-            label_reccurent = `A cada ${re.interval} anos`;
+            labels_reccurent.label_interval = `A cada ${re.interval} anos`;
             break;
           }
         }
 
         return {
           ...re,
-          label_reccurent,
+          labels_reccurent,
         };
       }) ?? [];
 
@@ -103,7 +124,9 @@ export function TableReccurent() {
               <TableHead className="md:w-auto text-center">Descrição</TableHead>
               <TableHead className="md:w-40 text-center">Status</TableHead>
               <TableHead className="md:w-40 text-center">Reccorência</TableHead>
-              {/* <TableHead className="md:w-36 text-center">Categoria</TableHead> */}
+              <TableHead className="md:w-36 text-center">
+                Prox. Pagamento
+              </TableHead>
               <TableHead className="text-right w-20">Valor</TableHead>
             </TableRow>
           </TableHeader>
@@ -116,7 +139,7 @@ export function TableReccurent() {
                     <div className="text-muted-foreground text-xs md:text-sm">
                       {`${format(rec.start_date as Date, "MMMM 'de' yyyy", {
                         locale: ptBR,
-                      })} - ${format(rec.start_date as Date, "MMMM 'de' yyyy", {
+                      })} - ${format(rec.end_date as Date, "MMMM 'de' yyyy", {
                         locale: ptBR,
                       })}`}
                     </div>
@@ -134,11 +157,18 @@ export function TableReccurent() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
-                    <p>{rec.label_reccurent}</p>
+                    <p>{rec.labels_reccurent.label_interval}</p>
+                    <p>{rec.labels_reccurent.label_installments}</p>
                   </TableCell>
-                  {/* <TableCell className="text-center">
-                    <p className="text-balance">{rec.category?.label}</p>
-                  </TableCell> */}
+                  <TableCell className="text-center">
+                    {rec.next_due_date ? (
+                      <p className="text-balance">
+                        {format(rec.next_due_date, "dd/MM/yyyy")}
+                      </p>
+                    ) : (
+                      <p className="text-balance">--/--/--</p>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     {rec.type === "debito" ? (
                       <span className="dark:text-red-400 ">

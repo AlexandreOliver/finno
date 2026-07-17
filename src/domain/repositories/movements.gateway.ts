@@ -8,7 +8,7 @@ import {
 } from "../entity/types";
 
 export interface IMovementGateway {
-  save: FunctionSave<Movement, boolean>;
+  saveOrUpdate: FunctionSave<Movement, boolean>;
   list: FunctionList<Movement>;
   getById: (id: string) => Promise<Movement | null>;
   deleteById: FunctionDelete<boolean>;

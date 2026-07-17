@@ -42,6 +42,7 @@ async function sedding() {
         set: {
           start_date: sql`excluded.start_date`,
           end_date: sql`excluded.end_date`,
+          next_due_date: sql`excluded.next_due_date`,
         },
       });
 

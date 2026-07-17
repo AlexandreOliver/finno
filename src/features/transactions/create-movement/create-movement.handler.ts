@@ -101,7 +101,7 @@ export class CreateMovementHandler {
 
     try {
       await this.transactionService.runInTransaction(async () => {
-        await this.movementsRepository.save(movementOrError.data);
+        await this.movementsRepository.saveOrUpdate(movementOrError.data);
         await this.walletRepository.saveOrUpdate(wallet);
       });
     } catch {

@@ -274,7 +274,6 @@ export function TableMovements() {
                   <TableRow key={mov.id} className="border-[#323A4D]">
                     <TableCell className="text-xs md:text-lg w-17 md:w-auto">
                       <div className="flex gap-4 ml-4">
-                        <div className="md:flex justify-center items-center hidden"></div>
                         <div className="flex flex-col">
                           <div className="text-xs md:text-sm text-white/60">
                             <span>
@@ -333,7 +332,7 @@ export function TableMovements() {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="flex justify-center items-center"
-                            hidden
+                            hidden={mov.isReversal}
                           >
                             <DelButtonMovement
                               functionDelete={() =>

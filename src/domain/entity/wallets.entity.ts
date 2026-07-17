@@ -5,7 +5,6 @@ import {
   Movement,
   MovementErrorsValidation,
   MovementsCreateProps,
-  resultCreateMovement,
 } from "./movements.entity";
 
 export type WalletsFromDb = typeof wallets.$inferSelect;
@@ -27,7 +26,12 @@ export type FunctionNewMovement = (props: {
   amount: number;
   movConfig: Omit<
     MovementsCreateProps,
-    "walletId" | "amount" | "reccurentId" | "type"
+    | "walletId"
+    | "amount"
+    | "reccurentId"
+    | "type"
+    | "isReversal"
+    | "reversalOfId"
   >;
 }) =>
   | { success: true; data: Movement }
@@ -42,7 +46,7 @@ export type WalletsProps = {
   createdAt: Date;
 };
 
-type resultCreate =
+export type resultCreateWallet =
   | {
       success: false;
       errors: {
@@ -59,7 +63,7 @@ export class Wallet {
 
   public static create(
     props: Omit<WalletsProps, "id" | "balance" | "createdAt" | "updatedAt">,
-  ): resultCreate {
+  ): resultCreateWallet {
     const dataValid = walletSchema.safeParse(props);
 
     if (!dataValid.success) {
@@ -122,6 +126,8 @@ export class Wallet {
       type: "debito",
       walletId: this.id,
       reccurentId: null,
+      isReversal: false,
+      reversalOfId: null,
     };
 
     const mov = Movement.create(movementDTO);
@@ -152,6 +158,8 @@ export class Wallet {
       type: "credito",
       walletId: this.id,
       reccurentId: null,
+      isReversal: false,
+      reversalOfId: null,
     };
 
     const mov = Movement.create(movementDTO);
@@ -172,6 +180,62 @@ export class Wallet {
       data: mov.movement,
     };
   };
+
+  public gerarEstorno(
+    source: Movement,
+  ): { success: true; data: Movement } | { success: false; message: string } {
+    const sourceMovmentDTO = {
+      ...source.toJson({ omit: ["id"] }),
+      description: `Estorno - ${source.description}`,
+      executedAt: new Date(),
+      isReversal: true,
+    };
+
+    let movement: Movement;
+
+    if (sourceMovmentDTO.type === "credito") {
+      const result = Movement.create({
+        ...sourceMovmentDTO,
+        type: "debito",
+        reversalOfId: source.id,
+      });
+
+      if (!result.success) {
+        return {
+          success: false,
+          message: "Falhou ao criar estorno do tipo debito",
+        };
+      }
+
+      movement = result.movement;
+
+      this.props.balance -= movement.amount;
+      this.props.updatedAt = new Date();
+    } else {
+      const result = Movement.create({
+        ...sourceMovmentDTO,
+        type: "credito",
+        reversalOfId: source.id,
+      });
+
+      if (!result.success) {
+        return {
+          success: false,
+          message: "Falhou ao criar estorno do tipo credito",
+        };
+      }
+
+      movement = result.movement;
+
+      this.props.balance += movement.amount;
+      this.props.updatedAt = new Date();
+    }
+
+    return {
+      success: true,
+      data: movement,
+    };
+  }
 
   public toJson<K extends keyof WalletsProps = never>(options?: {
     omit: readonly K[];

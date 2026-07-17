@@ -1,7 +1,7 @@
 import { frequencyEnum, statusEnum, typesEnum } from "./database/schemas/Enums";
 import bcrypt from "bcrypt";
 
-const hoje = new Date();
+const hoje = new Date(new Date().setHours(6));
 
 function hash(senha: string) {
   const salt = bcrypt.genSaltSync(1);
@@ -232,6 +232,12 @@ const seed_templateReccurent = [
       hoje.getDate(),
       hoje.getHours(),
     ),
+    next_due_date: new Date(
+      hoje.getFullYear(),
+      hoje.getMonth() + 1,
+      hoje.getDate(),
+      6,
+    ),
   },
   {
     id: "019f67dd-92c2-7a2f-b43c-53bc01a3455b",
@@ -257,6 +263,7 @@ const seed_templateReccurent = [
       8,
       hoje.getHours(),
     ),
+    next_due_date: new Date(hoje.getFullYear(), hoje.getMonth() + 1, 8, 6),
   },
 ];
 
@@ -283,7 +290,7 @@ const seed_movements = [
     amount: "1123.23",
     categoryId: seed_categorias[13].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "014e2dde-48e8-73b6-b0d4-bcaadd749216",
@@ -292,7 +299,7 @@ const seed_movements = [
     amount: "183.23",
     categoryId: seed_categorias[13].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "019e1dde-48e8-73b6-b0d4-bcaadd749216",
@@ -301,7 +308,7 @@ const seed_movements = [
     amount: "1843.23",
     categoryId: seed_categorias[13].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "019e1dff-0c81-7ea5-9ff2-582433246f3c",
@@ -310,7 +317,7 @@ const seed_movements = [
     amount: "789.34",
     categoryId: seed_categorias[3].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "019e1e0d-21aa-773e-b3a7-9bfb6af6e80f",
@@ -319,7 +326,7 @@ const seed_movements = [
     amount: "102.40",
     categoryId: seed_categorias[1].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "019e1e52-de9d-77e1-8175-0f12d40a181d",
@@ -328,7 +335,7 @@ const seed_movements = [
     amount: "50.41",
     categoryId: seed_categorias[5].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "019e1e59-1daa-7586-8bf9-9537a3fe52e8",
@@ -338,7 +345,7 @@ const seed_movements = [
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
     reccurentId: seed_templateReccurent[0].id,
-    executedAt: new Date(),
+    executedAt: hoje,
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000001",
@@ -347,7 +354,7 @@ const seed_movements = [
     amount: "23.50",
     categoryId: seed_categorias[0].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 3, 12, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 3, 6, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000002",
@@ -356,7 +363,7 @@ const seed_movements = [
     amount: "156.78",
     categoryId: seed_categorias[3].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 12, 10, 15),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 12, 6, 15),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000003",
@@ -365,7 +372,7 @@ const seed_movements = [
     amount: "18.90",
     categoryId: seed_categorias[7].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 22, 8, 5),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 22, 6, 5),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000004",
@@ -374,7 +381,7 @@ const seed_movements = [
     amount: "45.12",
     categoryId: seed_categorias[10].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 5, 9, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 5, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000005",
@@ -383,7 +390,7 @@ const seed_movements = [
     amount: "120.40",
     categoryId: seed_categorias[1].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 18, 14, 20),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 18, 6, 20),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000006",
@@ -392,7 +399,7 @@ const seed_movements = [
     amount: "32.10",
     categoryId: seed_categorias[22].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 9, 16, 45),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 9, 6, 45),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000007",
@@ -401,7 +408,7 @@ const seed_movements = [
     amount: "299.99",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 4, 2, 11, 5),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 4, 2, 6, 5),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000008",
@@ -419,7 +426,7 @@ const seed_movements = [
     amount: "38.00",
     categoryId: seed_categorias[20].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 5, 14, 20, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 5, 14, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000a",
@@ -428,7 +435,7 @@ const seed_movements = [
     amount: "75.30",
     categoryId: seed_categorias[1].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 6, 28, 22, 10),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 6, 28, 6, 10),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000b",
@@ -437,7 +444,7 @@ const seed_movements = [
     amount: "42.00",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 11, 15, 20),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 11, 6, 20),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000c",
@@ -446,7 +453,7 @@ const seed_movements = [
     amount: "65.00",
     categoryId: seed_categorias[21].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 7, 10, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 7, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000d",
@@ -455,7 +462,7 @@ const seed_movements = [
     amount: "210.00",
     categoryId: seed_categorias[22].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 7, 4, 9, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 7, 4, 6, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000e",
@@ -464,7 +471,7 @@ const seed_movements = [
     amount: "50.00",
     categoryId: seed_categorias[23].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 20, 18, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 20, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000f",
@@ -473,7 +480,7 @@ const seed_movements = [
     amount: "450.00",
     categoryId: seed_categorias[24].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 25, 13, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 25, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000010",
@@ -482,7 +489,7 @@ const seed_movements = [
     amount: "120.50",
     categoryId: seed_categorias[16].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 6, 9, 15),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 6, 6, 15),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000011",
@@ -491,7 +498,7 @@ const seed_movements = [
     amount: "89.90",
     categoryId: seed_categorias[25].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 4, 19, 11, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 4, 19, 6, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000012",
@@ -500,7 +507,7 @@ const seed_movements = [
     amount: "60.00",
     categoryId: seed_categorias[24].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 14, 17, 45),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 14, 6, 45),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000013",
@@ -509,7 +516,7 @@ const seed_movements = [
     amount: "12.75",
     categoryId: seed_categorias[0].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 5, 8, 15, 10),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 5, 8, 6, 10),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000014",
@@ -518,7 +525,7 @@ const seed_movements = [
     amount: "48.60",
     categoryId: seed_categorias[3].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 6, 2, 9, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 6, 2, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000015",
@@ -527,7 +534,7 @@ const seed_movements = [
     amount: "4.50",
     categoryId: seed_categorias[7].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 6, 3, 8, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 6, 3, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000016",
@@ -536,7 +543,7 @@ const seed_movements = [
     amount: "210.34",
     categoryId: seed_categorias[3].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 16, 12, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 16, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000017",
@@ -545,7 +552,7 @@ const seed_movements = [
     amount: "95.00",
     categoryId: seed_categorias[4].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 7, 10, 10, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 7, 10, 6, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000018",
@@ -554,7 +561,7 @@ const seed_movements = [
     amount: "150.00",
     categoryId: seed_categorias[5].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 21, 19, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 21, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000019",
@@ -563,7 +570,7 @@ const seed_movements = [
     amount: "120.00",
     categoryId: seed_categorias[6].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 30, 10, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 1, 30, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001a",
@@ -573,7 +580,7 @@ const seed_movements = [
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
     reccurentId: seed_templateReccurent[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 5, 9, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 5, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001b",
@@ -582,7 +589,7 @@ const seed_movements = [
     amount: "350.00",
     categoryId: seed_categorias[18].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 27, 14, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 2, 27, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001c",
@@ -591,7 +598,7 @@ const seed_movements = [
     amount: "150.00",
     categoryId: seed_categorias[16].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 13, 11, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 3, 13, 6, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001d",
@@ -600,7 +607,7 @@ const seed_movements = [
     amount: "89.99",
     categoryId: seed_categorias[11].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 4, 7, 8, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 4, 7, 6, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001e",
@@ -609,7 +616,7 @@ const seed_movements = [
     amount: "99.90",
     categoryId: seed_categorias[20].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 11, 2, 12, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 11, 2, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001f",
@@ -618,7 +625,7 @@ const seed_movements = [
     amount: "420.00",
     categoryId: seed_categorias[13].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 5, 3, 10, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 5, 3, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000020",

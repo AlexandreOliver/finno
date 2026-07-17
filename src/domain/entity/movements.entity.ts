@@ -10,6 +10,7 @@ export type MovementsProps = {
   description: string;
   amount: number;
   isReversal: boolean;
+  isRefunded: boolean;
   reversalOfId: string | null;
   categoryId: string;
   reccurentId: string | null;
@@ -22,6 +23,7 @@ export type MovementsCreateProps = {
   type: string;
   description: string;
   amount: number;
+  isRefunded: boolean;
   isReversal: boolean;
   reversalOfId: string | null;
   categoryId: string;
@@ -67,14 +69,31 @@ export const movementsSchema = createInsertSchema(movements, {
       error: "O Valor Precisa ser maior do que 0",
     }),
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
-  walletId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
-  reccurentId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
-  categoryId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
+  walletId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
+  reccurentId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
+  categoryId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
   executedAt: (schema) => schema.nonoptional().default(new Date()),
   dueDate: (schema) => schema.nonoptional(),
   isReversal: (schema) => schema.nonoptional(),
-  reversalOfId: (schema) => schema.nonoptional(),
-});
+  isRefunded: (schema) => schema.nonoptional(),
+  reversalOfId: () =>
+    zod.uuidv7({ error: "Forneça uma uuid na versao 7" }).nonoptional(),
+})
+  .refine((mov) => !(mov.isRefunded && mov.isReversal), {
+    error:
+      "A movimentação não pode ter os campos isReversal e isRefunded como true",
+    path: ["isReversal"],
+  })
+  .refine(
+    (mov) =>
+      (!mov.isReversal && !mov.reversalOfId) ||
+      (mov.isReversal && mov.reversalOfId),
+    {
+      error:
+        "Se a movimentação é um estorno o campo reversalOfId precisa estar preenchido.",
+      path: ["reversalOfId"],
+    },
+  );
 
 export class Movement {
   private constructor(private readonly props: MovementsProps) {}
@@ -124,6 +143,10 @@ export class Movement {
     return this.props.amount;
   }
 
+  public get isRefunded() {
+    return this.props.isRefunded;
+  }
+
   public get isReversal() {
     return this.props.isReversal;
   }
@@ -153,10 +176,17 @@ export class Movement {
   }
   //#endregion
 
+  //#region Setters
+  public set isRefunded(newSate: boolean) {
+    this.props.isRefunded = newSate;
+  }
+
+  //#endregion
+
   public toJson<K extends keyof MovementsProps = never>(options?: {
     omit: readonly K[];
   }): Omit<MovementsProps, K> {
-    const data = this.props;
+    const data = Object.assign({}, this.props);
 
     if (!options || Object.keys(options.omit).length === 0) {
       return data;

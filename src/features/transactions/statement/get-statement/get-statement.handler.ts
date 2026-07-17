@@ -20,6 +20,9 @@ export interface TransactionDTO {
       id: string;
       label: string;
     } | null;
+    isReversal: boolean;
+    isRefunded: boolean;
+    reversalOfId: string | null;
     walletId: string;
     executedAt: Date;
     reccurent: string | null;

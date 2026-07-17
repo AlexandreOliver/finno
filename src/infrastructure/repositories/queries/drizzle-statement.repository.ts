@@ -58,6 +58,9 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
             id: categories.id,
             label: categories.label,
           },
+          isReversal: movements.isReversal,
+          isRefunded: movements.isRefunded,
+          reversalOfId: movements.reversalOfId,
           walletId: movements.walletId,
           reccurent: movements.reccurentId,
           executedAt: movements.executedAt,
@@ -78,41 +81,6 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
         .where(and(...filtersRec))
         .orderBy(desc(templateReccurent.start_date)),
     ]);
-
-    // const resultDb = await this.dbInstance
-    //   .select({
-    //     id: movements.id,
-    //     type: movements.type,
-    //     description: movements.description,
-    //     amount: sql<number>`${movements.amount}`,
-    //     category: {
-    //       id: categories.id,
-    //       label: categories.label,
-    //     },
-    //     walletId: movements.walletId,
-    //     reccurent: {
-    //       id: templateReccurent.id,
-    //       status: templateReccurent.status,
-    //       frequency: templateReccurent.frequency,
-    //       interval: templateReccurent.interval,
-    //       countPaid: templateReccurent.countPaid,
-    //       installments: templateReccurent.installments,
-    //       start_date: templateReccurent.start_date,
-    //       end_date: templateReccurent.end_date,
-    //       next_due_date: templateReccurent.next_due_date,
-    //     },
-    //     executedAt: movements.executedAt,
-    //   })
-    //   .from(movements)
-    //   .leftJoin(categories, eq(categories.id, movements.categoryId))
-    //   .leftJoin(
-    //     templateReccurent,
-    //     eq(templateReccurent.id, movements.reccurentId),
-    //   )
-    //   .where(and(...filters))
-    //   .offset((pagination.page - 1) * pagination.limit)
-    //   .limit(pagination.limit)
-    //   .orderBy(desc(movements.executedAt), desc(movements.amount));
 
     return {
       movements: movementsFromDb,
