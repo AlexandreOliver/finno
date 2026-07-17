@@ -71,30 +71,29 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       success: true;
     };
 
-    const WalletAfter = walletTest.toJson();
-
     expect(result.success).toBe(true);
     expect(result.movement).toHaveProperty("id");
 
     expect(mockWalletRepository.findById).toHaveBeenCalled();
-
-    expect(WalletAfter.balance).toBe(-Number(data.amount));
-
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
-
     expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalled();
-
-    const walletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
-
-    expect(walletSaved.toJson()).toStrictEqual(WalletAfter);
-
     expect(mockMovementRepository.save).toHaveBeenCalled();
 
+    const WalletAfter = walletTest.toJson();
+    expect(WalletAfter.balance).toBe(-Number(data.amount));
+
+    const walletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
     const movementSaved = mockMovementRepository.save.mock.calls[0][0];
 
+    expect(walletSaved.toJson()).toStrictEqual(WalletAfter);
     expect(
       movementSaved.toJson({ omit: ["id", "dueDate", "executedAt"] }),
-    ).toStrictEqual({ ...data, amount: Number(data.amount) });
+    ).toStrictEqual({
+      ...data,
+      amount: Number(data.amount),
+      isReversal: false,
+      reversalOfId: null,
+    });
   });
 
   test("Ao criar uma movimentação de credito o valor é adicionado a carteira", async () => {
@@ -122,29 +121,28 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       success: true;
     };
 
-    const WalletAfter = walletTest.toJson();
-
     expect(result.success).toBe(true);
     expect(result.movement).toHaveProperty("id");
 
     expect(mockWalletRepository.findById).toHaveBeenCalled();
-
-    expect(WalletAfter.balance).toBe(Number(data.amount));
-
     expect(mockTransaction.runInTransaction).toHaveBeenCalled();
-
     expect(mockWalletRepository.saveOrUpdate).toHaveBeenCalled();
-
-    const WalletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
-
-    expect(WalletSaved.toJson()).toStrictEqual(WalletAfter);
-
     expect(mockMovementRepository.save).toHaveBeenCalled();
 
+    const WalletAfter = walletTest.toJson();
+    expect(WalletAfter.balance).toBe(Number(data.amount));
+
+    const WalletSaved = mockWalletRepository.saveOrUpdate.mock.calls[0][0];
     const movementSaved = mockMovementRepository.save.mock.calls[0][0];
 
+    expect(WalletSaved.toJson()).toStrictEqual(WalletAfter);
     expect(
       movementSaved.toJson({ omit: ["id", "dueDate", "executedAt"] }),
-    ).toStrictEqual({ ...data, amount: Number(data.amount) });
+    ).toStrictEqual({
+      ...data,
+      amount: Number(data.amount),
+      isReversal: false,
+      reversalOfId: null,
+    });
   });
 });

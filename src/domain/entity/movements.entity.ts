@@ -9,6 +9,8 @@ export type MovementsProps = {
   type: "debito" | "credito" | "investimento";
   description: string;
   amount: number;
+  isReversal: boolean;
+  reversalOfId: string | null;
   categoryId: string;
   reccurentId: string | null;
   executedAt: Date;
@@ -20,6 +22,8 @@ export type MovementsCreateProps = {
   type: string;
   description: string;
   amount: number;
+  isReversal: boolean;
+  reversalOfId: string | null;
   categoryId: string;
   reccurentId: string | null;
   executedAt: Date;
@@ -68,6 +72,8 @@ export const movementsSchema = createInsertSchema(movements, {
   categoryId: () => zod.uuidv7({ error: "Forneça uma uuid a versao 7" }),
   executedAt: (schema) => schema.nonoptional().default(new Date()),
   dueDate: (schema) => schema.nonoptional(),
+  isReversal: (schema) => schema.nonoptional(),
+  reversalOfId: (schema) => schema.nonoptional(),
 });
 
 export class Movement {
@@ -104,7 +110,7 @@ export class Movement {
 
   //#region Getters
   public get id() {
-    return this.props.id as string;
+    return this.props.id;
   }
   public get type() {
     return this.props.type;
@@ -116,6 +122,14 @@ export class Movement {
 
   public get amount() {
     return this.props.amount;
+  }
+
+  public get isReversal() {
+    return this.props.isReversal;
+  }
+
+  public get reversalOfId() {
+    return this.props.reversalOfId;
   }
 
   public get walletId() {
@@ -131,7 +145,7 @@ export class Movement {
   }
 
   public get executedAt() {
-    return this.props.executedAt as Date;
+    return this.props.executedAt;
   }
 
   public get dueDate() {

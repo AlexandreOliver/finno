@@ -167,6 +167,8 @@ describe("Repositorio drizzle Movements", () => {
       type: "debito",
       description: "Teste de save",
       amount: "100.00",
+      isReversal: false,
+      reversalOfId: null,
       categoryId: seed_categorias[13].id,
       reccurentId: null,
       executedAt: new Date(),
