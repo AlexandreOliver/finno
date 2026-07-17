@@ -919,8 +919,8 @@ const seed_movements = [
 const seed_transfers = [
   {
     id: "019e1e03-e846-7cb5-b183-4d9c85984e61",
-    debited_wallet: seed_wallets[1].id,
-    credited_wallet: seed_wallets[0].id,
+    debitedWallet: seed_wallets[1].id,
+    creditedWallet: seed_wallets[0].id,
     amount: "300",
   },
 ];
