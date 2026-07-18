@@ -48,7 +48,7 @@ export class CreateReccurentUseCase {
   public async execute(input: inputDTO): Promise<outputDTO> {
     const response = Reccurent.create({ ...input, countPaid: 0 });
 
-    if (!response.sucess) {
+    if (!response.success) {
       return {
         success: false,
         errors: response.errors,
@@ -57,7 +57,7 @@ export class CreateReccurentUseCase {
     }
 
     const result = await this.ReccurentRepository.save(
-      response.reccurent as Reccurent,
+      response.data as Reccurent,
     );
 
     if (result) {

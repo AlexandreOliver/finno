@@ -60,6 +60,7 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
     const { data: movementTest } = walletTest.debito({
       amount: 500.0,
       movConfig: {
+        reccurentId: null,
         description: "Mercado do mes",
         isRefunded: false,
         categoryId: uuid7(),
@@ -111,6 +112,7 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
     const { data: movementTest } = walletTest.credito({
       amount: 500.0,
       movConfig: {
+        reccurentId: null,
         description: "Freelancer",
         isRefunded: false,
         categoryId: uuid7(),
@@ -165,6 +167,7 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
     const { data: movementTest } = walletTest.credito({
       amount: 500.0,
       movConfig: {
+        reccurentId: null,
         description: "Freelancer",
         isRefunded: false,
         categoryId: uuid7(),
