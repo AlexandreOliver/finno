@@ -114,7 +114,7 @@ export function TableMovements() {
   };
 
   return (
-    <div className="min-h-147.25">
+    <div className="">
       <div className="flex flex-col gap-2">
         <div className="mx-auto md:mx-0">
           <div className="grid grid-cols-1 md:flex md:flex-row md:gap-4 md:justify-between md:items-end">
@@ -252,7 +252,7 @@ export function TableMovements() {
             </div>
           </div>
         </div>
-        <div className="rounded-md overflow-hidden border border-[#3a3f4d]">
+        <div className="rounded-md overflow-hidden border border-[#3a3f4d] min-h-174 bg-[#2A3040]/20 ">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-xs md:text-lg">
@@ -268,11 +268,11 @@ export function TableMovements() {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className=" bg-[#2A3040]/20 text-xs md:text-lg">
+            <TableBody className=" text-xs md:text-lg">
               {payloadFiltred.length > 0 ? (
                 payloadFiltred.map((mov) => (
                   <TableRow key={mov.id} className="border-[#323A4D]">
-                    <TableCell className="text-xs md:text-lg w-17 md:w-auto">
+                    <TableCell className="text-xs md:text-lg">
                       <div className="flex gap-4 ml-4">
                         <div className="flex flex-col">
                           <div className="text-xs md:text-sm text-white/60">
@@ -287,16 +287,32 @@ export function TableMovements() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-balance">{mov.description}</p>
+                          <p
+                            className={clsx(
+                              { "text-muted-foreground": mov.isRefunded },
+                              "text-balance",
+                            )}
+                          >
+                            {mov.description}
+                          </p>
+                          {mov.isRefunded && (
+                            <span className="text-sm text-muted-foreground">
+                              Reembolsado
+                            </span>
+                          )}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-center w-22 md:w-32">
+                    <TableCell className="text-center">
                       <p className="text-balance">
                         {mov.category?.label ?? "-"}
                       </p>
                     </TableCell>
-                    <TableCell className="text-right w-18">
+                    <TableCell
+                      className={clsx("text-right", {
+                        "line-through": mov.isRefunded,
+                      })}
+                    >
                       {mov.type === "debito" ? (
                         <span className="dark:text-red-400 ">
                           {`- ${formatCurrency(Number(mov.amount))}`}
@@ -307,7 +323,7 @@ export function TableMovements() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-center w-15 md:w-25">
+                    <TableCell className="text-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger
                           render={
@@ -324,15 +340,15 @@ export function TableMovements() {
                             <Link
                               prefetch={false}
                               href="#"
-                              className="flex justify-center items-center h-full w-full"
+                              className="flex justify-center items-center text-green-400 "
                             >
-                              <Edit className="text-green-400 " />
-                              <span className="sr-only">Editar</span>
+                              <Edit className="" />
+                              <span className="ml-2">Editar</span>
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="flex justify-center items-center"
-                            hidden={mov.isReversal}
+                            hidden={mov.isReversal || mov.isRefunded}
                           >
                             <DelButtonMovement
                               functionDelete={() =>

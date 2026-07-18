@@ -17,12 +17,12 @@ export function DelButtonMovement({
       type="submit"
       variant="ghost"
       size="icon-xs"
-      className="min-w-sm"
+      className="min-w-sm text-red-500"
       onClick={functionDelete}
       {...rest}
     >
-      <Trash2 color="red" />
-      <span className="sr-only">Excluir</span>
+      <Trash2 />
+      <span className="ml-2">Excluir</span>
     </Button>
   );
 }
