@@ -98,7 +98,8 @@ export function TableMovements() {
       movements?.payload?.movements.filter(
         (w) =>
           (w.type === seletorType || seletorType === "todas") &&
-          (w.walletId === selectWallet || selectWallet === "todas"),
+          (w.walletId === selectWallet || selectWallet === "todas") &&
+          !w.isReversal,
       ) ?? [],
     [movements?.payload, seletorType, selectWallet],
   );
@@ -295,11 +296,16 @@ export function TableMovements() {
                           >
                             {mov.description}
                           </p>
-                          {mov.isRefunded && (
-                            <span className="text-sm text-muted-foreground">
-                              Reembolsado
-                            </span>
-                          )}
+                          {mov.isRefunded &&
+                            (mov.type === "debito" ? (
+                              <span className="text-xs md:text-sm text-muted-foreground">
+                                Reembolsado
+                              </span>
+                            ) : (
+                              <span className="text-xs md:text-sm text-muted-foreground">
+                                Estornado
+                              </span>
+                            ))}
                         </div>
                       </div>
                     </TableCell>

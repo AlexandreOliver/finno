@@ -110,7 +110,7 @@ export function TableReccurent() {
       }) ?? [];
 
     return onlyReccurent;
-  }, [mov]);
+  }, [mov?.payload?.reccurents]);
 
   return (
     <section>
