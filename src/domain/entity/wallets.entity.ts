@@ -6,6 +6,8 @@ import {
   MovementErrorsValidation,
   MovementsCreateProps,
 } from "./movements.entity";
+import { Reccurent } from "./reccurent.entity";
+import { isEqual, set } from "date-fns";
 
 export type WalletsFromDb = typeof wallets.$inferSelect;
 export type WalletsFromD = typeof wallets.$inferInsert;
@@ -26,12 +28,7 @@ export type FunctionNewMovement = (props: {
   amount: number;
   movConfig: Omit<
     MovementsCreateProps,
-    | "walletId"
-    | "amount"
-    | "reccurentId"
-    | "type"
-    | "isReversal"
-    | "reversalOfId"
+    "walletId" | "amount" | "type" | "isReversal" | "reversalOfId"
   >;
 }) =>
   | { success: true; data: Movement }
@@ -58,6 +55,11 @@ export type resultCreateWallet =
       success: true;
       data: Wallet;
     };
+
+export type returnMovementFromReccurent =
+  | { success: true; data: Movement }
+  | { success: false; message: string };
+
 export class Wallet {
   private constructor(private readonly props: WalletsProps) {}
 
@@ -125,7 +127,6 @@ export class Wallet {
       amount,
       type: "debito",
       walletId: this.id,
-      reccurentId: null,
       isReversal: false,
       reversalOfId: null,
     };
@@ -157,7 +158,6 @@ export class Wallet {
       amount,
       type: "credito",
       walletId: this.id,
-      reccurentId: null,
       isReversal: false,
       reversalOfId: null,
     };
@@ -236,6 +236,80 @@ export class Wallet {
       data: movement,
     };
   }
+
+  public generateMovementFromReccurent = (
+    reccurent: Reccurent,
+  ): returnMovementFromReccurent => {
+    const hoje = set(new Date(), {
+      hours: reccurent.startHour,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    const isContinue =
+      reccurent.nextDueDate &&
+      isEqual(reccurent.nextDueDate, hoje) &&
+      (reccurent.installments ?? 0) > reccurent.countPaid &&
+      reccurent.walletId === this.id &&
+      reccurent.startDate <= hoje;
+
+    if (!isContinue)
+      return {
+        success: false,
+        message:
+          "A recorrencia é Invalida. Verifique se ja terminou, esta no vencimento ou pertence a essa wallet",
+      };
+
+    const rawData = {
+      ...reccurent.toJson({
+        omit: [
+          "countPaid",
+          "end_date",
+          "frequency",
+          "id",
+          "installments",
+          "interval",
+          "next_due_date",
+        ],
+      }),
+      reccurentId: reccurent.id,
+      executedAt: reccurent.nextDueDate as Date,
+      dueDate: reccurent.nextDueDate,
+      isReversal: false,
+      isRefunded: false,
+      reversalOfId: null,
+    };
+
+    let movement: ReturnType<FunctionNewMovement>;
+
+    if (rawData.type === "credito") {
+      movement = this.credito({
+        amount: rawData.amount,
+        movConfig: {
+          ...rawData,
+        },
+      });
+    } else {
+      movement = this.debito({
+        amount: rawData.amount,
+        movConfig: {
+          ...rawData,
+        },
+      });
+    }
+
+    if (!movement.success)
+      return {
+        success: false,
+        message: "Falha ao criar movimentação apartir da recorrência",
+      };
+
+    return {
+      success: true,
+      data: movement.data,
+    };
+  };
 
   public toJson<K extends keyof WalletsProps = never>(options?: {
     omit: readonly K[];

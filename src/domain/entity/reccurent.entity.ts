@@ -2,6 +2,7 @@ import { templateReccurent } from "@/infrastructure/database/schemas/templateRec
 import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuid7 } from "uuid";
 import zod from "zod";
+import { isEqual } from "lodash";
 
 import {
   addDays,
@@ -10,7 +11,6 @@ import {
   addYears,
   set,
   isBefore,
-  isEqual,
 } from "date-fns";
 import { Movement } from "./movements.entity";
 
@@ -132,6 +132,7 @@ export type ReccurentCreateProps = {
   walletId: string;
   start_date: string | Date;
   end_date?: string | Date | null;
+  nextDueDate?: Date;
 };
 
 export type ReccurentOutput = zod.output<typeof reccurentSchema>;
@@ -154,13 +155,35 @@ export type ReccurentProps = {
   next_due_date: Date | null;
 };
 
+export type returnCreateReccurent =
+  | { success: true; data: Reccurent }
+  | {
+      success: false;
+      errors: {
+        id?: string[] | undefined;
+        type?: string[] | undefined;
+        status?: string[] | undefined;
+        description?: string[] | undefined;
+        amount?: string[] | undefined;
+        frequency?: string[] | undefined;
+        interval?: string[] | undefined;
+        installments?: string[] | undefined;
+        countPaid?: string[] | undefined;
+        categoryId?: string[] | undefined;
+        walletId?: string[] | undefined;
+        start_date?: string[] | undefined;
+        end_date?: string[] | undefined;
+        next_due_date?: string[] | undefined;
+      };
+    };
+
 export class Reccurent {
   readonly #startHour = 6;
   readonly #endHour = 18;
 
   private constructor(private readonly props: ReccurentProps) {}
 
-  public static create(data: ReccurentCreateProps) {
+  public static create(data: ReccurentCreateProps): returnCreateReccurent {
     const fullData = {
       id: uuid7(),
       ...data,
@@ -170,31 +193,33 @@ export class Reccurent {
 
     if (!dataFormated.success) {
       return {
-        sucess: false,
+        success: false,
         errors: zod.flattenError(dataFormated.error).fieldErrors,
       };
     }
 
-    if (!dataFormated.data.next_due_date) {
-      const nextDue = this.calculateNextDueDate({
-        interval: dataFormated.data.interval,
-        frequency: dataFormated.data.frequency,
-        startDate: dataFormated.data.start_date,
-        endDate: dataFormated.data.end_date as Date,
-        countPaid: dataFormated.data.countPaid,
-      });
+    // if (!dataFormated.data.next_due_date) {
+    //   const nextDue = this.calculateNextDueDate({
+    //     interval: dataFormated.data.interval,
+    //     frequency: dataFormated.data.frequency,
+    //     startDate: dataFormated.data.start_date,
+    //     endDate: dataFormated.data.end_date as Date,
+    //     countPaid: dataFormated.data.countPaid,
+    //   });
 
-      dataFormated["data"]["next_due_date"] = nextDue;
-    }
+    //   dataFormated["data"]["next_due_date"] = nextDue;
+    // }
 
     // console.log("Saiu: ");
     // console.log(dataFormated.data);
 
     const reccurent = new Reccurent(dataFormated.data);
 
+    if (!reccurent.nextDueDate) reccurent.calculateNextDueDate();
+
     return {
-      sucess: true,
-      reccurent: reccurent,
+      success: true,
+      data: reccurent,
     };
   }
 
@@ -207,28 +232,20 @@ export class Reccurent {
     });
   }
 
-  public static calculateNextDueDate({
-    interval,
-    startDate,
-    endDate,
-    frequency,
-    installments,
-    countPaid,
-  }: {
-    startDate: Date;
-    endDate?: Date;
-    interval: number;
-    frequency: "daily" | "weekly" | "monthly" | "yearly";
-    installments?: number;
-    countPaid: number | null;
-  }): Date | null {
-    let nextDate = set(startDate, { hours: 6 });
+  public calculateNextDueDate(): Date | null {
+    let nextDate = set(this.startDate, {
+      hours: 6,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
 
-    if (installments && (countPaid ?? 0) >= installments) return null;
+    if (this.installments && (this.countPaid ?? 0) >= this.installments)
+      return null;
 
-    const salto = ((countPaid ?? 0) + 1) * interval;
+    const salto = ((this.countPaid ?? 0) + 1) * this.interval;
 
-    switch (frequency) {
+    switch (this.frequency) {
       case "daily":
         nextDate = addDays(nextDate, salto);
         break;
@@ -246,53 +263,47 @@ export class Reccurent {
         break;
     }
 
-    if (endDate && !isBefore(nextDate, endDate)) return null;
+    if (this.endDate && !isBefore(nextDate, this.endDate)) return null;
+
+    this.nextDueDate = nextDate;
 
     return nextDate;
   }
 
-  public generateMovement(): Movement | null {
-    if (
-      this.nextDueDate &&
-      isEqual(this.nextDueDate, set(new Date(), { hours: this.#startHour })) &&
-      (this.installments ?? 0) > this.countPaid
-    ) {
-      const rawData = {
-        ...this.toJson({
-          omit: [
-            "countPaid",
-            "end_date",
-            "frequency",
-            "id",
-            "installments",
-            "interval",
-            "next_due_date",
-          ],
-        }),
-        reccurentId: this.id,
-        executedAt: this.nextDueDate,
-        dueDate: this.nextDueDate,
-        isReversal: false,
-        isRefunded: false,
-        reversalOfId: null,
-      };
+  public mutateCountPaid(nextMovement: Movement): boolean {
+    if (!((this.installments ?? 0) > this.countPaid)) return false;
 
-      const movement = Movement.create(rawData);
+    const reccurentProps = this.toJson({
+      omit: [
+        "countPaid",
+        "status",
+        "start_date",
+        "end_date",
+        "frequency",
+        "id",
+        "installments",
+        "interval",
+        "next_due_date",
+      ],
+    });
 
-      if (!movement.success) return null;
+    const jsonMovementExpect = {
+      ...reccurentProps,
+      isReversal: false,
+      isRefunded: false,
+      reversalOfId: null,
+      reccurentId: this.id,
+      executedAt: this.nextDueDate,
+      dueDate: this.nextDueDate,
+    };
 
-      this.countPaid++;
+    const nextMovementJson = nextMovement.toJson({ omit: ["id"] });
 
-      return movement.movement as Movement;
-    }
+    if (!isEqual(jsonMovementExpect, nextMovementJson)) return false;
 
-    return null;
-  }
+    this.countPaid += 1;
 
-  private set countPaid(newValue: number) {
-    if (newValue < 0 || newValue === this.countPaid) return;
-
-    this.countPaid = newValue;
+    return true;
   }
 
   //#region Getters
@@ -350,12 +361,34 @@ export class Reccurent {
   public get nextDueDate() {
     return this.props.next_due_date;
   }
+
+  public get startHour() {
+    return this.#startHour;
+  }
+  //#endregion
+
+  //#region Setters
+
+  private set countPaid(newValue: number) {
+    if (newValue < 0 || newValue === this.countPaid) return;
+
+    this.props.countPaid = newValue;
+  }
+
+  private set nextDueDate(newDate: Date | null) {
+    if (this.nextDueDate && newDate == this.nextDueDate) {
+      return;
+    }
+
+    this.props.next_due_date = newDate;
+  }
+
   //#endregion
 
   public toJson<K extends keyof ReccurentProps = never>(options?: {
     omit: K[];
   }): Omit<ReccurentProps, K> {
-    const data = this.props;
+    const data = { ...this.props };
 
     if (!options || Object.keys(options.omit).length === 0) {
       return data as unknown as ReccurentProps;
