@@ -35,8 +35,12 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
 
     if (Array.isArray(walletId)) {
       filtersMov.push(inArray(movements.walletId, walletId));
+
+      filtersRec.push(inArray(templateReccurent.walletId, walletId));
     } else {
       filtersMov.push(eq(movements.walletId, walletId));
+
+      filtersRec.push(eq(templateReccurent.walletId, walletId));
     }
 
     if (query?.date && query.date.start && query.date.end) {
@@ -47,23 +51,20 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
       filtersRec.push(gte(templateReccurent.end_date, query.date.start));
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { categoryId, reccurentId, ...selectTableMovements } =
+      getTableColumns(movements);
+
     const [movementsFromDb, movReccurentFromDb] = await Promise.all([
       this.dbInstance
         .select({
-          id: movements.id,
-          type: movements.type,
-          description: movements.description,
+          ...selectTableMovements,
           amount: sql<number>`${movements.amount}`,
           category: {
             id: categories.id,
             label: categories.label,
           },
-          isReversal: movements.isReversal,
-          isRefunded: movements.isRefunded,
-          reversalOfId: movements.reversalOfId,
-          walletId: movements.walletId,
           reccurent: movements.reccurentId,
-          executedAt: movements.executedAt,
         })
         .from(movements)
         .leftJoin(categories, eq(categories.id, movements.categoryId))
