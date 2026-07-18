@@ -17,7 +17,7 @@ export class GetFinanceSumaryHandler {
   public async execute(
     props: GetFinanceSumaryQuery,
   ): Promise<FinanceSumaryDTO | null> {
-    const { currentDate, walletId } = props;
+    const { currentDate, wallets } = props;
 
     const interval = {
       start: startOfMonth(currentDate),
@@ -25,10 +25,10 @@ export class GetFinanceSumaryHandler {
     };
 
     const result = await this.financeSumaryRepository.getSumary({
-      walletId,
+      walletsQuery: wallets,
       interval,
     });
 
-    return result;
+    return result.success ? result.data : null;
   }
 }

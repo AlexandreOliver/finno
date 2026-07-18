@@ -6,6 +6,9 @@ export interface FinanceSumaryDTO {
 }
 
 export interface GetFinanceSumaryQuery {
-  walletId: string;
+  wallets: {
+    label: string;
+    id: string;
+  }[];
   currentDate: Date;
 }

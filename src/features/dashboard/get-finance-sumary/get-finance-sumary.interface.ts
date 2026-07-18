@@ -2,7 +2,13 @@ import { FinanceSumaryDTO } from "./get-finance-sumary.query";
 
 export interface GetFinanceSumaryRepository {
   getSumary: (props: {
-    walletId: string;
+    walletsQuery: {
+      label: string;
+      id: string;
+    }[];
     interval: { start: Date; end: Date };
-  }) => Promise<FinanceSumaryDTO>;
+  }) => Promise<
+    | { success: true; data: FinanceSumaryDTO }
+    | { success: false; message: string }
+  >;
 }

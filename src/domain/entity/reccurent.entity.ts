@@ -272,6 +272,9 @@ export class Reccurent {
         reccurentId: this.id,
         executedAt: this.nextDueDate,
         dueDate: this.nextDueDate,
+        isReversal: false,
+        isRefunded: false,
+        reversalOfId: null,
       };
 
       const movement = Movement.create(rawData);

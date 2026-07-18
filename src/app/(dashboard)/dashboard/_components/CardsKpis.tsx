@@ -8,7 +8,7 @@ import { GetFinanceSumaryHandler } from "@/features/dashboard/get-finance-sumary
 import { GetWalletsHandler } from "@/features/dashboard/get-wallets/get-wallets.handler";
 import { DrizzleFinanceSumaryRepsitory } from "@/infrastructure/repositories/queries/drizzle-finance-suamary.repository";
 
-const sumaryRepository = new DrizzleFinanceSumaryRepsitory();
+const sumaryRepository = DrizzleFinanceSumaryRepsitory.create(db);
 const sumaryHandler = GetFinanceSumaryHandler.create(sumaryRepository);
 
 const WalletsRepository = WalletsRepositoryDrizzle.create(db);
@@ -48,7 +48,9 @@ export async function CardsKpis(props: CardsKpisProps) {
   const wallets = await getWallets.execute({ ownerId: props.userId });
 
   const sumary = await sumaryHandler.execute({
-    walletId: wallets.find((w) => w.labelName === "Principal")?.id as string,
+    wallets: wallets.map((w) => {
+      return { id: w.id, label: w.labelName };
+    }),
     currentDate: new Date(),
   });
 
