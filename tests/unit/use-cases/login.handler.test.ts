@@ -26,7 +26,7 @@ describe("Caso de uso - Login", () => {
     };
 
     mockSessionRepository = {
-      findActiveByUserId: jest.fn(),
+      findActive: jest.fn(),
       findActiveByToken: jest.fn(),
       isActive: jest.fn(),
       saveOrUpdate: jest.fn(),
@@ -143,9 +143,7 @@ describe("Caso de uso - Login", () => {
     })) as resultCreateSession & { success: true };
 
     mockUserRepository.getByEmail.mockResolvedValue(userTest.user);
-    mockSessionRepository.findActiveByUserId.mockResolvedValue(
-      sessionTest.data,
-    );
+    mockSessionRepository.findActive.mockResolvedValue([sessionTest.data]);
 
     const credentials = {
       email: userTest.user.email,
@@ -165,7 +163,7 @@ describe("Caso de uso - Login", () => {
       email: credentials.email,
     });
 
-    expect(mockSessionRepository.findActiveByUserId).toHaveBeenCalled();
+    expect(mockSessionRepository.findActive).toHaveBeenCalled();
 
     const sessionRenew = mockSessionRepository.saveOrUpdate.mock.calls[0][0];
 

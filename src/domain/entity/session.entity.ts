@@ -1,4 +1,5 @@
 import { sessions } from "@/infrastructure/database/schemas/sessions";
+import { subDays } from "date-fns";
 import { randomBytes } from "node:crypto";
 import { v7 as uuid7 } from "uuid";
 import { z } from "zod";
@@ -62,6 +63,12 @@ export class Session {
       this.expiresAt.getTime() + Session.#expirationInMs,
     );
     this.expiresAt = newExpires;
+    this.updatedAt = new Date();
+  }
+
+  public invalidate() {
+    this.expiresAt = subDays(new Date(), 1);
+    this.updatedAt = new Date();
   }
 
   public isActive(): boolean {
@@ -93,12 +100,6 @@ export class Session {
     return this.props.expiresAt;
   }
 
-  private set expiresAt(newExpiresAt: Date) {
-    if (newExpiresAt <= this.expiresAt) return;
-
-    this.props.expiresAt = newExpiresAt;
-  }
-
   public get createdAt() {
     return this.props.createdAt;
   }
@@ -107,6 +108,14 @@ export class Session {
     return this.props.updatedAt;
   }
   //#endregion
+
+  private set expiresAt(newExpiresAt: Date) {
+    this.props.expiresAt = newExpiresAt;
+  }
+
+  private set updatedAt(newDate: Date) {
+    this.props.updatedAt = newDate;
+  }
 
   public toJson<K extends keyof SessionProps = never>(options?: {
     omit: readonly K[];

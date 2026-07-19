@@ -39,19 +39,30 @@ export class SessionsRepositoryDrizzle implements ISessionGateway {
     return session;
   };
 
-  public findActiveByUserId: ISessionGateway["findActiveByUserId"] = async (
+  public findActive: ISessionGateway["findActive"] = async ({
     userId,
-  ) => {
+    token,
+  }) => {
     const result = await this.dbInstance
       .select()
       .from(sessions)
       .where(
-        and(eq(sessions.userId, userId), gt(sessions.expiresAt, new Date())),
+        and(
+          eq(sessions.userId, userId),
+          gt(sessions.expiresAt, new Date()),
+          token ? eq(sessions.token, token) : undefined,
+        ),
       );
 
-    const session = result.length > 0 ? Session.with(result[0]) : null;
+    let sessionResult;
 
-    return session;
+    if (result.length > 0) {
+      sessionResult = result.map((s) => Session.with(s));
+    } else {
+      sessionResult = null;
+    }
+
+    return sessionResult;
   };
 
   public isActive: ISessionGateway["isActive"] = async () => {

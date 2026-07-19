@@ -1,16 +1,14 @@
 "use client";
 
-import { BellIcon, Coins, User } from "lucide-react";
+import { BellIcon, Coins } from "lucide-react";
 
 import { useSession } from "@/hooks/useSession";
 import ThemeComponent from "@/components/ThemeComponent";
-import { formatNome } from "@/lib/utils";
+import { UserOptions } from "./UserOptions";
 
 export function HeaderDashboard() {
   const { user } = useSession();
 
-  const nome = formatNome(user?.firstName as string);
-  const sobrenome = formatNome(user?.lastName as string);
   return (
     <header className="border-gray-400 border-b bg-background dark:bg-background">
       <div className="boxed p-2 flex justify-between">
@@ -29,15 +27,7 @@ export function HeaderDashboard() {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <div className="rounded-sm w-10 border border-gray-800 dark:border-gray-400 flex justify-center items-center">
-              <User />
-            </div>
-            <div>
-              <div className="text-sm">{nome}</div>
-              <div className="text-xs text-muted-foreground">{sobrenome}</div>
-            </div>
-          </div>
+          {user && <UserOptions user={user} />}
         </div>
       </div>
     </header>

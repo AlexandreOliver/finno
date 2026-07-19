@@ -19,7 +19,6 @@ export default function ThemeComponent(props: ThemeComponentProps) {
       className={`
         flex justify-between items-center 
         ${props.className}`}
-      onClick={toggleTheme}
     >
       <SunMoon />
     </button>

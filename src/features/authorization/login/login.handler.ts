@@ -66,18 +66,18 @@ export class LoginHandler {
       };
     }
 
-    const sessionExist = await this.SessionRepository.findActiveByUserId(
-      userIndDb.id,
-    );
+    const sessionExist = await this.SessionRepository.findActive({
+      userId: userIndDb.id,
+    });
 
     if (sessionExist) {
-      sessionExist.renew();
+      sessionExist[0].renew();
 
-      await this.SessionRepository.saveOrUpdate(sessionExist);
+      await this.SessionRepository.saveOrUpdate(sessionExist[0]);
 
       return {
         success: true,
-        sessionToken: sessionExist.token,
+        sessionToken: sessionExist[0].token,
       };
     } else {
       const session = Session.create({ userId: userIndDb.id });
