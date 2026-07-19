@@ -253,7 +253,7 @@ export function TableMovements() {
             </div>
           </div>
         </div>
-        <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-174 bg-[#2A3040]/20 ">
+        <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-176 bg-[#2A3040]/20 ">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-xs md:text-lg">
@@ -269,7 +269,7 @@ export function TableMovements() {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className=" text-xs md:text-lg">
+            <TableBody className="text-xs md:text-lg">
               {payloadFiltred.length > 0 ? (
                 payloadFiltred.map((mov) => (
                   <TableRow key={mov.id} className="border-[#323A4D]">
@@ -277,18 +277,30 @@ export function TableMovements() {
                       <div className="flex gap-4 ml-4">
                         <div className="flex flex-col">
                           <div className="text-xs md:text-sm text-white/60">
-                            <span>
-                              {format(mov.executedAt as Date, "d 'de' MMMM", {
-                                locale: ptBR,
-                              })}
-                            </span>
-                            {mov.reccurent && (
-                              <a href={`#${mov.reccurent}`}>
-                                <Badge className="ml-1 w-7">
-                                  <RefreshCcwIcon />
-                                </Badge>
-                              </a>
-                            )}
+                            <div className="flex gap-1">
+                              <span>
+                                {format(mov.executedAt as Date, "d 'de' MMMM", {
+                                  locale: ptBR,
+                                })}
+                              </span>
+                              {mov.isRefunded &&
+                                (mov.type === "debito" ? (
+                                  <span className="text-xs md:text-sm text-muted-foreground">
+                                    - Reembolsado
+                                  </span>
+                                ) : (
+                                  <span className="text-xs md:text-sm text-muted-foreground">
+                                    - Estornado
+                                  </span>
+                                ))}
+                              {mov.reccurent && (
+                                <a href={`#${mov.reccurent}`}>
+                                  <Badge className="ml-1 w-7">
+                                    <RefreshCcwIcon />
+                                  </Badge>
+                                </a>
+                              )}
+                            </div>
                           </div>
                           <p
                             className={clsx(
@@ -298,16 +310,6 @@ export function TableMovements() {
                           >
                             {mov.description}
                           </p>
-                          {mov.isRefunded &&
-                            (mov.type === "debito" ? (
-                              <span className="text-xs md:text-sm text-muted-foreground">
-                                Reembolsado
-                              </span>
-                            ) : (
-                              <span className="text-xs md:text-sm text-muted-foreground">
-                                Estornado
-                              </span>
-                            ))}
                         </div>
                       </div>
                     </TableCell>

@@ -9,7 +9,7 @@ export type FunctionList<R> = (args: {
 export type FunctionDelete<R> = (id: string) => Promise<R>;
 
 export type FunctionCount = (args: {
-  query?: Pick<QueryParams, "date">;
+  query?: Pick<QueryParams, "date"> & { includeReversal: boolean };
   walletId?: string | string[];
 }) => Promise<number>;
 

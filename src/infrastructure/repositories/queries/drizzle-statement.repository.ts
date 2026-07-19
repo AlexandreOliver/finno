@@ -68,7 +68,7 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
         })
         .from(movements)
         .leftJoin(categories, eq(categories.id, movements.categoryId))
-        .where(and(...filtersMov))
+        .where(and(...filtersMov, eq(movements.isReversal, false)))
         .offset((pagination.page - 1) * pagination.limit)
         .limit(pagination.limit)
         .orderBy(desc(movements.executedAt), desc(movements.amount)),

@@ -75,7 +75,10 @@ export class GetStatementHandler {
 
       const count = await this.movementsRepository.count({
         walletId,
-        query: { date },
+        query: {
+          date,
+          includeReversal: false,
+        },
       });
 
       const result = {

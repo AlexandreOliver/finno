@@ -130,6 +130,7 @@ describe("Repositorio drizzle Movements", () => {
           start: startOfMonth(baseDate),
           end: baseDate,
         },
+        includeReversal: true,
       },
     };
 

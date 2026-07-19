@@ -84,6 +84,9 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
       and(
         filtersWallet.length > 0 ? or(...filtersWallet) : undefined,
         filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
+        query && query.includeReversal
+          ? undefined
+          : eq(movements.isReversal, false),
       ),
     );
 
