@@ -19,10 +19,12 @@ import { formatCurrency } from "@/lib/utils";
 import { DatabaseSearch } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import clsx from "clsx";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function TableReccurent() {
   const { user } = useSession();
   const { range } = useRangeDate();
+  const isMobile = useIsMobile();
 
   const { data: wallets } = useWallets(user?.id ?? "");
 
@@ -121,11 +123,14 @@ export function TableReccurent() {
         <div className="rounded-md overflow-hidden border border-[#3a3f4d] min-h-174 bg-[#2A3040]/20">
           <Table>
             <TableHeader className="bg-[#0e1738]">
-              <TableRow className="font-bold text-xs md:text-lg">
+              <TableRow className="font-bold text-[12px] md:text-lg">
                 <TableHead className="md:w-auto text-center p-2">
                   Descrição
                 </TableHead>
-                <TableHead className="md:w-20 text-center p-2">
+                <TableHead
+                  className="md:w-20 text-center p-2"
+                  hidden={isMobile}
+                >
                   Status
                 </TableHead>
                 <TableHead className="md:w-40 text-center p-2">
@@ -139,27 +144,48 @@ export function TableReccurent() {
                 <TableHead className="text-center w-20 p-2">Valor</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="text-xs md:text-lg">
+            <TableBody className="">
               {dataTable?.length > 0 ? (
                 dataTable.map((rec) => (
-                  <TableRow key={rec.id} className="border-[#323A4D]">
+                  <TableRow
+                    key={rec.id}
+                    className="border-[#323A4D] text-[10px] md:text-lg"
+                  >
                     <TableCell className="pl-4">
-                      <div>{rec.description}</div>
-                      <div className="text-muted-foreground text-xs md:text-sm">
+                      {isMobile && (
+                        <Badge
+                          className={clsx(
+                            "text-[8px] md:text-base h-3.5 w-7 md:h-6 md:w-14 mb-1",
+                            {
+                              "bg-blue-600/40": rec.status === "ativo",
+                              "bg-gray-600": rec.status === "terminado",
+                              "bg-yellow-600/80": rec.status === "pausado",
+                            },
+                          )}
+                        >
+                          {rec?.status.charAt(0).toUpperCase() +
+                            rec.status.slice(1)}
+                        </Badge>
+                      )}
+                      <p>{rec.description}</p>
+                      <p className="text-muted-foreground ">
                         {`${format(rec.start_date as Date, "MMMM 'de' yyyy", {
                           locale: ptBR,
                         })} - ${format(rec.end_date as Date, "MMMM 'de' yyyy", {
                           locale: ptBR,
                         })}`}
-                      </div>
+                      </p>
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center" hidden={isMobile}>
                       <Badge
-                        className={clsx({
-                          "bg-blue-600": rec.status === "ativo",
-                          "bg-gray-600": rec.status === "terminado",
-                          "bg-yellow-600": rec.status === "pausado",
-                        })}
+                        className={clsx(
+                          "text-[8px] md:text-base h-3.5 w-7 md:h-6 md:w-14",
+                          {
+                            "bg-blue-600/40": rec.status === "ativo",
+                            "bg-gray-600": rec.status === "terminado",
+                            "bg-yellow-600/80": rec.status === "pausado",
+                          },
+                        )}
                       >
                         {rec?.status.charAt(0).toUpperCase() +
                           rec.status.slice(1)}

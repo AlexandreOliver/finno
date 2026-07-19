@@ -36,7 +36,7 @@ export function CreateDialog(props: CreateFormProps) {
       <DialogTrigger
         render={<ButtonCreate variant={props.type} label={props.label} />}
       />
-      <DialogContent className="sm:max-w-106.25">
+      <DialogContent className="max-w-90 md:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Nova Transação</DialogTitle>
         </DialogHeader>

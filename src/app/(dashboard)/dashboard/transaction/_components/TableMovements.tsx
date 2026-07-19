@@ -257,7 +257,7 @@ export function TableMovements() {
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-xs md:text-lg">
-                <TableHead className="flex p-2 justify-center items-center w-17 md:w-auto">
+                <TableHead className="flex p-2 justify-center items-center w-auto">
                   DESCRIÇÃO
                 </TableHead>
                 <TableHead className="text-center p-2 w-22 md:w-32">
