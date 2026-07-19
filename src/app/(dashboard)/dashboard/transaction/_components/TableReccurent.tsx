@@ -148,6 +148,7 @@ export function TableReccurent() {
               {dataTable?.length > 0 ? (
                 dataTable.map((rec) => (
                   <TableRow
+                    id={rec.id}
                     key={rec.id}
                     className="border-[#323A4D] text-[10px] md:text-lg"
                   >

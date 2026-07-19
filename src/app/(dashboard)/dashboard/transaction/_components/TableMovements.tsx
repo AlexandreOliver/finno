@@ -283,9 +283,11 @@ export function TableMovements() {
                               })}
                             </span>
                             {mov.reccurent && (
-                              <Badge className="ml-1 w-7">
-                                <RefreshCcwIcon />
-                              </Badge>
+                              <a href={`#${mov.reccurent}`}>
+                                <Badge className="ml-1 w-7">
+                                  <RefreshCcwIcon />
+                                </Badge>
+                              </a>
                             )}
                           </div>
                           <p
