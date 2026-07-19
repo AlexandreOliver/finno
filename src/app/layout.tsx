@@ -25,6 +25,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={cn("antialiased", geist.className)}
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-screen">
         <ThemeProvider

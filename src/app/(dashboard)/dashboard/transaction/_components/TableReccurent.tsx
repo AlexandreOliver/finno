@@ -120,7 +120,7 @@ export function TableReccurent() {
         <p className="text-2xl px-2">Transações Recorrentes</p>
       </header>
       <main>
-        <div className="rounded-md overflow-hidden border border-[#3a3f4d] min-h-174 bg-[#2A3040]/20">
+        <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-174 bg-[#2A3040]/20">
           <Table>
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-[12px] md:text-lg">

@@ -253,7 +253,7 @@ export function TableMovements() {
             </div>
           </div>
         </div>
-        <div className="rounded-md overflow-hidden border border-[#3a3f4d] min-h-174 bg-[#2A3040]/20 ">
+        <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-174 bg-[#2A3040]/20 ">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-xs md:text-lg">
