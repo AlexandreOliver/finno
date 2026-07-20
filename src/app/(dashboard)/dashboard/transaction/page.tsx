@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { CreateDialog } from "@/app/(dashboard)/dashboard/transaction/_components/CreateDialog";
+import { CreateMovementDialog } from "@/app/(dashboard)/dashboard/transaction/_components/CreateMovementDialog";
 import { TableMovements } from "@/app/(dashboard)/dashboard/transaction/_components/TableMovements";
 
 import { format } from "date-fns";
@@ -48,8 +48,8 @@ export default async function Page() {
             </div>
           </div>
           <div className="flex gap-2 justify-center flex-row md:gap-4">
-            <CreateDialog type="Renda" label="Nova Receita" />
-            <CreateDialog type="Despesa" label="Nova Despesa" />
+            <CreateMovementDialog type="Renda" label="Nova Receita" />
+            <CreateMovementDialog type="Despesa" label="Nova Despesa" />
           </div>
         </div>
         <div>

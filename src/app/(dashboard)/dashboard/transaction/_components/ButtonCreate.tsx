@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { ComponentProps } from "react";
 
 type ButtonCreateProps = {
-  variant: "Renda" | "Despesa" | "Investimento";
+  variant?: "Renda" | "Despesa" | "Investimento";
   label: string;
 } & ComponentProps<"button">;
 
@@ -15,6 +15,9 @@ export function ButtonCreate({ variant, label, ...rest }: ButtonCreateProps) {
   } else if (variant === "Despesa") {
     styles =
       "border-red-400 dark:border-red-800 hover:bg-red-700/40 text-red-700 dark:text-red-400";
+  } else {
+    styles =
+      "border-blue-500 hover:bg-blue-500 hover:text-white text-blue-200 px-4";
   }
 
   return (

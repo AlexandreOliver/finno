@@ -14,33 +14,28 @@ import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/
 import { DrizzleUnitOfWork } from "@/infrastructure/repositories/drizzle/drizzle-unitOfWork";
 import { CreateMovementHandler } from "@/features/transactions/create-movement/create-movement.handler";
 
-export interface StateForm {
+export interface StateFormMovement {
   errors?: {
     type?: string[] | null;
     description?: string[] | null;
     amount?: string[] | null;
     categoryId?: string[] | null;
     walletId?: string[] | null;
-    isReccurent?: string[] | null;
-    status?: string[] | null;
-    frequencie?: string[] | null;
-    interval?: string[] | null;
-    installments?: string[] | null;
-    start_date?: string[] | null;
-    end_date?: string[] | null;
   };
   message?: string | null;
   success: boolean;
 }
 
-export async function CreateAction(formData: FormData): Promise<StateForm> {
+export async function CreateAction(
+  formData: FormData,
+): Promise<StateFormMovement> {
   const { isAuth } = await verifySession(
     (await cookies()).get("session_token")?.value as string,
   );
 
   if (!isAuth) throw new Error("Não autorizado");
 
-  let result: StateForm = { success: false };
+  let result: StateFormMovement = { success: false };
 
   const MovementsRepository = MovementsRepositoryDrizzle.create(db);
   const WalletsRepository = WalletsRepositoryDrizzle.create(db);

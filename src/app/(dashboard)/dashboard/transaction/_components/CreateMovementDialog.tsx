@@ -1,7 +1,5 @@
 "use client";
 import * as React from "react";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { Button } from "@/components/ui/button";
 
 import {
   Dialog,
@@ -10,17 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 
-import { CreateForm } from "./CreateForm";
+import { CreateMovementForm } from "./CreateMovementForm";
 import { ButtonCreate } from "./ButtonCreate";
 
 interface CreateFormProps {
@@ -28,7 +17,7 @@ interface CreateFormProps {
   label: string;
 }
 
-export function CreateDialog(props: CreateFormProps) {
+export function CreateMovementDialog(props: CreateFormProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -40,7 +29,7 @@ export function CreateDialog(props: CreateFormProps) {
         <DialogHeader>
           <DialogTitle>Nova Transação</DialogTitle>
         </DialogHeader>
-        <CreateForm variant={props.type} />
+        <CreateMovementForm variant={props.type} />
       </DialogContent>
     </Dialog>
   );

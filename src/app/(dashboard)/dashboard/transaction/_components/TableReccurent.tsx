@@ -20,6 +20,7 @@ import { DatabaseSearch } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import clsx from "clsx";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { CreateReccurentDialog } from "./CreateReccurentDialog";
 
 export function TableReccurent() {
   const { user } = useSession();
@@ -116,8 +117,9 @@ export function TableReccurent() {
 
   return (
     <section>
-      <header className="mb-2">
+      <header className="mb-2 flex justify-between px-2">
         <p className="text-2xl px-2">Transações Recorrentes</p>
+        <CreateReccurentDialog />
       </header>
       <main>
         <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-174 bg-[#2A3040]/20">
