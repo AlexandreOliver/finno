@@ -13,6 +13,7 @@ import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzl
 import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-wallets.repository";
 import { DrizzleUnitOfWork } from "@/infrastructure/repositories/drizzle/drizzle-unitOfWork";
 import { CreateMovementHandler } from "@/features/transactions/create-movement/create-movement.handler";
+import { CreateMovementCommand } from "@/features/transactions/create-movement/create-movements.command";
 
 export interface StateFormMovement {
   errors?: {
@@ -46,13 +47,9 @@ export async function CreateAction(
     new DrizzleUnitOfWork(),
   );
 
-  const createMovementCommand = {
-    type: formData.get("type")?.toString() as string,
-    description: formData.get("description")?.toString() as string,
-    amount: formData.get("amount")?.toString() as string,
-    categoryId: formData.get("categoryId")?.toString() as string,
-    walletId: formData.get("walletId")?.toString() as string,
-  };
+  const createMovementCommand = Object.fromEntries(
+    formData.entries(),
+  ) as unknown as CreateMovementCommand;
 
   result = await createMovement.execute(createMovementCommand);
 
