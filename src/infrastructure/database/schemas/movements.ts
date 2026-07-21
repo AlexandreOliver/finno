@@ -12,7 +12,7 @@ import {
 import { typesEnum } from "./Enums";
 import { categories } from "./categories";
 import { wallets } from "./wallets";
-import { templateReccurent } from "./templateReccurent";
+import { templateReccurrent } from "./templateReccurrent";
 import { sql } from "drizzle-orm";
 
 export const movements = pgTable(
@@ -34,7 +34,7 @@ export const movements = pgTable(
     walletId: uuid()
       .references(() => wallets.id)
       .notNull(),
-    reccurentId: uuid().references(() => templateReccurent.id),
+    reccurrentId: uuid().references(() => templateReccurrent.id),
     executedAt: timestamp({ withTimezone: true }).notNull(),
     dueDate: timestamp({ withTimezone: true }),
   },

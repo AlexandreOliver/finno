@@ -1,4 +1,4 @@
-import { Reccurent } from "../entity/reccurent.entity";
+import { Reccurrent } from "../entity/reccurrent.entity";
 import {
   FunctionDelete,
   FunctionSave,
@@ -6,10 +6,10 @@ import {
   QueryParams,
 } from "../entity/types";
 
-export interface IReccurentGateway {
-  save: FunctionSave<Reccurent, boolean>;
-  getById: FunctionGet<string, Reccurent | null>;
-  list: FunctionList<Reccurent>;
+export interface IReccurrentGateway {
+  save: FunctionSave<Reccurrent, boolean>;
+  getById: FunctionGet<string, Reccurrent | null>;
+  list: FunctionList<Reccurrent>;
   deleteById: FunctionDelete<boolean>;
   count: FunctionCount;
 }

@@ -6,7 +6,7 @@ import {
   MovementErrorsValidation,
   MovementsCreateProps,
 } from "./movements.entity";
-import { Reccurent } from "./reccurent.entity";
+import { Reccurrent } from "./reccurrent.entity";
 import { isEqual, set } from "date-fns";
 
 export type WalletsFromDb = typeof wallets.$inferSelect;
@@ -56,7 +56,7 @@ export type resultCreateWallet =
       data: Wallet;
     };
 
-export type returnMovementFromReccurent =
+export type returnMovementFromreccurrent =
   | { success: true; data: Movement }
   | { success: false; message: string };
 
@@ -237,22 +237,22 @@ export class Wallet {
     };
   }
 
-  public generateMovementFromReccurent = (
-    reccurent: Reccurent,
-  ): returnMovementFromReccurent => {
+  public generateMovementFromreccurrent = (
+    reccurrent: Reccurrent,
+  ): returnMovementFromreccurrent => {
     const hoje = set(new Date(), {
-      hours: reccurent.startHour,
+      hours: reccurrent.startHour,
       minutes: 0,
       seconds: 0,
       milliseconds: 0,
     });
 
     const isContinue =
-      reccurent.nextDueDate &&
-      isEqual(reccurent.nextDueDate, hoje) &&
-      (reccurent.installments ?? 0) > reccurent.countPaid &&
-      reccurent.walletId === this.id &&
-      reccurent.startDate <= hoje;
+      reccurrent.nextDueDate &&
+      isEqual(reccurrent.nextDueDate, hoje) &&
+      (reccurrent.installments ?? 0) > reccurrent.countPaid &&
+      reccurrent.walletId === this.id &&
+      reccurrent.startDate <= hoje;
 
     if (!isContinue)
       return {
@@ -262,7 +262,7 @@ export class Wallet {
       };
 
     const rawData = {
-      ...reccurent.toJson({
+      ...reccurrent.toJson({
         omit: [
           "countPaid",
           "end_date",
@@ -273,9 +273,9 @@ export class Wallet {
           "next_due_date",
         ],
       }),
-      reccurentId: reccurent.id,
-      executedAt: reccurent.nextDueDate as Date,
-      dueDate: reccurent.nextDueDate,
+      reccurrentId: reccurrent.id,
+      executedAt: reccurrent.nextDueDate as Date,
+      dueDate: reccurrent.nextDueDate,
       isReversal: false,
       isRefunded: false,
       reversalOfId: null,

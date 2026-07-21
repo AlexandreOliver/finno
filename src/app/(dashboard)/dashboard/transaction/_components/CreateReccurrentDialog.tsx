@@ -9,10 +9,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { CreateReccurentForm } from "./CreateReccurentForm";
+import { CreatereccurrentForm } from "./CreateReccurrentForm";
 import { ButtonCreate } from "./ButtonCreate";
 
-export function CreateReccurentDialog() {
+export function CreatereccurrentDialog() {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -22,7 +22,7 @@ export function CreateReccurentDialog() {
         {/* <DialogHeader>
           <DialogTitle>Transação Recorrente</DialogTitle>
         </DialogHeader> */}
-        <CreateReccurentForm />
+        <CreatereccurrentForm />
       </DialogContent>
     </Dialog>
   );

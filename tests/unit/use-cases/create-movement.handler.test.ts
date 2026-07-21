@@ -62,7 +62,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       amount: "500.00",
       categoryId: uuid7(),
       walletId: walletTest.id,
-      reccurentId: null,
+      reccurrentId: null,
     };
 
     mockWalletRepository.findById.mockResolvedValue(walletTest);
@@ -115,7 +115,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
       amount: "1500.00",
       categoryId: uuid7(),
       walletId: walletTest.id,
-      reccurentId: null,
+      reccurrentId: null,
     };
 
     const result = (await createMovement.execute(data)) as MovementOutputDTO & {

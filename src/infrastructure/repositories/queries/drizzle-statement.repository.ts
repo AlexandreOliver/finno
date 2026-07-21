@@ -16,7 +16,7 @@ import {
   lte,
   getTableColumns,
 } from "drizzle-orm";
-import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
+import { templateReccurrent } from "@/infrastructure/database/schemas/templateReccurrent";
 
 export class StatementRepositoryDrizzle implements IStatementRepository {
   private constructor(private readonly dbInstance: typeof db) {}
@@ -36,26 +36,26 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
     if (Array.isArray(walletId)) {
       filtersMov.push(inArray(movements.walletId, walletId));
 
-      filtersRec.push(inArray(templateReccurent.walletId, walletId));
+      filtersRec.push(inArray(templateReccurrent.walletId, walletId));
     } else {
       filtersMov.push(eq(movements.walletId, walletId));
 
-      filtersRec.push(eq(templateReccurent.walletId, walletId));
+      filtersRec.push(eq(templateReccurrent.walletId, walletId));
     }
 
     if (query?.date && query.date.start && query.date.end) {
       filtersMov.push(gte(movements.executedAt, query.date.start));
       filtersMov.push(lt(movements.executedAt, query.date.end));
 
-      filtersRec.push(lte(templateReccurent.start_date, query.date.start));
-      filtersRec.push(gte(templateReccurent.end_date, query.date.start));
+      filtersRec.push(lte(templateReccurrent.start_date, query.date.start));
+      filtersRec.push(gte(templateReccurrent.end_date, query.date.start));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { categoryId, reccurentId, ...selectTableMovements } =
+    const { categoryId, reccurrentId, ...selectTableMovements } =
       getTableColumns(movements);
 
-    const [movementsFromDb, movReccurentFromDb] = await Promise.all([
+    const [movementsFromDb, movreccurrentFromDb] = await Promise.all([
       this.dbInstance
         .select({
           ...selectTableMovements,
@@ -64,7 +64,7 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
             id: categories.id,
             label: categories.label,
           },
-          reccurent: movements.reccurentId,
+          reccurrent: movements.reccurrentId,
         })
         .from(movements)
         .leftJoin(categories, eq(categories.id, movements.categoryId))
@@ -75,17 +75,17 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
 
       this.dbInstance
         .select({
-          ...getTableColumns(templateReccurent),
-          amount: sql<number>`${templateReccurent.amount}`,
+          ...getTableColumns(templateReccurrent),
+          amount: sql<number>`${templateReccurrent.amount}`,
         })
-        .from(templateReccurent)
+        .from(templateReccurrent)
         .where(and(...filtersRec))
-        .orderBy(desc(templateReccurent.start_date)),
+        .orderBy(desc(templateReccurrent.start_date)),
     ]);
 
     return {
       movements: movementsFromDb,
-      reccurents: movReccurentFromDb,
+      reccurrents: movreccurrentFromDb,
     };
   };
 }

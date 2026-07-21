@@ -25,9 +25,9 @@ export interface TransactionDTO {
     reversalOfId: string | null;
     walletId: string;
     executedAt: Date;
-    reccurent: string | null;
+    reccurrent: string | null;
   }[];
-  reccurents: {
+  reccurrents: {
     id: string;
     type: "debito" | "credito" | "investimento";
     status: "ativo" | "pausado" | "terminado";

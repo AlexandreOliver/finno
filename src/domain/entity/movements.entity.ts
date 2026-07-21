@@ -14,7 +14,7 @@ export type MovementsProps = {
   isRefunded: boolean;
   reversalOfId: string | null;
   categoryId: string;
-  reccurentId: string | null;
+  reccurrentId: string | null;
   executedAt: Date;
   dueDate: Date | null;
 };
@@ -28,7 +28,7 @@ export type MovementsCreateProps = {
   isReversal: boolean;
   reversalOfId: string | null;
   categoryId: string;
-  reccurentId: string | null;
+  reccurrentId: string | null;
   executedAt: Date;
   dueDate: Date | null;
 };
@@ -42,7 +42,7 @@ export type MovementErrorsValidation = {
   amount?: string[] | undefined;
   categoryId?: string[] | undefined;
   walletId?: string[] | undefined;
-  reccurentId?: string[] | undefined;
+  reccurrentId?: string[] | undefined;
   executedAt?: string[] | undefined;
   dueDate?: string[] | undefined;
 };
@@ -57,7 +57,7 @@ export type resultCreateMovement =
         amount?: string[] | undefined;
         categoryId?: string[] | undefined;
         walletId?: string[] | undefined;
-        reccurentId?: string[] | undefined;
+        reccurrentId?: string[] | undefined;
         executedAt?: string[] | undefined;
         dueDate?: string[] | undefined;
       };
@@ -71,7 +71,7 @@ export const movementsSchema = createInsertSchema(movements, {
     }),
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
   walletId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
-  reccurentId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
+  reccurrentId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
   categoryId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
   executedAt: (schema) => schema.nonoptional().default(new Date()),
   dueDate: (schema) => schema.nonoptional(),
@@ -164,8 +164,8 @@ export class Movement {
     return this.props.categoryId;
   }
 
-  public get reccurentId() {
-    return this.props.reccurentId;
+  public get reccurrentId() {
+    return this.props.reccurrentId;
   }
 
   public get executedAt() {

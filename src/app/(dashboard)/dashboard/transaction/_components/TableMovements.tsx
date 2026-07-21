@@ -293,8 +293,8 @@ export function TableMovements() {
                                     - Estornado
                                   </span>
                                 ))}
-                              {mov.reccurent && (
-                                <a href={`#${mov.reccurent}`}>
+                              {mov.reccurrent && (
+                                <a href={`#${mov.reccurrent}`}>
                                   <Badge className="ml-1 w-7">
                                     <RefreshCcwIcon />
                                   </Badge>

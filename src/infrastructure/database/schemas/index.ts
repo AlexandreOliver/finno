@@ -4,7 +4,7 @@ import * as accounts from "./wallets";
 import * as categories from "./categories";
 import * as transfers from "./transfers";
 import * as movements from "./movements";
-import * as templateReccurent from "./templateReccurent";
+import * as templateReccurrent from "./templateReccurrent";
 
 export const schemas = {
   ...users,
@@ -13,5 +13,5 @@ export const schemas = {
   ...categories,
   ...transfers,
   ...movements,
-  ...templateReccurent,
+  ...templateReccurrent,
 };

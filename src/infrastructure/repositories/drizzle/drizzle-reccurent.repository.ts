@@ -1,45 +1,47 @@
-import { Reccurent } from "@/domain/entity/reccurent.entity";
-import { IReccurentGateway } from "@/domain/repositories/reccurent.gateway";
-import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
+import { Reccurrent } from "@/domain/entity/reccurrent.entity";
+import { IReccurrentGateway } from "@/domain/repositories/reccurrent.gateway";
+import { templateReccurrent } from "@/infrastructure/database/schemas/templateReccurrent";
 import db from "@/infrastructure/database";
 import { and, desc, eq, inArray, or, SQL } from "drizzle-orm";
 
-export class ReccurentRepositoryDrizzle implements IReccurentGateway {
+export class reccurrentRepositoryDrizzle implements IReccurrentGateway {
   private constructor(private readonly dbInstance: typeof db) {}
 
   public static create(dbInstance: typeof db) {
-    return new ReccurentRepositoryDrizzle(dbInstance);
+    return new reccurrentRepositoryDrizzle(dbInstance);
   }
 
-  public save: IReccurentGateway["save"] = async (reccurent) => {
+  public save: IReccurrentGateway["save"] = async (reccurrent) => {
     const resultDb = await this.dbInstance
-      .insert(templateReccurent)
-      .values({ ...reccurent.toJson(), amount: reccurent.amount.toString() })
+      .insert(templateReccurrent)
+      .values({ ...reccurrent.toJson(), amount: reccurrent.amount.toString() })
       .returning();
 
     return !!resultDb[0].id;
   };
 
-  public getById: IReccurentGateway["getById"] = async (id) => {
+  public getById: IReccurrentGateway["getById"] = async (id) => {
     const filters: SQL[] = [];
 
     if (Array.isArray(id)) {
-      filters.push(inArray(templateReccurent.id, id));
+      filters.push(inArray(templateReccurrent.id, id));
     } else {
-      filters.push(eq(templateReccurent.id, id));
+      filters.push(eq(templateReccurrent.id, id));
     }
 
     const resultFromDb = await this.dbInstance
       .select()
-      .from(templateReccurent)
+      .from(templateReccurrent)
       .where(and(...filters));
 
-    const reccurentResult = resultFromDb.map((r) => Reccurent.with(r));
+    const reccurrentResult = resultFromDb.map((r) => Reccurrent.with(r));
 
-    return reccurentResult.length === 1 ? reccurentResult[0] : reccurentResult;
+    return reccurrentResult.length === 1
+      ? reccurrentResult[0]
+      : reccurrentResult;
   };
 
-  public list: IReccurentGateway["list"] = async (args) => {
+  public list: IReccurrentGateway["list"] = async (args) => {
     const { walletId, pagination, query } = args;
 
     if ((Array.isArray(walletId) && walletId.length === 0) || !walletId)
@@ -48,56 +50,56 @@ export class ReccurentRepositoryDrizzle implements IReccurentGateway {
     const filters: SQL[] = [];
 
     if (Array.isArray(walletId)) {
-      filters.push(inArray(templateReccurent.walletId, walletId));
+      filters.push(inArray(templateReccurrent.walletId, walletId));
     } else {
-      filters.push(eq(templateReccurent.walletId, walletId));
+      filters.push(eq(templateReccurrent.walletId, walletId));
     }
 
     if (query?.status) {
-      filters.push(eq(templateReccurent.status, query.status));
+      filters.push(eq(templateReccurrent.status, query.status));
     }
 
-    let resultDb: (typeof templateReccurent.$inferSelect)[];
+    let resultDb: (typeof templateReccurrent.$inferSelect)[];
 
     if (pagination) {
       resultDb = await this.dbInstance
         .select()
-        .from(templateReccurent)
+        .from(templateReccurrent)
         .where(and(...filters))
-        .orderBy(desc(templateReccurent.amount))
+        .orderBy(desc(templateReccurrent.amount))
         .offset(((pagination.page ?? 1) - 1) * pagination.limit)
         .limit(pagination.limit);
     } else {
       resultDb = await this.dbInstance
         .select()
-        .from(templateReccurent)
+        .from(templateReccurrent)
         .where(and(...filters))
-        .orderBy(desc(templateReccurent.amount));
+        .orderBy(desc(templateReccurrent.amount));
     }
 
-    const recurentList = resultDb.map((rec) => Reccurent.with(rec));
+    const recurentList = resultDb.map((rec) => Reccurrent.with(rec));
 
     return recurentList;
   };
 
-  public deleteById: IReccurentGateway["deleteById"] = async (id) => {
+  public deleteById: IReccurrentGateway["deleteById"] = async (id) => {
     const resultFromDb = await this.dbInstance
-      .delete(templateReccurent)
-      .where(eq(templateReccurent.id, id))
+      .delete(templateReccurrent)
+      .where(eq(templateReccurrent.id, id))
       .returning();
 
     return resultFromDb.length > 0;
   };
 
-  public count: IReccurentGateway["count"] = async (args) => {
+  public count: IReccurrentGateway["count"] = async (args) => {
     const { query, walletId } = args;
 
     let count;
 
     const filtersQuery: SQL[] = [];
     // if (query?.date && query.date.start && query.date.end) {
-    //   filtersQuery.push(gte(templateReccurent.executedAt, query.date.start));
-    //   filtersQuery.push(lt(templateReccurent.executedAt, query.date.end));
+    //   filtersQuery.push(gte(templateReccurrent.executedAt, query.date.start));
+    //   filtersQuery.push(lt(templateReccurrent.executedAt, query.date.end));
     // }
 
     if (Array.isArray(walletId)) {
@@ -105,10 +107,10 @@ export class ReccurentRepositoryDrizzle implements IReccurentGateway {
 
       const filters: SQL[] = [];
 
-      walletId.forEach((w) => filters.push(eq(templateReccurent.walletId, w)));
+      walletId.forEach((w) => filters.push(eq(templateReccurrent.walletId, w)));
 
       count = await this.dbInstance.$count(
-        templateReccurent,
+        templateReccurrent,
         and(
           or(...filters),
           filtersQuery.length > 0 ? and(...filtersQuery) : undefined,
@@ -119,13 +121,13 @@ export class ReccurentRepositoryDrizzle implements IReccurentGateway {
 
     if (walletId) {
       count = await this.dbInstance.$count(
-        templateReccurent,
-        eq(templateReccurent.walletId, walletId),
+        templateReccurrent,
+        eq(templateReccurrent.walletId, walletId),
       );
       return count;
     }
 
-    count = await this.dbInstance.$count(templateReccurent);
+    count = await this.dbInstance.$count(templateReccurrent);
 
     return count;
   };

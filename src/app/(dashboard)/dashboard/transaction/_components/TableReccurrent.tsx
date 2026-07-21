@@ -20,9 +20,9 @@ import { DatabaseSearch } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import clsx from "clsx";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { CreateReccurentDialog } from "./CreateReccurentDialog";
+import { CreatereccurrentDialog } from "./CreateReccurrentDialog";
 
-export function TableReccurent() {
+export function TableReccurrent() {
   const { user } = useSession();
   const { range } = useRangeDate();
   const isMobile = useIsMobile();
@@ -46,9 +46,9 @@ export function TableReccurent() {
   );
 
   const dataTable = useMemo(() => {
-    const onlyReccurent =
-      mov?.payload?.reccurents.map((re) => {
-        const labels_reccurent = {
+    const onlyreccurrent =
+      mov?.payload?.reccurrents.map((re) => {
+        const labels_reccurrent = {
           label_interval: "",
           label_installments: "",
         };
@@ -56,70 +56,70 @@ export function TableReccurent() {
         switch (re.frequency) {
           case "monthly": {
             if (re.installments) {
-              labels_reccurent.label_installments = `por ${re.installments} meses`;
+              labels_reccurrent.label_installments = `por ${re.installments} meses`;
             }
 
             if (re.interval === 1) {
-              labels_reccurent.label_interval = "A cada mês";
+              labels_reccurrent.label_interval = "A cada mês";
 
               break;
             }
-            labels_reccurent.label_interval = `A cada ${re.interval} Meses`;
+            labels_reccurrent.label_interval = `A cada ${re.interval} Meses`;
             break;
           }
           case "daily": {
             if (re.installments) {
-              labels_reccurent.label_installments = `por ${re.installments} dias`;
+              labels_reccurrent.label_installments = `por ${re.installments} dias`;
             }
 
             if (re.interval === 1) {
-              labels_reccurent.label_interval = "A cada dia";
+              labels_reccurrent.label_interval = "A cada dia";
               break;
             }
-            labels_reccurent.label_interval = `A cada ${re.interval} dias`;
+            labels_reccurrent.label_interval = `A cada ${re.interval} dias`;
             break;
           }
           case "weekly": {
             if (re.installments) {
-              labels_reccurent.label_installments = `por ${re.installments} semanas`;
+              labels_reccurrent.label_installments = `por ${re.installments} semanas`;
             }
 
             if (re.interval === 1) {
-              labels_reccurent.label_interval = "A cada semana";
+              labels_reccurrent.label_interval = "A cada semana";
               break;
             }
 
-            labels_reccurent.label_interval = `A cada ${re.interval} semanas`;
+            labels_reccurrent.label_interval = `A cada ${re.interval} semanas`;
             break;
           }
           case "yearly": {
             if (re.installments) {
-              labels_reccurent.label_installments = `por ${re.installments} anos`;
+              labels_reccurrent.label_installments = `por ${re.installments} anos`;
             }
 
             if (re.interval === 1) {
-              labels_reccurent.label_interval = "A cada ano";
+              labels_reccurrent.label_interval = "A cada ano";
               break;
             }
-            labels_reccurent.label_interval = `A cada ${re.interval} anos`;
+            labels_reccurrent.label_interval = `A cada ${re.interval} anos`;
             break;
           }
         }
 
         return {
           ...re,
-          labels_reccurent,
+          labels_reccurrent,
         };
       }) ?? [];
 
-    return onlyReccurent;
-  }, [mov?.payload?.reccurents]);
+    return onlyreccurrent;
+  }, [mov?.payload?.reccurrents]);
 
   return (
     <section>
       <header className="mb-2 flex justify-between px-2">
         <p className="text-2xl px-2">Transações Recorrentes</p>
-        <CreateReccurentDialog />
+        <CreatereccurrentDialog />
       </header>
       <main>
         <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-174 bg-[#2A3040]/20">
@@ -195,9 +195,9 @@ export function TableReccurent() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <p className="">{rec.labels_reccurent.label_interval}</p>
+                      <p className="">{rec.labels_reccurrent.label_interval}</p>
                       <p className="">
-                        {rec.labels_reccurent.label_installments}
+                        {rec.labels_reccurrent.label_installments}
                       </p>
                     </TableCell>
                     <TableCell className="text-center">

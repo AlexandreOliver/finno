@@ -1,5 +1,5 @@
-import { Reccurent } from "@/domain/entity/reccurent.entity";
-import { IReccurentGateway } from "@/domain/repositories/reccurent.gateway";
+import { Reccurrent } from "@/domain/entity/reccurrent.entity";
+import { IReccurrentGateway } from "@/domain/repositories/reccurrent.gateway";
 
 export type inputDTO = {
   type: string;
@@ -23,7 +23,7 @@ export type outputDTO = {
     amount?: string[] | null;
     categoryId?: string[] | null;
     walletId?: string[] | null;
-    isReccurent?: string[] | null;
+    isreccurrent?: string[] | null;
     status?: string[] | null;
     frequencie?: string[] | null;
     interval?: string[] | null;
@@ -36,17 +36,17 @@ export type outputDTO = {
   success: boolean;
 };
 
-export class CreateReccurentUseCase {
+export class CreatereccurrentUseCase {
   private constructor(
-    private readonly ReccurentRepository: IReccurentGateway,
+    private readonly reccurrentRepository: IReccurrentGateway,
   ) {}
 
-  public static create(ReccurentRepository: IReccurentGateway) {
-    return new CreateReccurentUseCase(ReccurentRepository);
+  public static create(reccurrentRepository: IReccurrentGateway) {
+    return new CreatereccurrentUseCase(reccurrentRepository);
   }
 
   public async execute(input: inputDTO): Promise<outputDTO> {
-    const response = Reccurent.create({ ...input, countPaid: 0 });
+    const response = Reccurrent.create({ ...input, countPaid: 0 });
 
     if (!response.success) {
       return {
@@ -56,8 +56,8 @@ export class CreateReccurentUseCase {
       };
     }
 
-    const result = await this.ReccurentRepository.save(
-      response.data as Reccurent,
+    const result = await this.reccurrentRepository.save(
+      response.data as Reccurrent,
     );
 
     if (result) {

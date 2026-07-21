@@ -1,4 +1,4 @@
-import { templateReccurent } from "@/infrastructure/database/schemas/templateReccurent";
+import { templateReccurrent } from "@/infrastructure/database/schemas/templateReccurrent";
 import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuid7 } from "uuid";
 import zod from "zod";
@@ -14,12 +14,12 @@ import {
 } from "date-fns";
 import { Movement } from "./movements.entity";
 import {
-  FrequenciesReccurent,
+  Frequenciesreccurrent,
   StatusTransaction,
   TypesTransaction,
 } from "../enums";
 
-export const reccurentSchema = createInsertSchema(templateReccurent, {
+export const reccurrentSchema = createInsertSchema(templateReccurrent, {
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
   interval: (schema) =>
     zod.preprocess(
@@ -122,9 +122,9 @@ export const reccurentSchema = createInsertSchema(templateReccurent, {
   },
 );
 
-export type ReccurentFromDbSelect = typeof templateReccurent.$inferSelect;
+export type reccurrentFromDbSelect = typeof templateReccurrent.$inferSelect;
 
-export type ReccurentCreateProps = {
+export type reccurrentCreateProps = {
   type: string;
   status: string;
   description: string;
@@ -140,16 +140,16 @@ export type ReccurentCreateProps = {
   nextDueDate?: Date;
 };
 
-export type ReccurentOutput = zod.output<typeof reccurentSchema>;
-export type ReccurentInput = zod.input<typeof reccurentSchema>;
+export type reccurrentOutput = zod.output<typeof reccurrentSchema>;
+export type reccurrentInput = zod.input<typeof reccurrentSchema>;
 
-export type ReccurentProps = {
+export type reccurrentProps = {
   id: string;
   type: TypesTransaction;
   status: StatusTransaction;
   description: string;
   amount: number;
-  frequency: FrequenciesReccurent;
+  frequency: Frequenciesreccurrent;
   interval: number;
   categoryId: string;
   walletId: string;
@@ -160,8 +160,8 @@ export type ReccurentProps = {
   next_due_date: Date | null;
 };
 
-export type returnCreateReccurent =
-  | { success: true; data: Reccurent }
+export type returnCreateReccurrent =
+  | { success: true; data: Reccurrent }
   | {
       success: false;
       errors: {
@@ -182,19 +182,19 @@ export type returnCreateReccurent =
       };
     };
 
-export class Reccurent {
+export class Reccurrent {
   readonly #startHour = 6;
   readonly #endHour = 18;
 
-  private constructor(private readonly props: ReccurentProps) {}
+  private constructor(private readonly props: reccurrentProps) {}
 
-  public static create(data: ReccurentCreateProps): returnCreateReccurent {
+  public static create(data: reccurrentCreateProps): returnCreateReccurrent {
     const fullData = {
       id: uuid7(),
       ...data,
     };
 
-    const dataFormated = reccurentSchema.safeParse(fullData);
+    const dataFormated = reccurrentSchema.safeParse(fullData);
 
     if (!dataFormated.success) {
       return {
@@ -218,18 +218,18 @@ export class Reccurent {
     // console.log("Saiu: ");
     // console.log(dataFormated.data);
 
-    const reccurent = new Reccurent(dataFormated.data);
+    const reccurrent = new Reccurrent(dataFormated.data);
 
-    if (!reccurent.nextDueDate) reccurent.calculateNextDueDate();
+    if (!reccurrent.nextDueDate) reccurrent.calculateNextDueDate();
 
     return {
       success: true,
-      data: reccurent,
+      data: reccurrent,
     };
   }
 
-  public static with(props: ReccurentFromDbSelect) {
-    return new Reccurent({
+  public static with(props: reccurrentFromDbSelect) {
+    return new Reccurrent({
       ...props,
       amount: Number.parseFloat(props.amount),
       installments: props.installments as number,
@@ -278,7 +278,7 @@ export class Reccurent {
   public mutateCountPaid(nextMovement: Movement): boolean {
     if (!((this.installments ?? 0) > this.countPaid)) return false;
 
-    const reccurentProps = this.toJson({
+    const reccurrentProps = this.toJson({
       omit: [
         "countPaid",
         "status",
@@ -293,11 +293,11 @@ export class Reccurent {
     });
 
     const jsonMovementExpect = {
-      ...reccurentProps,
+      ...reccurrentProps,
       isReversal: false,
       isRefunded: false,
       reversalOfId: null,
-      reccurentId: this.id,
+      reccurrentId: this.id,
       executedAt: this.nextDueDate,
       dueDate: this.nextDueDate,
     };
@@ -390,19 +390,19 @@ export class Reccurent {
 
   //#endregion
 
-  public toJson<K extends keyof ReccurentProps = never>(options?: {
+  public toJson<K extends keyof reccurrentProps = never>(options?: {
     omit: K[];
-  }): Omit<ReccurentProps, K> {
+  }): Omit<reccurrentProps, K> {
     const data = { ...this.props };
 
     if (!options || Object.keys(options.omit).length === 0) {
-      return data as unknown as ReccurentProps;
+      return data as unknown as reccurrentProps;
     }
 
     options.omit.forEach((key) => {
       delete data[key];
     });
 
-    return data as unknown as Omit<ReccurentProps, K>;
+    return data as unknown as Omit<reccurrentProps, K>;
   }
 }

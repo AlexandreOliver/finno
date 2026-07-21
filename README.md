@@ -64,7 +64,7 @@ pnpm \<comand>
 - categories - Dedicada a registrar todas as categorias de movementos
 - transfers - Registra as transferencias entre carteiras
 - movements - Registra todos as movimentações financeiras de entrada e saida
-- template_reccurent - Registra as movimentações finaceiras recorrentes e planejadas
+- template_reccurrent - Registra as movimentações finaceiras recorrentes e planejadas
 
 ## Regras de Negócios
 

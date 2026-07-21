@@ -211,7 +211,7 @@ const seed_categorias = [
   },
 ];
 
-const seed_templateReccurent = [
+const seed_templatereccurrent = [
   {
     id: "019e1e61-b1d6-701c-8483-c2b5ba46a932",
     type: TYPES_TRANSACTION[0],
@@ -348,7 +348,7 @@ const seed_movements = [
     amount: "120.43",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    reccurentId: seed_templateReccurent[0].id,
+    reccurrentId: seed_templatereccurrent[0].id,
     executedAt: hoje,
   },
   {
@@ -583,7 +583,7 @@ const seed_movements = [
     amount: "120.43",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    reccurentId: seed_templateReccurent[0].id,
+    reccurrentId: seed_templatereccurrent[0].id,
     executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 5, 6, 0),
   },
   {
@@ -942,5 +942,5 @@ export {
   seed_wallets,
   seed_movements,
   seed_transfers,
-  seed_templateReccurent,
+  seed_templatereccurrent,
 };

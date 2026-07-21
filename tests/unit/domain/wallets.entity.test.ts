@@ -1,13 +1,13 @@
 import { describe, test, beforeEach, expect } from "@jest/globals";
 import {
   resultCreateWallet,
-  returnMovementFromReccurent,
+  returnMovementFromreccurrent,
   Wallet,
 } from "@/domain/entity/wallets.entity";
 import {
-  Reccurent,
-  returnCreateReccurent,
-} from "@/domain/entity/reccurent.entity";
+  Reccurrent,
+  returnCreateReccurrent,
+} from "@/domain/entity/reccurrent.entity";
 import { v7 as uuidv7 } from "uuid";
 
 import { addDays, subMonths } from "date-fns";
@@ -24,7 +24,7 @@ describe("Entidade Wallet", () => {
     ).data;
   });
 
-  const getReccurent = (props: {
+  const getreccurrent = (props: {
     amount?: string;
     categoryId?: string;
     description?: string;
@@ -36,7 +36,7 @@ describe("Entidade Wallet", () => {
     countPaid?: number;
     installments?: number;
     start_date?: Date;
-  }): Reccurent => {
+  }): Reccurrent => {
     const DTO = {
       amount: props.amount ?? "200",
       categoryId: props.categoryId ?? uuidv7(),
@@ -51,73 +51,74 @@ describe("Entidade Wallet", () => {
       start_date: props.start_date ?? subMonths(new Date(), 1),
     };
 
-    return (Reccurent.create(DTO) as returnCreateReccurent & { success: true })
-      .data;
+    return (
+      Reccurrent.create(DTO) as returnCreateReccurrent & { success: true }
+    ).data;
   };
 
-  test("generateMovementReccurent() - Gera uma nova movimentação apartir de uma recorrência de debito valida", async () => {
-    const reccurentTest = getReccurent({});
+  test("generateMovementreccurrent() - Gera uma nova movimentação apartir de uma recorrência de debito valida", async () => {
+    const reccurrentTest = getreccurrent({});
 
-    const result = testWallet.generateMovementFromReccurent(
-      reccurentTest,
-    ) as returnMovementFromReccurent & { success: true };
+    const result = testWallet.generateMovementFromreccurrent(
+      reccurrentTest,
+    ) as returnMovementFromreccurrent & { success: true };
 
     expect(result.success).toBeTruthy();
-    expect(reccurentTest.mutateCountPaid(result.data)).toBeTruthy();
+    expect(reccurrentTest.mutateCountPaid(result.data)).toBeTruthy();
 
-    expect(testWallet.balance).toBe(-reccurentTest.amount);
+    expect(testWallet.balance).toBe(-reccurrentTest.amount);
   });
 
-  test("generateMovementReccurent() - Gera uma nova movimentação apartir de uma recorrência de credito valida", async () => {
-    const reccurentTest = getReccurent({
+  test("generateMovementreccurrent() - Gera uma nova movimentação apartir de uma recorrência de credito valida", async () => {
+    const reccurrentTest = getreccurrent({
       type: "credito",
     });
 
-    const result = testWallet.generateMovementFromReccurent(
-      reccurentTest,
-    ) as returnMovementFromReccurent & { success: true };
+    const result = testWallet.generateMovementFromreccurrent(
+      reccurrentTest,
+    ) as returnMovementFromreccurrent & { success: true };
 
     expect(result.success).toBeTruthy();
-    expect(reccurentTest.mutateCountPaid(result.data)).toBeTruthy();
+    expect(reccurrentTest.mutateCountPaid(result.data)).toBeTruthy();
 
-    expect(testWallet.balance).toBe(reccurentTest.amount);
+    expect(testWallet.balance).toBe(reccurrentTest.amount);
   });
 
-  test("generateMovementReccurent() - Recebe uma recorrência com startDate no futuro e nao gera movimentação", async () => {
-    const reccurentTest = getReccurent({
+  test("generateMovementreccurrent() - Recebe uma recorrência com startDate no futuro e nao gera movimentação", async () => {
+    const reccurrentTest = getreccurrent({
       start_date: addDays(new Date(), 1),
     });
 
-    const result = testWallet.generateMovementFromReccurent(
-      reccurentTest,
-    ) as returnMovementFromReccurent & { success: false };
+    const result = testWallet.generateMovementFromreccurrent(
+      reccurrentTest,
+    ) as returnMovementFromreccurrent & { success: false };
 
     expect(result.success).toBeFalsy();
     expect(result.message).toBeDefined();
   });
 
-  test("generateMovementReccurent() - Recebe uma recorrência ja chegou ao fim e nao gera movimentação", async () => {
-    const reccurentTest = getReccurent({
+  test("generateMovementreccurrent() - Recebe uma recorrência ja chegou ao fim e nao gera movimentação", async () => {
+    const reccurrentTest = getreccurrent({
       countPaid: 5,
       installments: 5,
     });
 
-    const result = testWallet.generateMovementFromReccurent(
-      reccurentTest,
-    ) as returnMovementFromReccurent & { success: false };
+    const result = testWallet.generateMovementFromreccurrent(
+      reccurrentTest,
+    ) as returnMovementFromreccurrent & { success: false };
 
     expect(result.success).toBeFalsy();
     expect(result.message).toBeDefined();
   });
 
-  test("generateMovementReccurent() - Recebe uma recorrência de outra carteira e nao gera movimentação", async () => {
-    const reccurentTest = getReccurent({
+  test("generateMovementreccurrent() - Recebe uma recorrência de outra carteira e nao gera movimentação", async () => {
+    const reccurrentTest = getreccurrent({
       walletId: uuidv7(),
     });
 
-    const result = testWallet.generateMovementFromReccurent(
-      reccurentTest,
-    ) as returnMovementFromReccurent & { success: false };
+    const result = testWallet.generateMovementFromreccurrent(
+      reccurrentTest,
+    ) as returnMovementFromreccurrent & { success: false };
 
     expect(result.success).toBeFalsy();
     expect(result.message).toBeDefined();

@@ -172,7 +172,7 @@ describe("Repositorio drizzle Movements", () => {
       isReversal: false,
       reversalOfId: null,
       categoryId: seed_categorias[13].id,
-      reccurentId: null,
+      reccurrentId: null,
       executedAt: new Date(),
       dueDate: null,
     };

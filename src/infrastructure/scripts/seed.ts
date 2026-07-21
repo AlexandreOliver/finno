@@ -2,7 +2,7 @@ import { schemas } from "../database/schemas";
 import {
   seed_categorias,
   seed_movements,
-  seed_templateReccurent,
+  seed_templatereccurrent,
   seed_transfers,
   seed_users,
   seed_wallets,
@@ -35,10 +35,10 @@ async function sedding() {
       });
 
     await db
-      .insert(schemas.templateReccurent)
-      .values(seed_templateReccurent)
+      .insert(schemas.templateReccurrent)
+      .values(seed_templatereccurrent)
       .onConflictDoUpdate({
-        target: schemas.templateReccurent.id,
+        target: schemas.templateReccurrent.id,
         set: {
           start_date: sql`excluded.start_date`,
           end_date: sql`excluded.end_date`,

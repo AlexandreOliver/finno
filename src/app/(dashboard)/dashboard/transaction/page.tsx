@@ -8,7 +8,7 @@ import { ptBR } from "date-fns/locale/pt-BR";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { TableReccurent } from "./_components/TableReccurent";
+import { TableReccurrent } from "./_components/TableReccurrent";
 
 import { RangeDateProvider } from "@/features/transactions/contexts/rangeDateProvider";
 import { Separator } from "@/components/ui/separator";
@@ -59,7 +59,7 @@ export default async function Page() {
         </div>
         <Separator className="my-4" />
         <div>
-          <TableReccurent />
+          <TableReccurrent />
         </div>
       </section>
     </RangeDateProvider>

@@ -129,7 +129,7 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
           isRefunded: sql`excluded.is_refunded`,
           walletId: sql`excluded.wallet_id`,
         },
-        // setWhere: sql`${movements.reccurentId} IS NULL`,
+        // setWhere: sql`${movements.reccurrentId} IS NULL`,
       })
       .returning();
 

@@ -26,7 +26,7 @@ export const CreateMovementCommandSchema = z.object({
     }),
   categoryId: z.string().min(1, { error: "Forneça uma uuid" }),
   walletId: z.string().min(1, { error: "Forneça uma uuid" }),
-  reccurentId: z.string().nullable().default(null),
+  reccurrentId: z.string().nullable().default(null),
   isReversal: z.boolean().optional().default(false),
   isRefunded: z.boolean().optional().default(false),
   reversalOfId: z.string().optional().nullable().default(null),

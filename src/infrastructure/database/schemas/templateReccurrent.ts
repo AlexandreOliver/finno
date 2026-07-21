@@ -12,8 +12,8 @@ import { categories } from "./categories";
 import { wallets } from "./wallets";
 import { sql } from "drizzle-orm";
 
-export const templateReccurent = pgTable(
-  "template_reccurent",
+export const templateReccurrent = pgTable(
+  "template_reccurrent",
   {
     id: uuid().primaryKey(),
     type: typesEnum().notNull(),

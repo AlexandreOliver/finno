@@ -40,7 +40,7 @@ import { useCriarMovement } from "@/features/transactions/hooks/useCriarMovement
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
 
-export function CreateReccurentForm() {
+export function CreatereccurrentForm() {
   const { user } = useSession();
   const { range } = useRangeDate();
   const [inputAmount, setAmount] = useState("");

@@ -34,7 +34,7 @@ export default function setupTestDb() {
   const clearDatabase = async () => {
     // await db.execute(sql`DROP TABLE __drizzle_migrations`);
     await db.execute(sql`TRUNCATE TABLE users CASCADE`);
-    await db.execute(sql`TRUNCATE TABLE template_reccurent CASCADE`);
+    await db.execute(sql`TRUNCATE TABLE template_reccurrent CASCADE`);
     await db.execute(sql`TRUNCATE TABLE movements CASCADE`);
     await db.execute(sql`TRUNCATE TABLE sessions CASCADE`);
     await db.execute(sql`TRUNCATE TABLE categories CASCADE`);

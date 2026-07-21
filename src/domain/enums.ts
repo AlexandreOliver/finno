@@ -10,4 +10,4 @@ export const FREQUENCIES_RECCURRENT = [
   "monthly",
   "yearly",
 ] as const;
-export type FrequenciesReccurent = (typeof FREQUENCIES_RECCURRENT)[number];
+export type Frequenciesreccurrent = (typeof FREQUENCIES_RECCURRENT)[number];
