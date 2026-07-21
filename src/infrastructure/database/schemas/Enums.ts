@@ -1,12 +1,12 @@
 import { pgEnum } from "drizzle-orm/pg-core";
+import {
+  FREQUENCIES_RECCURRENT,
+  STATUS_TRANSACTION,
+  TYPES_TRANSACTION,
+} from "@/domain/enums";
 
-export const typesEnum = pgEnum("types", ["debito", "credito", "investimento"]);
+export const typesEnum = pgEnum("types", TYPES_TRANSACTION);
 
-export const statusEnum = pgEnum("status", ["ativo", "pausado", "terminado"]);
+export const statusEnum = pgEnum("status", STATUS_TRANSACTION);
 
-export const frequencyEnum = pgEnum("frequency", [
-  "daily",
-  "weekly",
-  "monthly",
-  "yearly",
-]);
+export const frequencyEnum = pgEnum("frequency", FREQUENCIES_RECCURRENT);

@@ -2,11 +2,12 @@ import { movements } from "@/infrastructure/database/schemas/movements";
 import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuid7 } from "uuid";
 import zod from "zod";
+import { TypesTransaction } from "../enums";
 
 export type MovementsProps = {
   id: string;
   walletId: string;
-  type: "debito" | "credito" | "investimento";
+  type: TypesTransaction;
   description: string;
   amount: number;
   isReversal: boolean;

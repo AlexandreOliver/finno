@@ -1,4 +1,8 @@
-import { frequencyEnum, statusEnum, typesEnum } from "./database/schemas/Enums";
+import {
+  TYPES_TRANSACTION,
+  FREQUENCIES_RECCURRENT,
+  STATUS_TRANSACTION,
+} from "@/domain/enums";
 import bcrypt from "bcrypt";
 
 const hoje = new Date(new Date().setHours(6));
@@ -41,180 +45,180 @@ const seed_categorias = [
     id: "019e1da3-47bc-7cca-8563-da7d117ac1e2",
     label: "Lanche",
     description: "comida no ifood ou outro app semelhante",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1da0-9c16-7398-860d-8029f22dd04c",
     label: "Energia",
     description: "Fatura de energia da concessionária",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1da5-dc9f-70e5-a692-89772875c085",
     label: "Compras",
     description: "Compras no geral, caso não haja Categoria especifica",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1da6-2987-7134-a0fa-e292b62e63cb",
     label: "Mercado",
     description: "Compras no Supermercado",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1dd8-ac1d-7c13-86b4-26552aadef87",
     label: "Beleza",
     description: "Compra de itens de Beleza",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1da6-67fe-7b33-84f3-b4ac46116ed3",
     label: "Empréstimo",
     description: "Dinheiro enviado para terceiro com expectativa de retorno",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1dab-48cc-770e-a639-c67a8880703f",
     label: "Saude",
     description: "Gastos com Remedios, Exames ou Produtos relacionados a Saude",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1dad-283b-7df5-935d-d400efa09f8e",
     label: "Transporte",
     description: "Gastos com Uber ou Onibus",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1dae-3250-7113-adba-1dafb7a8bcb5",
     label: "Investimento",
     description: "Dinheiro alçado para Investimentos diversos",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1db1-1cbd-7b89-ade4-d471fbe8072f",
     label: "Agua",
     description: "Fatura de Agua da Concessionária",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1db1-655e-7581-a6f8-ed74610050f3",
     label: "Internet",
     description: "Fatura de Energia da Concessionária",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1db2-1283-7323-9086-1c1a1a3185b1",
     label: "Assinaturas",
     description: "Assinaturas diversas em streaming",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1db5-e83b-7b56-857c-1b94181d95d3",
     label: "Faculdade",
     description: "Mensalidade da Faculdade",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019e1d97-f1c6-7eee-bb29-18e289e7484f",
     label: "Salário",
     description: "Salário recebido mensalmente",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019e1da0-389e-7ec5-8b87-0b877b11c4a4",
     label: "Rendimentos",
     description: "Lucros de investimento",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019e1daf-f477-7faf-a514-a6627ac48356",
     label: "Devolução",
     description: "Retorno de um Empréstimo á terceiro",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019e1dbc-ddff-7801-9a9c-a617cfd6ad15",
     label: "Aquisição de Empréstimo",
     description: "Empréstimo recebido sendo Bancário ou não",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019e1dc3-e1d4-7978-98ec-88eb2c60037e",
     label: "Extra",
     description: "Ganhos oriundos de renda extra",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000001",
     label: "Lazer",
     description: "Cinema, shows e eventos",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000002",
     label: "Restaurante",
     description: "Almoços e jantares fora",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000003",
     label: "Farmácia",
     description: "Remédios e produtos de saúde",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000004",
     label: "Freelance",
     description: "Renda extra de projetos",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000005",
     label: "Reembolso",
     description: "Reembolso de despesas",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000006",
     label: "Doações",
     description: "Doações e caridade",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000007",
     label: "Seguro",
     description: "Pagamentos de seguro",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000008",
     label: "Pets",
     description: "Gastos com animais de estimação",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000009",
     label: "Assinatura Streaming",
     description: "Netflix, Spotify, etc.",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
   {
     id: "019f2c01-0000-701c-8483-000000000010",
     label: "Educação",
     description: "Cursos e materiais didáticos",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
   },
 ];
 
 const seed_templateReccurent = [
   {
     id: "019e1e61-b1d6-701c-8483-c2b5ba46a932",
-    type: typesEnum.enumValues[0],
-    status: statusEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
+    status: STATUS_TRANSACTION[0],
     description: "Iphone 12",
     amount: "120.43",
-    frequency: frequencyEnum.enumValues[2],
+    frequency: FREQUENCIES_RECCURRENT[2],
     interval: 1,
     installments: 12,
     countPaid: 0,
@@ -241,11 +245,11 @@ const seed_templateReccurent = [
   },
   {
     id: "019f67dd-92c2-7a2f-b43c-53bc01a3455b",
-    type: typesEnum.enumValues[0],
-    status: statusEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
+    status: STATUS_TRANSACTION[0],
     description: "Carro",
     amount: "325.31",
-    frequency: frequencyEnum.enumValues[2],
+    frequency: FREQUENCIES_RECCURRENT[2],
     interval: 1,
     installments: 24,
     countPaid: 12,
@@ -270,7 +274,7 @@ const seed_templateReccurent = [
 const seed_movements = [
   {
     id: "019e5c74-dfb9-7691-961c-81d6ef0d3a31",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Salário",
     amount: "1623.13",
     categoryId: seed_categorias[13].id,
@@ -285,7 +289,7 @@ const seed_movements = [
   },
   {
     id: "019e5c74-dfb9-7691-961c-81d6ef0d3a32",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Salário",
     amount: "1123.23",
     categoryId: seed_categorias[13].id,
@@ -294,7 +298,7 @@ const seed_movements = [
   },
   {
     id: "014e2dde-48e8-73b6-b0d4-bcaadd749216",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Salário",
     amount: "183.23",
     categoryId: seed_categorias[13].id,
@@ -303,7 +307,7 @@ const seed_movements = [
   },
   {
     id: "019e1dde-48e8-73b6-b0d4-bcaadd749216",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Salário do mês",
     amount: "1843.23",
     categoryId: seed_categorias[13].id,
@@ -312,7 +316,7 @@ const seed_movements = [
   },
   {
     id: "019e1dff-0c81-7ea5-9ff2-582433246f3c",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Mercado do mês",
     amount: "789.34",
     categoryId: seed_categorias[3].id,
@@ -321,7 +325,7 @@ const seed_movements = [
   },
   {
     id: "019e1e0d-21aa-773e-b3a7-9bfb6af6e80f",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Conta de luz",
     amount: "102.40",
     categoryId: seed_categorias[1].id,
@@ -330,7 +334,7 @@ const seed_movements = [
   },
   {
     id: "019e1e52-de9d-77e1-8175-0f12d40a181d",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Emprestado a Melenau",
     amount: "50.41",
     categoryId: seed_categorias[5].id,
@@ -339,7 +343,7 @@ const seed_movements = [
   },
   {
     id: "019e1e59-1daa-7586-8bf9-9537a3fe52e8",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Parcela 01/12 - Iphone 12",
     amount: "120.43",
     categoryId: seed_categorias[2].id,
@@ -349,7 +353,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000001",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Almoço rápido",
     amount: "23.50",
     categoryId: seed_categorias[0].id,
@@ -358,7 +362,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000002",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Mercado semanal",
     amount: "156.78",
     categoryId: seed_categorias[3].id,
@@ -367,7 +371,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000003",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Uber para trabalho",
     amount: "18.90",
     categoryId: seed_categorias[7].id,
@@ -376,7 +380,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000004",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Conta de água",
     amount: "45.12",
     categoryId: seed_categorias[10].id,
@@ -385,7 +389,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000005",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Conta de luz",
     amount: "120.40",
     categoryId: seed_categorias[1].id,
@@ -394,7 +398,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000006",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Farmácia local",
     amount: "32.10",
     categoryId: seed_categorias[22].id,
@@ -403,7 +407,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000007",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Compra online - eletrônicos",
     amount: "299.99",
     categoryId: seed_categorias[2].id,
@@ -412,7 +416,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000008",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Assinatura mensal",
     amount: "29.90",
     categoryId: seed_categorias[12].id,
@@ -421,7 +425,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000009",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Cinema com amigos",
     amount: "38.00",
     categoryId: seed_categorias[20].id,
@@ -430,7 +434,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000a",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Bar e restaurante",
     amount: "75.30",
     categoryId: seed_categorias[1].id,
@@ -439,7 +443,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000b",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Compra de material",
     amount: "42.00",
     categoryId: seed_categorias[2].id,
@@ -448,7 +452,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000c",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Pet shop - banho",
     amount: "65.00",
     categoryId: seed_categorias[21].id,
@@ -457,7 +461,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000d",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Seguro do carro",
     amount: "210.00",
     categoryId: seed_categorias[22].id,
@@ -466,7 +470,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000e",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Doação à instituição",
     amount: "50.00",
     categoryId: seed_categorias[23].id,
@@ -475,7 +479,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000000f",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Pagamento Freelance",
     amount: "450.00",
     categoryId: seed_categorias[24].id,
@@ -484,7 +488,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000010",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Rendimento investimento",
     amount: "120.50",
     categoryId: seed_categorias[16].id,
@@ -493,7 +497,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000011",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Reembolso viagem",
     amount: "89.90",
     categoryId: seed_categorias[25].id,
@@ -502,7 +506,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000012",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Presente/extra",
     amount: "60.00",
     categoryId: seed_categorias[24].id,
@@ -511,7 +515,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000013",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Lanche tarde",
     amount: "12.75",
     categoryId: seed_categorias[0].id,
@@ -520,7 +524,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000014",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Mercado - frutas",
     amount: "48.60",
     categoryId: seed_categorias[3].id,
@@ -529,7 +533,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000015",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Transporte público",
     amount: "4.50",
     categoryId: seed_categorias[7].id,
@@ -538,7 +542,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000016",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Compra no supermercado",
     amount: "210.34",
     categoryId: seed_categorias[3].id,
@@ -547,7 +551,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000017",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Beleza - salão",
     amount: "95.00",
     categoryId: seed_categorias[4].id,
@@ -556,7 +560,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000018",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Empréstimo enviado",
     amount: "150.00",
     categoryId: seed_categorias[5].id,
@@ -565,7 +569,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000019",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Consulta médica",
     amount: "120.00",
     categoryId: seed_categorias[6].id,
@@ -574,7 +578,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001a",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Parcela 02/12 - Iphone 12",
     amount: "120.43",
     categoryId: seed_categorias[2].id,
@@ -584,7 +588,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001b",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Salário extra",
     amount: "350.00",
     categoryId: seed_categorias[18].id,
@@ -593,7 +597,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001c",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Devolução empréstimo",
     amount: "150.00",
     categoryId: seed_categorias[16].id,
@@ -602,7 +606,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001d",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Internet - provedor",
     amount: "89.99",
     categoryId: seed_categorias[11].id,
@@ -611,7 +615,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001e",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Assinatura streaming anual",
     amount: "99.90",
     categoryId: seed_categorias[20].id,
@@ -620,7 +624,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001f",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Mensalidade faculdade",
     amount: "420.00",
     categoryId: seed_categorias[13].id,
@@ -629,7 +633,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000020",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Investimento resgate",
     amount: "520.00",
     categoryId: seed_categorias[8].id,
@@ -638,7 +642,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000021",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Reembolso cartão",
     amount: "30.00",
     categoryId: seed_categorias[24].id,
@@ -647,7 +651,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000022",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Compras gerais",
     amount: "67.45",
     categoryId: seed_categorias[2].id,
@@ -656,7 +660,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000023",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Ração pet",
     amount: "89.00",
     categoryId: seed_categorias[21].id,
@@ -665,7 +669,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000024",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Medicamentos",
     amount: "23.40",
     categoryId: seed_categorias[6].id,
@@ -674,7 +678,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000025",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Passeio/combustível",
     amount: "150.00",
     categoryId: seed_categorias[7].id,
@@ -683,7 +687,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000026",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Freelance curta",
     amount: "260.00",
     categoryId: seed_categorias[24].id,
@@ -692,7 +696,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000027",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Assinatura app",
     amount: "14.99",
     categoryId: seed_categorias[12].id,
@@ -701,7 +705,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000028",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Restaurante almoço",
     amount: "48.00",
     categoryId: seed_categorias[20].id,
@@ -710,7 +714,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000029",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Livros e cursos",
     amount: "120.00",
     categoryId: seed_categorias[27].id,
@@ -719,7 +723,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002a",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Pequena manutenção",
     amount: "75.00",
     categoryId: seed_categorias[22].id,
@@ -728,7 +732,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002b",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Bônus projeto",
     amount: "980.00",
     categoryId: seed_categorias[18].id,
@@ -737,7 +741,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002c",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Compra presente",
     amount: "55.00",
     categoryId: seed_categorias[2].id,
@@ -746,7 +750,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002d",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Cafeteria",
     amount: "7.50",
     categoryId: seed_categorias[0].id,
@@ -755,7 +759,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002e",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Taxi aeroporto",
     amount: "45.00",
     categoryId: seed_categorias[7].id,
@@ -764,7 +768,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002f",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Compra roupas",
     amount: "140.00",
     categoryId: seed_categorias[2].id,
@@ -773,7 +777,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000030",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Posto combustível",
     amount: "120.00",
     categoryId: seed_categorias[7].id,
@@ -782,7 +786,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000031",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Venda item usado",
     amount: "85.00",
     categoryId: seed_categorias[24].id,
@@ -791,7 +795,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000032",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Conserto eletrônico",
     amount: "210.50",
     categoryId: seed_categorias[2].id,
@@ -800,7 +804,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000033",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Entrega app comida",
     amount: "34.90",
     categoryId: seed_categorias[0].id,
@@ -809,7 +813,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000034",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Juros conta investimento",
     amount: "33.25",
     categoryId: seed_categorias[16].id,
@@ -818,7 +822,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000035",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Pequena doação",
     amount: "20.00",
     categoryId: seed_categorias[23].id,
@@ -827,7 +831,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000036",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Serviço doméstico",
     amount: "90.00",
     categoryId: seed_categorias[2].id,
@@ -836,7 +840,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000037",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Troca de pneu",
     amount: "180.00",
     categoryId: seed_categorias[22].id,
@@ -845,7 +849,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000038",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Renda extra evento",
     amount: "200.00",
     categoryId: seed_categorias[24].id,
@@ -854,7 +858,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000039",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Reparo hidráulico",
     amount: "260.00",
     categoryId: seed_categorias[22].id,
@@ -863,7 +867,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003a",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Pequena reforma casa",
     amount: "480.00",
     categoryId: seed_categorias[2].id,
@@ -872,7 +876,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003b",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Manutenção PC",
     amount: "140.00",
     categoryId: seed_categorias[2].id,
@@ -881,7 +885,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003c",
-    type: typesEnum.enumValues[1],
+    type: TYPES_TRANSACTION[1],
     description: "Venda freelance",
     amount: "320.00",
     categoryId: seed_categorias[24].id,
@@ -896,7 +900,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003d",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Pagamento curso",
     amount: "200.00",
     categoryId: seed_categorias[27].id,
@@ -905,7 +909,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003e",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Transporte intermunicipal",
     amount: "65.00",
     categoryId: seed_categorias[7].id,
@@ -914,7 +918,7 @@ const seed_movements = [
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003f",
-    type: typesEnum.enumValues[0],
+    type: TYPES_TRANSACTION[0],
     description: "Farmácia - remédio contínuo",
     amount: "42.00",
     categoryId: seed_categorias[6].id,

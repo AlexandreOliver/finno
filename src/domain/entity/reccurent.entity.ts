@@ -13,6 +13,11 @@ import {
   isBefore,
 } from "date-fns";
 import { Movement } from "./movements.entity";
+import {
+  FrequenciesReccurent,
+  StatusTransaction,
+  TypesTransaction,
+} from "../enums";
 
 export const reccurentSchema = createInsertSchema(templateReccurent, {
   description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
@@ -140,11 +145,11 @@ export type ReccurentInput = zod.input<typeof reccurentSchema>;
 
 export type ReccurentProps = {
   id: string;
-  type: "debito" | "credito" | "investimento";
-  status: "ativo" | "pausado" | "terminado";
+  type: TypesTransaction;
+  status: StatusTransaction;
   description: string;
   amount: number;
-  frequency: "daily" | "weekly" | "monthly" | "yearly";
+  frequency: FrequenciesReccurent;
   interval: number;
   categoryId: string;
   walletId: string;

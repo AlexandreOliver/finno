@@ -19,7 +19,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import { ComponentProps, useMemo, useCallback } from "react";
 
-import { typesEnum } from "@/infrastructure/database/schemas/Enums";
+import { TYPES_TRANSACTION } from "@/domain/enums";
 
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 
@@ -37,7 +37,7 @@ export function CreateMovementForm({ className, variant, ...rest }: FormProps) {
   const { range } = useRangeDate();
   const { user } = useSession();
   const [type, setType] = useState(
-    variant === "Renda" ? typesEnum.enumValues[1] : typesEnum.enumValues[0],
+    variant === "Renda" ? TYPES_TRANSACTION[1] : TYPES_TRANSACTION[0],
   );
   const [amount, setAmount] = useState("");
 
