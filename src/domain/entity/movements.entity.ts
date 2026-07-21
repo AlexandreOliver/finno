@@ -1,111 +1,36 @@
-import { movements } from "@/infrastructure/database/schemas/movements";
-import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuid7 } from "uuid";
 import zod from "zod";
-import { TypesTransaction } from "../enums";
 
-export type MovementsProps = {
-  id: string;
-  walletId: string;
-  type: TypesTransaction;
-  description: string;
-  amount: number;
-  isReversal: boolean;
-  isRefunded: boolean;
-  reversalOfId: string | null;
-  categoryId: string;
-  reccurrentId: string | null;
-  executedAt: Date;
-  dueDate: Date | null;
-};
+import {
+  MovementProps,
+  MovementErrorsValidation,
+  movementDomainSchema,
+} from "../schemas/movement.schema";
 
-export type MovementsCreateProps = {
-  walletId: string;
-  type: string;
-  description: string;
-  amount: number;
-  isRefunded: boolean;
-  isReversal: boolean;
-  reversalOfId: string | null;
-  categoryId: string;
-  reccurrentId: string | null;
-  executedAt: Date;
-  dueDate: Date | null;
-};
+export type MovementCreateProps = Omit<MovementProps, "id">;
 
-export type MovementsFromDb = typeof movements.$inferSelect;
-
-export type MovementErrorsValidation = {
-  id?: string[] | undefined;
-  type?: string[] | undefined;
-  description?: string[] | undefined;
-  amount?: string[] | undefined;
-  categoryId?: string[] | undefined;
-  walletId?: string[] | undefined;
-  reccurrentId?: string[] | undefined;
-  executedAt?: string[] | undefined;
-  dueDate?: string[] | undefined;
+export type MovementsFromDb = Omit<MovementProps, "amount"> & {
+  amount: string;
 };
 
 export type resultCreateMovement =
   | {
       success: false;
-      errors: {
-        id?: string[] | undefined;
-        type?: string[] | undefined;
-        description?: string[] | undefined;
-        amount?: string[] | undefined;
-        categoryId?: string[] | undefined;
-        walletId?: string[] | undefined;
-        reccurrentId?: string[] | undefined;
-        executedAt?: string[] | undefined;
-        dueDate?: string[] | undefined;
-      };
+      errors: MovementErrorsValidation;
     }
   | { success: true; movement: Movement };
 
-export const movementsSchema = createInsertSchema(movements, {
-  amount: () =>
-    zod.number().refine((value) => value > 0, {
-      error: "O Valor Precisa ser maior do que 0",
-    }),
-  description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
-  walletId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
-  reccurrentId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
-  categoryId: () => zod.uuidv7({ error: "Forneça uma uuid na versao 7" }),
-  executedAt: (schema) => schema.nonoptional().default(new Date()),
-  dueDate: (schema) => schema.nonoptional(),
-  isReversal: (schema) => schema.nonoptional(),
-  isRefunded: (schema) => schema.nonoptional(),
-  reversalOfId: () =>
-    zod.uuidv7({ error: "Forneça uma uuid na versao 7" }).nonoptional(),
-})
-  .refine((mov) => !(mov.isRefunded && mov.isReversal), {
-    error:
-      "A movimentação não pode ter os campos isReversal e isRefunded como true",
-    path: ["isReversal"],
-  })
-  .refine(
-    (mov) =>
-      (!mov.isReversal && !mov.reversalOfId) ||
-      (mov.isReversal && mov.reversalOfId),
-    {
-      error:
-        "Se a movimentação é um estorno o campo reversalOfId precisa estar preenchido.",
-      path: ["reversalOfId"],
-    },
-  );
-
 export class Movement {
-  private constructor(private readonly props: MovementsProps) {}
+  private constructor(private readonly props: MovementProps) {}
 
-  public static create(data: MovementsCreateProps): resultCreateMovement {
-    const dataValid = movementsSchema.safeParse({
+  public static create(data: MovementCreateProps): resultCreateMovement {
+    const dataValid = movementDomainSchema.safeParse({
       id: uuid7(),
       ...data,
     });
 
     if (!dataValid.success) {
+      console.log(zod.flattenError(dataValid.error).fieldErrors);
       return {
         errors: zod.flattenError(dataValid.error).fieldErrors,
         success: false,
@@ -184,9 +109,9 @@ export class Movement {
 
   //#endregion
 
-  public toJson<K extends keyof MovementsProps = never>(options?: {
+  public toJson<K extends keyof MovementProps = never>(options?: {
     omit: readonly K[];
-  }): Omit<MovementsProps, K> {
+  }): Omit<MovementProps, K> {
     const data = Object.assign({}, this.props);
 
     if (!options || Object.keys(options.omit).length === 0) {
@@ -199,6 +124,6 @@ export class Movement {
       });
     }
 
-    return data as Omit<MovementsProps, K>;
+    return data as Omit<MovementProps, K>;
   }
 }

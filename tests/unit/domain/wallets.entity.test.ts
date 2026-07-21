@@ -24,7 +24,7 @@ describe("Entidade Wallet", () => {
     ).data;
   });
 
-  const getreccurrent = (props: {
+  const getReccurrent = (props: {
     amount?: string;
     categoryId?: string;
     description?: string;
@@ -57,7 +57,7 @@ describe("Entidade Wallet", () => {
   };
 
   test("generateMovementreccurrent() - Gera uma nova movimentação apartir de uma recorrência de debito valida", async () => {
-    const reccurrentTest = getreccurrent({});
+    const reccurrentTest = getReccurrent({});
 
     const result = testWallet.generateMovementFromreccurrent(
       reccurrentTest,
@@ -70,7 +70,7 @@ describe("Entidade Wallet", () => {
   });
 
   test("generateMovementreccurrent() - Gera uma nova movimentação apartir de uma recorrência de credito valida", async () => {
-    const reccurrentTest = getreccurrent({
+    const reccurrentTest = getReccurrent({
       type: "credito",
     });
 
@@ -85,7 +85,7 @@ describe("Entidade Wallet", () => {
   });
 
   test("generateMovementreccurrent() - Recebe uma recorrência com startDate no futuro e nao gera movimentação", async () => {
-    const reccurrentTest = getreccurrent({
+    const reccurrentTest = getReccurrent({
       start_date: addDays(new Date(), 1),
     });
 
@@ -98,7 +98,7 @@ describe("Entidade Wallet", () => {
   });
 
   test("generateMovementreccurrent() - Recebe uma recorrência ja chegou ao fim e nao gera movimentação", async () => {
-    const reccurrentTest = getreccurrent({
+    const reccurrentTest = getReccurrent({
       countPaid: 5,
       installments: 5,
     });
@@ -112,7 +112,7 @@ describe("Entidade Wallet", () => {
   });
 
   test("generateMovementreccurrent() - Recebe uma recorrência de outra carteira e nao gera movimentação", async () => {
-    const reccurrentTest = getreccurrent({
+    const reccurrentTest = getReccurrent({
       walletId: uuidv7(),
     });
 

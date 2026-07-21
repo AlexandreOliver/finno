@@ -62,7 +62,6 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
       movConfig: {
         reccurrentId: null,
         description: "Mercado do mes",
-        isRefunded: false,
         categoryId: uuid7(),
         dueDate: null,
         executedAt: new Date(),
@@ -114,7 +113,6 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
       movConfig: {
         reccurrentId: null,
         description: "Freelancer",
-        isRefunded: false,
         categoryId: uuid7(),
         dueDate: null,
         executedAt: new Date(),
@@ -169,7 +167,6 @@ describe("Caso de Uso - Apagar uma movimentação", () => {
       movConfig: {
         reccurrentId: null,
         description: "Freelancer",
-        isRefunded: false,
         categoryId: uuid7(),
         dueDate: null,
         executedAt: new Date(),

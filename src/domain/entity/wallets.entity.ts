@@ -1,11 +1,8 @@
 import { wallets } from "@/infrastructure/database/schemas/wallets";
 import { v7 as uuidV7 } from "uuid";
 import { z } from "zod";
-import {
-  Movement,
-  MovementErrorsValidation,
-  MovementsCreateProps,
-} from "./movements.entity";
+import { MovementErrorsValidation } from "../schemas/movement.schema";
+import { Movement, MovementCreateProps } from "./movements.entity";
 import { Reccurrent } from "./reccurrent.entity";
 import { isEqual, set } from "date-fns";
 
@@ -27,8 +24,13 @@ const walletSchema = z.object({
 export type FunctionNewMovement = (props: {
   amount: number;
   movConfig: Omit<
-    MovementsCreateProps,
-    "walletId" | "amount" | "type" | "isReversal" | "reversalOfId"
+    MovementCreateProps,
+    | "walletId"
+    | "amount"
+    | "type"
+    | "isReversal"
+    | "reversalOfId"
+    | "isRefunded"
   >;
 }) =>
   | { success: true; data: Movement }
@@ -125,9 +127,10 @@ export class Wallet {
     const movementDTO = {
       ...movConfig,
       amount,
-      type: "debito",
+      type: "debito" as const,
       walletId: this.id,
       isReversal: false,
+      isRefunded: false,
       reversalOfId: null,
     };
 
@@ -156,9 +159,10 @@ export class Wallet {
     const movementDTO = {
       ...movConfig,
       amount,
-      type: "credito",
+      type: "credito" as const,
       walletId: this.id,
       isReversal: false,
+      isRefunded: false,
       reversalOfId: null,
     };
 

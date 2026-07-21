@@ -165,7 +165,7 @@ describe("Repositorio drizzle Movements", () => {
   test("save() insere movimento e retorna true quando ID é gerado", async () => {
     const data = {
       walletId: seed_wallets[1].id,
-      type: "debito",
+      type: "debito" as const,
       description: "Teste de save",
       amount: "100.00",
       isRefunded: false,

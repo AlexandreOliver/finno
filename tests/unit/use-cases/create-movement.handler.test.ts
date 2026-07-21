@@ -58,11 +58,16 @@ describe("Caso de Uso - Criar uma movimentação", () => {
 
     const data = {
       description: "Mercado do mes",
-      type: "debito",
-      amount: "500.00",
+      type: "debito" as const,
+      amount: 500.0,
       categoryId: uuid7(),
       walletId: walletTest.id,
       reccurrentId: null,
+      isReversal: false,
+      isRefunded: false,
+      reversalOfId: null,
+      executedAt: new Date(),
+      dueDate: null,
     };
 
     mockWalletRepository.findById.mockResolvedValue(walletTest);
@@ -86,9 +91,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
     const movementSaved = mockMovementRepository.saveOrUpdate.mock.calls[0][0];
 
     expect(walletSaved.toJson()).toStrictEqual(WalletAfter);
-    expect(
-      movementSaved.toJson({ omit: ["id", "dueDate", "executedAt"] }),
-    ).toStrictEqual({
+    expect(movementSaved.toJson({ omit: ["id"] })).toStrictEqual({
       ...data,
       amount: Number(data.amount),
       isReversal: false,
@@ -111,11 +114,16 @@ describe("Caso de Uso - Criar uma movimentação", () => {
 
     const data = {
       description: "Salario do mes",
-      type: "credito",
-      amount: "1500.00",
+      type: "credito" as const,
+      amount: 1500.0,
       categoryId: uuid7(),
       walletId: walletTest.id,
       reccurrentId: null,
+      isReversal: false,
+      isRefunded: false,
+      reversalOfId: null,
+      executedAt: new Date(),
+      dueDate: null,
     };
 
     const result = (await createMovement.execute(data)) as MovementOutputDTO & {
@@ -137,9 +145,7 @@ describe("Caso de Uso - Criar uma movimentação", () => {
     const movementSaved = mockMovementRepository.saveOrUpdate.mock.calls[0][0];
 
     expect(WalletSaved.toJson()).toStrictEqual(WalletAfter);
-    expect(
-      movementSaved.toJson({ omit: ["id", "dueDate", "executedAt"] }),
-    ).toStrictEqual({
+    expect(movementSaved.toJson({ omit: ["id"] })).toStrictEqual({
       ...data,
       amount: Number(data.amount),
       isReversal: false,
