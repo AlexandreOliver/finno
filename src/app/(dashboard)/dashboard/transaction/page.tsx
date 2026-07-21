@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
 import { TableReccurrent } from "./_components/TableReccurrent";
 
 import { RangeDateProvider } from "@/features/transactions/contexts/rangeDateProvider";
@@ -29,7 +28,7 @@ export default async function Page() {
   return (
     <RangeDateProvider>
       <section className="flex flex-col gap-2 w-full">
-        <div className="p-3 flex flex-col justify-center items-center gap-3 md:flex-row md:justify-between">
+        <header className="p-3 flex flex-col justify-center items-center gap-3 md:flex-row md:justify-between">
           <div>
             <p className="text-muted-foreground text-md">{dateFormated}</p>
             <p className="text-3xl tracking-tight font-medium text-center md:text-start">
@@ -51,16 +50,14 @@ export default async function Page() {
             <CreateMovementDialog type="Renda" label="Nova Receita" />
             <CreateMovementDialog type="Despesa" label="Nova Despesa" />
           </div>
-        </div>
-        <div>
-          <Suspense fallback={<div></div>}>
-            <TableMovements />
-          </Suspense>
-        </div>
-        <Separator className="my-4" />
-        <div>
+        </header>
+        <main>
+          <TableMovements />
+
+          <Separator className="my-8" />
+
           <TableReccurrent />
-        </div>
+        </main>
       </section>
     </RangeDateProvider>
   );

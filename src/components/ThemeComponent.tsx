@@ -10,6 +10,7 @@ interface ThemeComponentProps {
 export default function ThemeComponent(props: ThemeComponentProps) {
   const { theme, setTheme } = useTheme();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function toggleTheme() {
     setTheme(theme === "light" ? "dark" : "light");
   }

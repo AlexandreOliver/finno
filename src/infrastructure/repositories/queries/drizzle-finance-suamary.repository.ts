@@ -1,5 +1,5 @@
 import { GetFinanceSumaryRepository } from "@/features/dashboard/get-finance-sumary/get-finance-sumary.interface";
-import { eq, and, sum, sql, gte, lt, inArray } from "drizzle-orm";
+import { eq, and, sum, gte, lt, inArray } from "drizzle-orm";
 import db from "@/infrastructure/database";
 import { movements } from "@/infrastructure/database/schemas/movements";
 import { wallets } from "@/infrastructure/database/schemas/wallets";

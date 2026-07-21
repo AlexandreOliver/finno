@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { categoriesProps, Categories } from "@/domain/entity/categories.entity";
 import { categoriesGateway } from "@/domain/repositories/categories.gateway";
 

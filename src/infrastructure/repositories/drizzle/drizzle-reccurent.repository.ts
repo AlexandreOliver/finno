@@ -92,7 +92,7 @@ export class reccurrentRepositoryDrizzle implements IReccurrentGateway {
   };
 
   public count: IReccurrentGateway["count"] = async (args) => {
-    const { query, walletId } = args;
+    const { walletId } = args;
 
     let count;
 
