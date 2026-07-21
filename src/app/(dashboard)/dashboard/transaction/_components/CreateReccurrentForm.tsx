@@ -214,6 +214,7 @@ export function CreatereccurrentForm() {
                     Tipo<span className="text-destructive text-base">*</span>
                   </FieldLabel>
                   <Select
+                    id="label-type"
                     name="type"
                     items={types}
                     value={selectType}
@@ -224,7 +225,7 @@ export function CreatereccurrentForm() {
                     itemToStringValue={(item) => (item ? item.value : "")}
                     required
                   >
-                    <SelectTrigger id="label-type">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent alignItemWithTrigger={false}>
@@ -242,13 +243,14 @@ export function CreatereccurrentForm() {
                     <span className="text-destructive text-base">*</span>
                   </FieldLabel>
                   <Select
+                    id="label-carteira"
                     name="walletId"
                     items={wallets}
                     defaultValue={null}
                     disabled={isLoadingWallet}
                     required
                   >
-                    <SelectTrigger id="label-carteira">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent alignItemWithTrigger={false}>
@@ -268,6 +270,7 @@ export function CreatereccurrentForm() {
                     <span className="text-destructive text-base">*</span>
                   </FieldLabel>
                   <Select
+                    id="label-categoria"
                     key={selectType?.value}
                     name="categoryId"
                     items={categories}
@@ -275,7 +278,7 @@ export function CreatereccurrentForm() {
                     required
                     disabled={isLoadingCategories || categories?.length == 0}
                   >
-                    <SelectTrigger id="label-categoria">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent alignItemWithTrigger={false}>
@@ -425,14 +428,14 @@ export function CreatereccurrentForm() {
                     Inicio<span className="text-destructive text-base">*</span>
                   </FieldLabel>
                   <input
-                    id="input-start"
-                    name="start_date"
+                    name="startDate"
                     type="text"
                     defaultValue={startDate?.toISOString().slice(0, 10)}
                     hidden
                   />
                   <Popover>
                     <PopoverTrigger
+                      id="input-start"
                       render={
                         <Button
                           variant={"outline"}
@@ -482,14 +485,14 @@ export function CreatereccurrentForm() {
                     Fim
                   </FieldLabel>
                   <input
-                    id="input-end"
-                    name="end_date"
+                    name="endDate"
                     type="text"
                     defaultValue={endDate?.toISOString().slice(0, 10)}
                     hidden
                   />
                   <Popover>
                     <PopoverTrigger
+                      id="input-end"
                       render={
                         <Button
                           variant={"outline"}

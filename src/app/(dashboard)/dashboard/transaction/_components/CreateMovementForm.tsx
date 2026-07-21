@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import clsx from "clsx";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { ComponentProps, useMemo, useCallback } from "react";
 
 import { TYPES_TRANSACTION } from "@/domain/enums";
@@ -66,7 +66,11 @@ export function CreateMovementForm({ className, variant, ...rest }: FormProps) {
 
   // ----------- Memos ----------------
   const categoriesBytype = useMemo(() => {
-    return categories?.filter((ctg) => ctg.type === type);
+    const ctgFiltred = categories?.filter((ctg) => ctg.type === type);
+
+    return ctgFiltred?.map((ctg) => {
+      return { value: ctg.id, label: ctg.label };
+    });
   }, [categories, type]);
 
   // ------------ useCallback -----------
@@ -95,10 +99,18 @@ export function CreateMovementForm({ className, variant, ...rest }: FormProps) {
     [normalizeCurrencyString],
   );
 
-  const handleAmountBlur = () => {
+  const handleAmountBlur = useCallback(() => {
     const formatted = formatCurrencyDisplay(amount);
     setAmount(formatted);
-  };
+  }, [amount, formatCurrencyDisplay]);
+
+  const handleChangeAmount = useCallback(
+    (e: ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+      e.preventDefault();
+      setAmount(e.target.value);
+    },
+    [],
+  );
 
   const normalizedAmount = normalizeCurrencyString(amount);
 
@@ -164,7 +176,7 @@ export function CreateMovementForm({ className, variant, ...rest }: FormProps) {
           placeholder="R$ 1.232,56"
           autoComplete="off"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={handleChangeAmount}
           onBlur={handleAmountBlur}
           aria-invalid={stateForm?.errors?.amount ? "true" : "false"}
         />
@@ -179,7 +191,7 @@ export function CreateMovementForm({ className, variant, ...rest }: FormProps) {
           <SelectField
             type={type}
             nameForm="categoryId"
-            data={categoriesBytype ?? [{ id: "noFound", label: "" }]}
+            data={categoriesBytype}
             isError={stateForm?.errors?.categoryId ? true : false}
             placeholder="Categorias"
           />
@@ -192,11 +204,11 @@ export function CreateMovementForm({ className, variant, ...rest }: FormProps) {
               dataWallets
                 ? dataWallets.map((w) => {
                     return {
-                      id: w.id,
+                      value: w.id,
                       label: w.labelName,
                     };
                   })
-                : [{ id: "error", label: "noFound" }]
+                : undefined
             }
             isError={stateForm?.errors?.walletId ? true : false}
             placeholder="Carteiras"
