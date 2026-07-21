@@ -1,5 +1,3 @@
-import { templateReccurrent } from "@/infrastructure/database/schemas/templateReccurrent";
-import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuid7 } from "uuid";
 import zod from "zod";
 import { isEqual } from "lodash";
@@ -13,188 +11,39 @@ import {
   isBefore,
 } from "date-fns";
 import { Movement } from "./movements.entity";
+
 import {
-  Frequenciesreccurrent,
-  StatusTransaction,
-  TypesTransaction,
-} from "../enums";
+  ReccurrentProps,
+  ReccurrentErrorsValidation,
+  reccurrentDomainSchema,
+} from "../schemas/reccurrent.schema";
 
-export const reccurrentSchema = createInsertSchema(templateReccurrent, {
-  description: (schema) => schema.min(2, { error: "Descrição curta demais" }),
-  interval: (schema) =>
-    zod.preprocess(
-      (val) => (typeof val === "string" ? Number.parseInt(val) : val),
-      schema.gt(0, {
-        error: "O Intervalo precisa ser maior do que 0",
-      }),
-    ),
-  countPaid: (schema) => schema.default(0),
-  installments: (schema) =>
-    zod.preprocess(
-      (val) => {
-        if (typeof val !== "string") return val;
-
-        return val.length > 0 ? Number.parseFloat(val) : 0;
-      },
-      schema.gte(0, {
-        error: "As parcelas não podem ser menores que 0",
-      }),
-    ),
-  amount: () =>
-    zod
-      .preprocess(
-        (val) => {
-          if (typeof val !== "string") return val;
-          const valor = val.trim();
-          if (valor.includes(",")) {
-            return valor.replace(/\./g, "").replace(",", ".");
-          }
-          return Number.parseFloat(valor);
-        },
-        zod.number({ error: "O Valor precisa ser um Número" }),
-      )
-      .refine((value) => value > 0, {
-        error: "O Valor Precisa ser maior do que 0",
-      }),
-  startDate: (schema) =>
-    zod.preprocess((val) => {
-      if (typeof val !== "string") return val;
-
-      if (val.length === 10) {
-        const dateData = new Date(val);
-
-        //Converte o startDate para as 6 horas
-        const dateReceived = new Date(
-          dateData.getFullYear(),
-          dateData.getMonth(),
-          dateData.getDate() + 1,
-          6,
-        ); // +3
-
-        return dateReceived;
-      }
-
-      return val;
-    }, schema),
-  endDate: (schema) =>
-    zod
-      .preprocess((val) => {
-        if (typeof val !== "string") return val;
-
-        if (val.length === 10) {
-          const dateData = new Date(val);
-
-          //Converte o endDate para as 18 horas
-          const dateReceived = new Date(
-            dateData.getFullYear(),
-            dateData.getMonth(),
-            dateData.getDate() + 1,
-            18,
-          ); // +3
-
-          return dateReceived;
-        }
-
-        return val;
-      }, schema.nullable().default(null))
-      .refine(
-        (data) => {
-          if (data) return data.toDateString() !== new Date().toDateString();
-
-          return true;
-        },
-        { error: "A data final nao pode ser hoje" },
-      ),
-  nextDueDate: (schema) => schema.nullable().default(null),
-}).refine(
-  (data) => {
-    if (data.endDate) {
-      return (
-        new Date(data.startDate.toDateString()) <
-        new Date(data.endDate.toDateString())
-      );
-    }
-    return true;
-  },
-  {
-    error: "A Data Final não pode ser anterior ou igual a Data Final",
-    path: ["endDate"],
-  },
-);
-
-export type reccurrentFromDbSelect = typeof templateReccurrent.$inferSelect;
-
-export type reccurrentCreateProps = {
-  type: string;
-  status: string;
-  description: string;
+export type ReccurrentFromDb = Omit<ReccurrentProps, "amount"> & {
   amount: string;
-  frequency: string;
-  interval: number | string;
-  installments?: number | string | null;
-  countPaid?: number | null;
-  categoryId: string;
-  walletId: string;
-  startDate: string | Date;
-  endDate?: string | Date | null;
-  nextDueDate?: Date | null;
 };
 
-export type reccurrentOutput = zod.output<typeof reccurrentSchema>;
-export type reccurrentInput = zod.input<typeof reccurrentSchema>;
-
-export type reccurrentProps = {
-  id: string;
-  type: TypesTransaction;
-  status: StatusTransaction;
-  description: string;
-  amount: number;
-  frequency: Frequenciesreccurrent;
-  interval: number;
-  categoryId: string;
-  walletId: string;
-  installments: number | null;
-  countPaid: number;
-  startDate: Date;
-  endDate: Date | null;
-  nextDueDate: Date | null;
-};
+export type ReccurrentCreateProps = Omit<ReccurrentProps, "id">;
 
 export type returnCreateReccurrent =
   | { success: true; data: Reccurrent }
   | {
       success: false;
-      errors: {
-        id?: string[] | undefined;
-        type?: string[] | undefined;
-        status?: string[] | undefined;
-        description?: string[] | undefined;
-        amount?: string[] | undefined;
-        frequency?: string[] | undefined;
-        interval?: string[] | undefined;
-        installments?: string[] | undefined;
-        countPaid?: string[] | undefined;
-        categoryId?: string[] | undefined;
-        walletId?: string[] | undefined;
-        startDate?: string[] | undefined;
-        endDate?: string[] | undefined;
-        nextDueDate?: string[] | undefined;
-      };
+      errors: ReccurrentErrorsValidation;
     };
 
 export class Reccurrent {
   readonly #startHour = 6;
   readonly #endHour = 18;
 
-  private constructor(private readonly props: reccurrentProps) {}
+  private constructor(private readonly props: ReccurrentProps) {}
 
-  public static create(data: reccurrentCreateProps): returnCreateReccurrent {
+  public static create(data: ReccurrentCreateProps): returnCreateReccurrent {
     const fullData = {
       id: uuid7(),
       ...data,
     };
 
-    const dataFormated = reccurrentSchema.safeParse(fullData);
+    const dataFormated = reccurrentDomainSchema.safeParse(fullData);
 
     if (!dataFormated.success) {
       return {
@@ -228,7 +77,7 @@ export class Reccurrent {
     };
   }
 
-  public static with(props: reccurrentFromDbSelect) {
+  public static with(props: ReccurrentFromDb) {
     return new Reccurrent({
       ...props,
       amount: Number.parseFloat(props.amount),
@@ -390,19 +239,19 @@ export class Reccurrent {
 
   //#endregion
 
-  public toJson<K extends keyof reccurrentProps = never>(options?: {
+  public toJson<K extends keyof ReccurrentProps = never>(options?: {
     omit: K[];
-  }): Omit<reccurrentProps, K> {
+  }): Omit<ReccurrentProps, K> {
     const data = { ...this.props };
 
     if (!options || Object.keys(options.omit).length === 0) {
-      return data as unknown as reccurrentProps;
+      return data as unknown as ReccurrentProps;
     }
 
     options.omit.forEach((key) => {
       delete data[key];
     });
 
-    return data as unknown as Omit<reccurrentProps, K>;
+    return data as unknown as Omit<ReccurrentProps, K>;
   }
 }

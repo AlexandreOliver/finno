@@ -40,7 +40,7 @@ const CreateMovementRequestSchema = movementDomainBaseSchema
       .default(new Date()),
   });
 
-interface StateFormMovement {
+export interface StateFormMovement {
   errors?: z.core.$ZodFlattenedError<
     z.infer<typeof CreateMovementRequestSchema>
   >["fieldErrors"];

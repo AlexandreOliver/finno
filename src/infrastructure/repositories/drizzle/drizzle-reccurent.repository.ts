@@ -17,7 +17,7 @@ export class reccurrentRepositoryDrizzle implements IReccurrentGateway {
       .values({ ...reccurrent.toJson(), amount: reccurrent.amount.toString() })
       .returning();
 
-    return !!resultDb[0].id;
+    return { id: resultDb[0].id };
   };
 
   public getById: IReccurrentGateway["getById"] = async (id) => {

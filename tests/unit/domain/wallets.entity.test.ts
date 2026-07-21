@@ -11,6 +11,7 @@ import {
 import { v7 as uuidv7 } from "uuid";
 
 import { addDays, subMonths } from "date-fns";
+import { ReccurrentProps } from "@/domain/schemas/reccurrent.schema";
 
 describe("Entidade Wallet", () => {
   let testWallet: Wallet;
@@ -24,31 +25,21 @@ describe("Entidade Wallet", () => {
     ).data;
   });
 
-  const getReccurrent = (props: {
-    amount?: string;
-    categoryId?: string;
-    description?: string;
-    frequency?: string;
-    interval?: 1;
-    status?: string;
-    type?: string;
-    walletId?: string;
-    countPaid?: number;
-    installments?: number;
-    start_date?: Date;
-  }): Reccurrent => {
+  const getReccurrent = (props: Partial<ReccurrentProps>): Reccurrent => {
     const DTO = {
-      amount: props.amount ?? "200",
+      amount: props.amount ?? 200,
       categoryId: props.categoryId ?? uuidv7(),
       description: props.description ?? "Conserto",
       frequency: props.frequency ?? "monthly",
       interval: props.interval ?? 1,
-      status: props.status ?? "ativo",
+      status: props.status ?? ("ativo" as const),
       type: props.type ?? "debito",
       walletId: props.walletId ?? testWallet.id,
       countPaid: props.countPaid ?? 0,
       installments: props.installments ?? 5,
-      startDate: props.start_date ?? subMonths(new Date(), 1),
+      startDate: props.startDate ?? subMonths(new Date(), 1),
+      endDate: props.endDate ?? null,
+      nextDueDate: props.nextDueDate ?? null,
     };
 
     return (
@@ -86,7 +77,7 @@ describe("Entidade Wallet", () => {
 
   test("generateMovementreccurrent() - Recebe uma recorrência com startDate no futuro e nao gera movimentação", async () => {
     const reccurrentTest = getReccurrent({
-      start_date: addDays(new Date(), 1),
+      startDate: addDays(new Date(), 1),
     });
 
     const result = testWallet.generateMovementFromreccurrent(

@@ -7,7 +7,7 @@ import {
 } from "../entity/types";
 
 export interface IReccurrentGateway {
-  save: FunctionSave<Reccurrent, boolean>;
+  save: FunctionSave<Reccurrent, { id: string }>;
   getById: FunctionGet<string, Reccurrent | null>;
   list: FunctionList<Reccurrent>;
   deleteById: FunctionDelete<boolean>;
