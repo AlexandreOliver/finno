@@ -11,9 +11,9 @@ export type inputDTO = {
   categoryId: string;
   walletId: string;
   installments: number | string;
-  start_date: string;
-  end_date?: string | null;
-  next_due_date?: string | null;
+  startDate: string;
+  endDate?: string | null;
+  nextDueDate?: Date | null;
 };
 
 export type outputDTO = {
@@ -28,8 +28,8 @@ export type outputDTO = {
     frequencie?: string[] | null;
     interval?: string[] | null;
     installments?: string[] | null;
-    start_date?: string[] | null;
-    end_date?: string[] | null;
+    startDate?: string[] | null;
+    endDate?: string[] | null;
   };
   message: string;
   movement?: { id: string };

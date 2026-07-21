@@ -39,9 +39,9 @@ export interface TransactionDTO {
     countPaid: number;
     categoryId: string;
     walletId: string;
-    start_date: Date;
-    end_date: Date | null;
-    next_due_date: Date | null;
+    startDate: Date;
+    endDate: Date | null;
+    nextDueDate: Date | null;
   }[];
 }
 

@@ -47,8 +47,8 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
       filtersMov.push(gte(movements.executedAt, query.date.start));
       filtersMov.push(lt(movements.executedAt, query.date.end));
 
-      filtersRec.push(lte(templateReccurrent.start_date, query.date.start));
-      filtersRec.push(gte(templateReccurrent.end_date, query.date.start));
+      filtersRec.push(lte(templateReccurrent.startDate, query.date.start));
+      filtersRec.push(gte(templateReccurrent.endDate, query.date.start));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,7 +80,7 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
         })
         .from(templateReccurrent)
         .where(and(...filtersRec))
-        .orderBy(desc(templateReccurrent.start_date)),
+        .orderBy(desc(templateReccurrent.startDate)),
     ]);
 
     return {

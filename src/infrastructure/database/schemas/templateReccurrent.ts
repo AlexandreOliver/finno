@@ -30,24 +30,21 @@ export const templateReccurrent = pgTable(
     walletId: uuid()
       .references(() => wallets.id)
       .notNull(),
-    start_date: timestamp({ withTimezone: true }).notNull(),
-    end_date: timestamp({ withTimezone: true }),
-    next_due_date: timestamp({ withTimezone: true }),
+    startDate: timestamp({ withTimezone: true }).notNull(),
+    endDate: timestamp({ withTimezone: true }),
+    nextDueDate: timestamp({ withTimezone: true }),
   },
   (table) => [
     check("chck_amount_gt0", sql`${table.amount} > 0`),
     check("chck_interval_gt0", sql`${table.interval} > 0`),
-    check(
-      "chck_start_before_end",
-      sql`${table.end_date} > ${table.start_date}`,
-    ),
+    check("chck_start_before_end", sql`${table.endDate} > ${table.startDate}`),
     check(
       "chck_start_before_nextdue",
-      sql`${table.next_due_date} > ${table.start_date}`,
+      sql`${table.nextDueDate} > ${table.startDate}`,
     ),
     check(
       "chck_end_afterOrEqual_nextdue",
-      sql`${table.end_date} >= ${table.next_due_date}`,
+      sql`${table.endDate} >= ${table.nextDueDate}`,
     ),
   ],
 );

@@ -265,12 +265,12 @@ export class Wallet {
       ...reccurrent.toJson({
         omit: [
           "countPaid",
-          "end_date",
+          "endDate",
           "frequency",
           "id",
           "installments",
           "interval",
-          "next_due_date",
+          "nextDueDate",
         ],
       }),
       reccurrentId: reccurrent.id,

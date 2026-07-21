@@ -211,7 +211,7 @@ const seed_categorias = [
   },
 ];
 
-const seed_templatereccurrent = [
+const seed_templateReccurrent = [
   {
     id: "019e1e61-b1d6-701c-8483-c2b5ba46a932",
     type: TYPES_TRANSACTION[0],
@@ -224,19 +224,19 @@ const seed_templatereccurrent = [
     countPaid: 0,
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    start_date: new Date(
+    startDate: new Date(
       hoje.getFullYear(),
       hoje.getMonth() - 1,
       hoje.getDate(),
       hoje.getHours(),
     ),
-    end_date: new Date(
+    endDate: new Date(
       hoje.getFullYear(),
       hoje.getMonth() + 11,
       hoje.getDate(),
       hoje.getHours(),
     ),
-    next_due_date: new Date(
+    nextDueDate: new Date(
       hoje.getFullYear(),
       hoje.getMonth() + 1,
       hoje.getDate(),
@@ -255,19 +255,19 @@ const seed_templatereccurrent = [
     countPaid: 12,
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    start_date: new Date(
+    startDate: new Date(
       hoje.getFullYear() - 1,
       hoje.getMonth(),
       8,
       hoje.getHours(),
     ),
-    end_date: new Date(
+    endDate: new Date(
       hoje.getFullYear() + 1,
       hoje.getMonth(),
       8,
       hoje.getHours(),
     ),
-    next_due_date: new Date(hoje.getFullYear(), hoje.getMonth() + 1, 8, 6),
+    nextDueDate: new Date(hoje.getFullYear(), hoje.getMonth() + 1, 8, 6),
   },
 ];
 
@@ -348,7 +348,7 @@ const seed_movements = [
     amount: "120.43",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    reccurrentId: seed_templatereccurrent[0].id,
+    reccurrentId: seed_templateReccurrent[0].id,
     executedAt: hoje,
   },
   {
@@ -583,7 +583,7 @@ const seed_movements = [
     amount: "120.43",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    reccurrentId: seed_templatereccurrent[0].id,
+    reccurrentId: seed_templateReccurrent[0].id,
     executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 5, 6, 0),
   },
   {
@@ -942,5 +942,5 @@ export {
   seed_wallets,
   seed_movements,
   seed_transfers,
-  seed_templatereccurrent,
+  seed_templateReccurrent,
 };

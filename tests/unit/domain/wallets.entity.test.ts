@@ -48,7 +48,7 @@ describe("Entidade Wallet", () => {
       walletId: props.walletId ?? testWallet.id,
       countPaid: props.countPaid ?? 0,
       installments: props.installments ?? 5,
-      start_date: props.start_date ?? subMonths(new Date(), 1),
+      startDate: props.start_date ?? subMonths(new Date(), 1),
     };
 
     return (

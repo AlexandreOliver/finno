@@ -172,9 +172,9 @@ export function TableReccurrent() {
                       )}
                       <p>{rec.description}</p>
                       <p className="text-muted-foreground ">
-                        {`${format(rec.start_date as Date, "MMMM 'de' yyyy", {
+                        {`${format(rec.startDate as Date, "MMMM 'de' yyyy", {
                           locale: ptBR,
-                        })} - ${format(rec.end_date as Date, "MMMM 'de' yyyy", {
+                        })} - ${format(rec.endDate as Date, "MMMM 'de' yyyy", {
                           locale: ptBR,
                         })}`}
                       </p>
@@ -201,9 +201,9 @@ export function TableReccurrent() {
                       </p>
                     </TableCell>
                     <TableCell className="text-center">
-                      {rec.next_due_date ? (
+                      {rec.nextDueDate ? (
                         <p className="text-balance">
-                          {format(rec.next_due_date, "dd/MM/yyyy")}
+                          {format(rec.nextDueDate, "dd/MM/yyyy")}
                         </p>
                       ) : (
                         <p className="text-balance">--/--/--</p>

@@ -56,14 +56,14 @@ export const reccurrentSchema = createInsertSchema(templateReccurrent, {
       .refine((value) => value > 0, {
         error: "O Valor Precisa ser maior do que 0",
       }),
-  start_date: (schema) =>
+  startDate: (schema) =>
     zod.preprocess((val) => {
       if (typeof val !== "string") return val;
 
       if (val.length === 10) {
         const dateData = new Date(val);
 
-        //Converte o start_date para as 6 horas
+        //Converte o startDate para as 6 horas
         const dateReceived = new Date(
           dateData.getFullYear(),
           dateData.getMonth(),
@@ -76,7 +76,7 @@ export const reccurrentSchema = createInsertSchema(templateReccurrent, {
 
       return val;
     }, schema),
-  end_date: (schema) =>
+  endDate: (schema) =>
     zod
       .preprocess((val) => {
         if (typeof val !== "string") return val;
@@ -84,7 +84,7 @@ export const reccurrentSchema = createInsertSchema(templateReccurrent, {
         if (val.length === 10) {
           const dateData = new Date(val);
 
-          //Converte o end_date para as 18 horas
+          //Converte o endDate para as 18 horas
           const dateReceived = new Date(
             dateData.getFullYear(),
             dateData.getMonth(),
@@ -105,20 +105,20 @@ export const reccurrentSchema = createInsertSchema(templateReccurrent, {
         },
         { error: "A data final nao pode ser hoje" },
       ),
-  next_due_date: (schema) => schema.nullable().default(null),
+  nextDueDate: (schema) => schema.nullable().default(null),
 }).refine(
   (data) => {
-    if (data.end_date) {
+    if (data.endDate) {
       return (
-        new Date(data.start_date.toDateString()) <
-        new Date(data.end_date.toDateString())
+        new Date(data.startDate.toDateString()) <
+        new Date(data.endDate.toDateString())
       );
     }
     return true;
   },
   {
     error: "A Data Final não pode ser anterior ou igual a Data Final",
-    path: ["end_date"],
+    path: ["endDate"],
   },
 );
 
@@ -135,9 +135,9 @@ export type reccurrentCreateProps = {
   countPaid?: number | null;
   categoryId: string;
   walletId: string;
-  start_date: string | Date;
-  end_date?: string | Date | null;
-  nextDueDate?: Date;
+  startDate: string | Date;
+  endDate?: string | Date | null;
+  nextDueDate?: Date | null;
 };
 
 export type reccurrentOutput = zod.output<typeof reccurrentSchema>;
@@ -155,9 +155,9 @@ export type reccurrentProps = {
   walletId: string;
   installments: number | null;
   countPaid: number;
-  start_date: Date;
-  end_date: Date | null;
-  next_due_date: Date | null;
+  startDate: Date;
+  endDate: Date | null;
+  nextDueDate: Date | null;
 };
 
 export type returnCreateReccurrent =
@@ -176,9 +176,9 @@ export type returnCreateReccurrent =
         countPaid?: string[] | undefined;
         categoryId?: string[] | undefined;
         walletId?: string[] | undefined;
-        start_date?: string[] | undefined;
-        end_date?: string[] | undefined;
-        next_due_date?: string[] | undefined;
+        startDate?: string[] | undefined;
+        endDate?: string[] | undefined;
+        nextDueDate?: string[] | undefined;
       };
     };
 
@@ -203,16 +203,16 @@ export class Reccurrent {
       };
     }
 
-    // if (!dataFormated.data.next_due_date) {
+    // if (!dataFormated.data.nextDueDate) {
     //   const nextDue = this.calculateNextDueDate({
     //     interval: dataFormated.data.interval,
     //     frequency: dataFormated.data.frequency,
-    //     startDate: dataFormated.data.start_date,
-    //     endDate: dataFormated.data.end_date as Date,
+    //     startDate: dataFormated.data.startDate,
+    //     endDate: dataFormated.data.endDate as Date,
     //     countPaid: dataFormated.data.countPaid,
     //   });
 
-    //   dataFormated["data"]["next_due_date"] = nextDue;
+    //   dataFormated["data"]["nextDueDate"] = nextDue;
     // }
 
     // console.log("Saiu: ");
@@ -233,7 +233,7 @@ export class Reccurrent {
       ...props,
       amount: Number.parseFloat(props.amount),
       installments: props.installments as number,
-      start_date: props.start_date as Date,
+      startDate: props.startDate as Date,
     });
   }
 
@@ -282,13 +282,13 @@ export class Reccurrent {
       omit: [
         "countPaid",
         "status",
-        "start_date",
-        "end_date",
+        "startDate",
+        "endDate",
         "frequency",
         "id",
         "installments",
         "interval",
-        "next_due_date",
+        "nextDueDate",
       ],
     });
 
@@ -356,15 +356,15 @@ export class Reccurrent {
   }
 
   public get startDate() {
-    return this.props.start_date as Date;
+    return this.props.startDate as Date;
   }
 
   public get endDate() {
-    return this.props.end_date;
+    return this.props.endDate;
   }
 
   public get nextDueDate() {
-    return this.props.next_due_date;
+    return this.props.nextDueDate;
   }
 
   public get startHour() {
@@ -385,7 +385,7 @@ export class Reccurrent {
       return;
     }
 
-    this.props.next_due_date = newDate;
+    this.props.nextDueDate = newDate;
   }
 
   //#endregion
