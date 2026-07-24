@@ -1,5 +1,4 @@
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { CardsKpis } from "./_components/CardsKpis";
 import { FonteRenda } from "./_components/FonteRenda";
 import { ChartTransactions } from "./_components/ChartTransactions";
 
@@ -7,6 +6,9 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
+import { CardsKpis } from "./_components/CardsKpisComponent/CardsKpis";
+import { SkeletonCardsKpis } from "./_components/CardsKpisComponent/SkeletonCardsKpis";
+import { CardsWrapper } from "./_components/CardsKpisComponent/CardsWrapper";
 
 export const metadata = {
   title: "Dashboard",
@@ -34,9 +36,11 @@ export default async function Page() {
 
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-12">
         <div className="xl:col-span-6">
-          <Suspense fallback={<div>ddd</div>}>
-            <CardsKpis userId={auth.isAuth ? auth.user.id : ""} />
-          </Suspense>
+          <CardsWrapper>
+            <Suspense fallback={<SkeletonCardsKpis countCards={4} />}>
+              <CardsKpis userId={auth.isAuth ? auth.user.id : ""} />
+            </Suspense>
+          </CardsWrapper>
         </div>
         <div className="xl:col-span-6">
           <FonteRenda />
