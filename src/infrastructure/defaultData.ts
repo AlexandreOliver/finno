@@ -222,6 +222,7 @@ const seed_templateReccurrent = [
     interval: 1,
     installments: 12,
     countPaid: 0,
+    payOnStartDate: false,
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
     startDate: new Date(
@@ -253,6 +254,7 @@ const seed_templateReccurrent = [
     interval: 1,
     installments: 24,
     countPaid: 12,
+    payOnStartDate: false,
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
     startDate: new Date(
