@@ -13,6 +13,7 @@
     "test:watch": "jest --runInBand --watch",
     "build": "next build && pnpm db:push && pnpm db:seed",
     "lint": "eslint",
+    "lint:tsc": "pnpm tsc --noEmit",
     "service:db:up": "docker compose -f src/infrastructure/compose.yaml up -d",
     "service:db:down": "docker compose -f src/infrastructure/compose.yaml down",
     "db:generate": "drizzle-kit generate",

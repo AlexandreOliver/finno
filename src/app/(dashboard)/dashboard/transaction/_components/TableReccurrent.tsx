@@ -209,7 +209,7 @@ export function TableReccurrent() {
                         <p className="text-balance">--/--/--</p>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right pr-4">
                       {rec.type === "debito" ? (
                         <span className="dark:text-red-400 ">
                           {`- ${formatCurrency(rec.amount)}`}

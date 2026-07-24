@@ -241,28 +241,32 @@ export class Wallet {
     };
   }
 
-  public generateMovementFromreccurrent = (
+  public generateMovementFromReccurrent = (
     reccurrent: Reccurrent,
   ): returnMovementFromreccurrent => {
-    const hoje = set(new Date(), {
-      hours: reccurrent.startHour,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-    });
+    // const hoje = set(new Date(), {
+    //   hours: Reccurrent.startHour,
+    //   minutes: 0,
+    //   seconds: 0,
+    //   milliseconds: 0,
+    // });
 
-    const isContinue =
-      reccurrent.nextDueDate &&
-      isEqual(reccurrent.nextDueDate, hoje) &&
-      (reccurrent.installments ?? 0) > reccurrent.countPaid &&
-      reccurrent.walletId === this.id &&
-      reccurrent.startDate <= hoje;
-
-    if (!isContinue)
+    if (!reccurrent.nextDueDate)
       return {
         success: false,
-        message:
-          "A recorrencia é Invalida. Verifique se ja terminou, esta no vencimento ou pertence a essa wallet",
+        message: "A recorrencia não possui uma data de vencimento",
+      };
+
+    if (!reccurrent.isDued())
+      return {
+        success: false,
+        message: "A recorrencia ainda não venceu",
+      };
+
+    if (reccurrent.walletId != this.id)
+      return {
+        success: false,
+        message: "A recorrencia não pertence a essa carteira",
       };
 
     const rawData = {
@@ -278,8 +282,8 @@ export class Wallet {
         ],
       }),
       reccurrentId: reccurrent.id,
-      executedAt: reccurrent.nextDueDate as Date,
-      dueDate: reccurrent.nextDueDate,
+      executedAt: new Date(),
+      dueDate: null,
       isReversal: false,
       isRefunded: false,
       reversalOfId: null,

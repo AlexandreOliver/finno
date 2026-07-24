@@ -1,9 +1,11 @@
 import zod from "zod";
+import { v7 as uuid7 } from "uuid";
 import { movementDomainBaseSchema } from "./movement.schema";
-import { STATUS_TRANSACTION, FREQUENCIES_RECCURRENT } from "../enums";
-import { isAfter, isBefore, isEqual, subDays } from "date-fns";
+import { FREQUENCIES_RECCURRENT, StatusTransaction } from "../enums";
+import { set, subDays } from "date-fns";
+import { Reccurrent } from "../entity/reccurrent.entity";
 
-export const reccurrentDomainBaseSchema = movementDomainBaseSchema
+export const reccurrentDomainSchema = movementDomainBaseSchema
   .omit({
     isRefunded: true,
     isReversal: true,
@@ -11,15 +13,9 @@ export const reccurrentDomainBaseSchema = movementDomainBaseSchema
     executedAt: true,
     dueDate: true,
     reccurrentId: true,
+    id: true,
   })
   .safeExtend({
-    status: zod.enum(STATUS_TRANSACTION, {
-      error: (iss) => {
-        if (iss.code === "invalid_value") {
-          return { message: "Forneça apenas um desses valores: " + iss.values };
-        }
-      },
-    }),
     frequency: zod.enum(FREQUENCIES_RECCURRENT, {
       error: (iss) => {
         if (iss.code === "invalid_value") {
@@ -32,10 +28,6 @@ export const reccurrentDomainBaseSchema = movementDomainBaseSchema
       .gt(0, {
         error: "O Intervalo precisa ser maior do que 0",
       })
-      .nonoptional(),
-    countPaid: zod
-      .number()
-      .gt(0, { error: "O countPaid não pode ser menor do que 0" })
       .nonoptional(),
     installments: zod
       .number()
@@ -52,61 +44,76 @@ export const reccurrentDomainBaseSchema = movementDomainBaseSchema
       .min(subDays(new Date(), 1), {
         error: "A data inicial nao pode ser anterior a hoje",
       })
-      .nonoptional(),
-    endDate: zod
-      .date()
-      .min(new Date(), { error: "A data final nao pode ser hoje" })
-      .nullable(),
-    nextDueDate: zod.date().nullable(),
+      .nonoptional()
+      .transform((val) =>
+        set(val, {
+          hours: Reccurrent.startHour,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+        }),
+      ),
+    payOnStartDate: zod.boolean().nonoptional(),
+  })
+  .transform((base) => {
+    return {
+      ...base,
+      id: uuid7(),
+      countPaid: 0,
+      status: "pausado" as StatusTransaction,
+      endDate: null as Date | null,
+      nextDueDate: null as Date | null,
+    };
   });
 
-export const reccurrentDomainSchema = reccurrentDomainBaseSchema
-  .refine(
-    (data) => {
-      if (data.endDate) {
-        return (
-          new Date(data.startDate.toDateString()) <
-          new Date(data.endDate.toDateString())
-        );
-      }
-      return true;
-    },
-    {
-      error: "A Data Final não pode ser anterior ou igual a Data Final",
-      path: ["endDate"],
-    },
-  )
-  .refine(
-    (rec) => {
-      if (rec.nextDueDate) {
-        return isAfter(rec.nextDueDate, rec.startDate);
-      }
+// .refine(
+//   (data) => {
+//     if (data.endDate) {
+//       return (
+//         new Date(data.startDate.toDateString()) <
+//         new Date(data.endDate.toDateString())
+//       );
+//     }
+//     return true;
+//   },
+//   {
+//     error: "A Data Final não pode ser anterior ou igual a Data Final",
+//     path: ["endDate"],
+//   },
+// )
+// .refine(
+//   (rec) => {
+//     if (rec.nextDueDate) {
+//       return isAfter(rec.nextDueDate, rec.startDate);
+//     }
 
-      return true;
-    },
-    {
-      error: "O campo nextDueDate não pode ser menor que a data de inicio",
-      path: ["nextDueDate"],
-    },
-  )
-  .refine(
-    (rec) => {
-      if (rec.nextDueDate && rec.endDate) {
-        return (
-          isBefore(rec.nextDueDate, rec.endDate) ||
-          isEqual(rec.nextDueDate, rec.endDate)
-        );
-      }
+//     return true;
+//   },
+//   {
+//     error: "O campo nextDueDate não pode ser menor que a data de inicio",
+//     path: ["nextDueDate"],
+//   },
+// )
+// .refine(
+//   (rec) => {
+//     if (rec.nextDueDate && rec.endDate) {
+//       return (
+//         isBefore(rec.nextDueDate, rec.endDate) ||
+//         isEqual(rec.nextDueDate, rec.endDate)
+//       );
+//     }
 
-      return true;
-    },
-    {
-      error: "O campo nextDueDate não pode ser maior que a data final",
-      path: ["nextDueDate"],
-    },
-  );
+//     return true;
+//   },
+//   {
+//     error: "O campo nextDueDate não pode ser maior que a data final",
+//     path: ["nextDueDate"],
+//   },
+// )
 
-export type ReccurrentProps = zod.infer<typeof reccurrentDomainBaseSchema>;
+export type ReccurrentProps = zod.infer<typeof reccurrentDomainSchema>;
+export type CreateReccurrentProps = zod.input<typeof reccurrentDomainSchema>;
+export type ReccurrentPropsOutput = zod.output<typeof reccurrentDomainSchema>;
 
 export type ReccurrentErrorsValidation =
-  zod.core.$ZodFlattenedError<ReccurrentProps>["fieldErrors"];
+  zod.core.$ZodFlattenedError<CreateReccurrentProps>["fieldErrors"];

@@ -4,20 +4,27 @@ import { templateReccurrent } from "@/infrastructure/database/schemas/templateRe
 import db from "@/infrastructure/database";
 import { and, desc, eq, inArray, or, SQL } from "drizzle-orm";
 
-export class reccurrentRepositoryDrizzle implements IReccurrentGateway {
+export class ReccurrentRepositoryDrizzle implements IReccurrentGateway {
   private constructor(private readonly dbInstance: typeof db) {}
 
   public static create(dbInstance: typeof db) {
-    return new reccurrentRepositoryDrizzle(dbInstance);
+    return new ReccurrentRepositoryDrizzle(dbInstance);
   }
 
   public save: IReccurrentGateway["save"] = async (reccurrent) => {
-    const resultDb = await this.dbInstance
-      .insert(templateReccurrent)
-      .values({ ...reccurrent.toJson(), amount: reccurrent.amount.toString() })
-      .returning();
+    try {
+      const resultDb = await this.dbInstance
+        .insert(templateReccurrent)
+        .values({
+          ...reccurrent.toJson(),
+          amount: reccurrent.amount.toString(),
+        })
+        .returning();
 
-    return { id: resultDb[0].id };
+      return { id: resultDb[0].id };
+    } catch (err) {
+      throw new Error("Erro na query Save", { cause: err });
+    }
   };
 
   public getById: IReccurrentGateway["getById"] = async (id) => {

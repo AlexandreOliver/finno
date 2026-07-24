@@ -1,4 +1,5 @@
 import {
+  boolean,
   check,
   decimal,
   integer,
@@ -24,6 +25,7 @@ export const templateReccurrent = pgTable(
     interval: integer().notNull(),
     installments: integer(),
     countPaid: integer().notNull().default(0),
+    payOnStartDate: boolean().notNull().default(false),
     categoryId: uuid()
       .references(() => categories.id)
       .notNull(),
@@ -38,10 +40,6 @@ export const templateReccurrent = pgTable(
     check("chck_amount_gt0", sql`${table.amount} > 0`),
     check("chck_interval_gt0", sql`${table.interval} > 0`),
     check("chck_start_before_end", sql`${table.endDate} > ${table.startDate}`),
-    check(
-      "chck_start_before_nextdue",
-      sql`${table.nextDueDate} > ${table.startDate}`,
-    ),
     check(
       "chck_end_afterOrEqual_nextdue",
       sql`${table.endDate} >= ${table.nextDueDate}`,

@@ -2,6 +2,11 @@ import { IStatementRepository } from "@/features/transactions/statement/get-stat
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { GetStatementQuery } from "./get-statement.query";
 import { cache } from "react";
+import {
+  FrequenciesReccurrent,
+  StatusTransaction,
+  TypesTransaction,
+} from "@/domain/enums";
 
 export interface StatementOutput {
   totalMovementsFromDb: number;
@@ -13,7 +18,7 @@ export interface StatementOutput {
 export interface TransactionDTO {
   movements: {
     id: string;
-    type: "debito" | "credito" | "investimento";
+    type: TypesTransaction;
     description: string;
     amount: number;
     category: {
@@ -29,11 +34,11 @@ export interface TransactionDTO {
   }[];
   reccurrents: {
     id: string;
-    type: "debito" | "credito" | "investimento";
-    status: "ativo" | "pausado" | "terminado";
+    type: TypesTransaction;
+    status: StatusTransaction;
     description: string;
     amount: number;
-    frequency: "daily" | "weekly" | "monthly" | "yearly";
+    frequency: FrequenciesReccurrent;
     interval: number;
     installments: number | null;
     countPaid: number;

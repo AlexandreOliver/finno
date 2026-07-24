@@ -2,8 +2,8 @@
 
 import {
   Field,
+  FieldContent,
   FieldDescription,
-  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -33,14 +33,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, isAfter, isBefore } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
-import { useCriarMovement } from "@/features/transactions/hooks/useCriarMovement";
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
+import { useCriarReccurent } from "@/features/transactions/hooks/useCriarReccurrent";
+import { Checkbox } from "@/components/ui/checkbox";
 
-export function CreatereccurrentForm() {
+export function CreateReccurrentForm() {
   const { user } = useSession();
   const { range } = useRangeDate();
   const [inputAmount, setAmount] = useState("");
@@ -49,7 +50,7 @@ export function CreatereccurrentForm() {
     value: string;
   } | null>(null);
   const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
+  const [endDate] = useState<Date>();
 
   const { data: walletsFromDb, isLoading: isLoadingWallet } = useWallets(
     user?.id as string,
@@ -127,7 +128,7 @@ export function CreatereccurrentForm() {
     mutate,
     data: stateForm,
     isPending,
-  } = useCriarMovement(
+  } = useCriarReccurent(
     movementsQuerys.owned(wallets?.map((w) => w.value) as string[])._ctx.query({
       date: {
         start: range.start.toISOString().slice(0, 10),
@@ -137,9 +138,9 @@ export function CreatereccurrentForm() {
   );
 
   return (
-    <form>
+    <form action={mutate}>
       <FieldGroup>
-        <FieldSet className="overflow-y-auto no-scrollbar h-135">
+        <FieldSet className="overflow-y-auto no-scrollbar h-136">
           <FieldLegend>Transação Recorrente</FieldLegend>
           <FieldDescription>
             Uma transação recorrente é uma movimentação financeira que ocorrerá
@@ -148,39 +149,12 @@ export function CreatereccurrentForm() {
 
           <FieldSet>
             <FieldLegend>Informações Gerais</FieldLegend>
+            <FieldDescription
+              className={stateForm?.success ? "text-green-500" : "text-red-500"}
+            >
+              {stateForm?.message}
+            </FieldDescription>
             <FieldGroup>
-              {/* <Field>
-              <FieldLabel>Informações:</FieldLabel>
-              <FieldDescription>1 -</FieldDescription>
-              
-            </Field> */}
-              {/* <Field>
-              <FieldLabel htmlFor="status-checkbox">
-                Status<span className="text-destructive text-md">*</span>
-              </FieldLabel>
-              <RadioGroup
-                id="status-checkbox"
-                defaultValue="ativo"
-                name="status"
-              >
-                <div className="flex">
-                  <Field orientation="horizontal">
-                    <RadioGroupItem value="ativo" id="ativo-status" />
-                    <FieldLabel htmlFor="ativo-status">Ativo</FieldLabel>
-                  </Field>
-                  <Field orientation="horizontal">
-                    <RadioGroupItem value="pausado" id="pausado-status" />
-                    <FieldLabel htmlFor="pausado-status">Pausado</FieldLabel>
-                  </Field>
-                  <Field orientation="horizontal">
-                    <RadioGroupItem value="terminado" id="terminado-status" />
-                    <FieldLabel htmlFor="terminado-status">
-                      Terminado
-                    </FieldLabel>
-                  </Field>
-                </div>
-              </RadioGroup>
-            </Field> */}
               <Field>
                 <FieldLabel htmlFor="label-description">
                   Descrição<span className="text-destructive text-base">*</span>
@@ -191,7 +165,13 @@ export function CreatereccurrentForm() {
                   placeholder="Descrição curta da movimentação"
                   required
                   rows={4}
+                  aria-invalid={
+                    stateForm?.errors?.description ? "true" : "false"
+                  }
                 />
+                <FieldDescription className="text-red-500">
+                  {stateForm?.errors?.description}
+                </FieldDescription>
               </Field>
               <div className="grid grid-cols-2 gap-8">
                 <Field>
@@ -206,8 +186,12 @@ export function CreatereccurrentForm() {
                     onChange={(e) => setAmount(e.target.value)}
                     onBlur={handleAmountBlur}
                     required
+                    aria-invalid={stateForm?.errors?.amount ? "true" : "false"}
                   />
                   <input type="hidden" name="amount" value={normalizedAmount} />
+                  <FieldDescription className="text-red-500">
+                    {stateForm?.errors?.amount}
+                  </FieldDescription>
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="label-type">
@@ -223,6 +207,7 @@ export function CreatereccurrentForm() {
                       !!itemValue && !!value && itemValue.value === value.value
                     }
                     itemToStringValue={(item) => (item ? item.value : "")}
+                    aria-invalid={stateForm?.errors?.type ? "true" : "false"}
                     required
                   >
                     <SelectTrigger>
@@ -248,6 +233,9 @@ export function CreatereccurrentForm() {
                     items={wallets}
                     defaultValue={null}
                     disabled={isLoadingWallet}
+                    aria-invalid={
+                      stateForm?.errors?.walletId ? "true" : "false"
+                    }
                     required
                   >
                     <SelectTrigger>
@@ -277,6 +265,9 @@ export function CreatereccurrentForm() {
                     defaultValue={null}
                     required
                     disabled={isLoadingCategories || categories?.length == 0}
+                    aria-invalid={
+                      stateForm?.errors?.categoryId ? "true" : "false"
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -308,13 +299,16 @@ export function CreatereccurrentForm() {
                   <details>
                     <summary className="font-medium">Parcelas</summary>
                     <p>
-                      Opicional - Nem toda recorrência terá uma um numero fixo
-                      de parcelas, mas para fins de cálculo o sistema inferirá
-                      as parcelas com base na data inicial e final.
+                      Opicional.
+                      <br />
+                      Nem toda recorrência terá uma um numero fixo de parcelas.
+                      <br />
+                      Havendo parcelas a data final da reccorência será inferida
+                      com base nos demais dados de recorrência.
                     </p>
                   </details>
                   <details>
-                    <summary className="font-medium">Frenquência</summary>
+                    <summary className="font-medium">Frequência</summary>
                     <p>
                       Normalmente é mensal, mas outras são possiveis. Combine
                       com o intervalo para criar uma recorrencia adequada
@@ -373,14 +367,13 @@ export function CreatereccurrentForm() {
                     name="interval"
                     required
                     min={1}
+                    aria-invalid={
+                      stateForm?.errors?.interval ? "true" : "false"
+                    }
                   />
-                  <FieldError
-                  //   errors={stateForm?.errors?.interval?.map((a) => {
-                  //     if (a) {
-                  //       return { message: a };
-                  //     }
-                  //   })}
-                  ></FieldError>
+                  <FieldDescription className="text-red-500">
+                    {stateForm?.errors?.interval}
+                  </FieldDescription>
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="installments-input" className="py-0.5">
@@ -390,39 +383,30 @@ export function CreatereccurrentForm() {
                     id="installments-input"
                     name="installments"
                     type="number"
+                    aria-invalid={
+                      stateForm?.errors?.installments ? "true" : "false"
+                    }
                     min={0}
                   />
-                  <FieldError
-                  //   errors={stateForm?.errors?.installments?.map((a) => {
-                  //     if (a) {
-                  //       return { message: a };
-                  //     }
-                  //   })}
-                  ></FieldError>
+                  <FieldDescription className="text-red-500">
+                    {stateForm?.errors?.installments}
+                  </FieldDescription>
                 </Field>
               </div>
             </FieldGroup>
             <FieldSet>
               <FieldLegend>Duração</FieldLegend>
-              <details className="text-muted-foreground">
-                <summary className="font-medium">Inicio</summary>
-                <p>
-                  Data de inicio da reccorência, pode ser hoje ou futura. <br />
-                  Sendo hoje, irá gerar automaticamente uma nova movimentação.
-                  <br />
-                  Sendo futura, irá gerar uma movimentação assim que iniciar.
-                </p>
-              </details>
-              <details className="text-muted-foreground">
-                <summary className="font-medium">Fim</summary>
-                <p>
-                  Opicional. Se não fornecida será inferida usando as parcelas
-                  como base. <br />
-                  Se não houver parcelas, a recorrência continuará
-                  indefinidamente.
-                </p>
-              </details>
-              <FieldGroup className="grid grid-cols-2 gap-8">
+              <FieldDescription>
+                A data de inicio da recorrência, pode ser hoje ou futura. <br />
+                Sendo hoje, irá gerar automaticamente uma nova movimentação.
+                <br />
+                Sendo futura, irá gerar uma movimentação assim que iniciar.
+              </FieldDescription>
+              <FieldDescription>
+                A Data Final será inferida pelos parametros de reccorência,
+                podendo não ter uma fixa
+              </FieldDescription>
+              <FieldGroup className="grid grid-cols-2 gap-8 items-center">
                 <Field>
                   <FieldLabel htmlFor="input-start">
                     Inicio<span className="text-destructive text-base">*</span>
@@ -436,6 +420,9 @@ export function CreatereccurrentForm() {
                   <Popover>
                     <PopoverTrigger
                       id="input-start"
+                      aria-invalid={
+                        stateForm?.errors?.startDate ? "true" : "false"
+                      }
                       render={
                         <Button
                           variant={"outline"}
@@ -467,81 +454,40 @@ export function CreatereccurrentForm() {
                           endDate != undefined && {
                             after: endDate,
                           },
+                          { before: new Date() },
                         ]}
                         required
                       />
                     </PopoverContent>
                   </Popover>
-                  <FieldError
-                  //   errors={stateForm?.errors?.start_date?.map((a) => {
-                  //     if (a) {
-                  //       return { message: a };
-                  //     }
-                  //   })}
-                  ></FieldError>
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="input-end" className="py-0.5">
-                    Fim
-                  </FieldLabel>
-                  <input
-                    name="endDate"
-                    type="text"
-                    defaultValue={endDate?.toISOString().slice(0, 10)}
-                    hidden
-                  />
-                  <Popover>
-                    <PopoverTrigger
-                      id="input-end"
-                      render={
-                        <Button
-                          variant={"outline"}
-                          data-empty={endDate}
-                          className="w-53 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-                        >
-                          {endDate ? (
-                            format(endDate, "dd 'de' MMMM 'de' yyyy", {
-                              locale: ptBR,
-                            })
-                          ) : (
-                            <span>Escolha uma data</span>
-                          )}
-                          <ChevronDownIcon data-icon="inline-end" />
-                        </Button>
-                      }
-                    />
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        locale={ptBR}
-                        mode="single"
-                        selected={endDate}
-                        onSelect={setEndDate}
-                        captionLayout="dropdown"
-                        defaultMonth={new Date()}
-                        startMonth={startDate ? startDate : new Date()}
-                        endMonth={new Date(2036, 0, 0)}
-                        hidden={[
-                          startDate != undefined && {
-                            before: startDate,
-                          },
-                        ]}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FieldError
-                  //   errors={stateForm?.errors?.end_date?.map((a) => {
-                  //     if (a) {
-                  //       return { message: a };
-                  //     }
-                  //   })}
-                  ></FieldError>
+                  <FieldDescription className="text-red-500">
+                    {stateForm?.errors?.startDate}
+                  </FieldDescription>
                 </Field>
               </FieldGroup>
             </FieldSet>
+            <Field orientation="horizontal">
+              <Checkbox id="label-executedNow" name="payOnStartDate" />
+              <FieldContent aria-disabled>
+                <FieldLabel
+                  htmlFor="label-executedNow"
+                  className="sm:text-sm leading-5 font-light"
+                >
+                  Gerar nova movimentação na data de inicio?
+                </FieldLabel>
+              </FieldContent>
+            </Field>
           </FieldSet>
+          <FieldDescription
+            className={stateForm?.success ? "text-green-500" : "text-red-500"}
+          >
+            {stateForm?.message}
+          </FieldDescription>
         </FieldSet>
         <Field>
-          <Button type="submit">Criar</Button>
+          <Button type="submit" disabled={isPending}>
+            Criar
+          </Button>
         </Field>
       </FieldGroup>
     </form>

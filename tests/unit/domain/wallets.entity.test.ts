@@ -1,16 +1,13 @@
-import { describe, test, beforeEach, expect } from "@jest/globals";
+import { describe, test, beforeEach, expect, jest } from "@jest/globals";
 import {
   resultCreateWallet,
   returnMovementFromreccurrent,
   Wallet,
 } from "@/domain/entity/wallets.entity";
-import {
-  Reccurrent,
-  returnCreateReccurrent,
-} from "@/domain/entity/reccurrent.entity";
+import { Reccurrent } from "@/domain/entity/reccurrent.entity";
 import { v7 as uuidv7 } from "uuid";
 
-import { addDays, subMonths } from "date-fns";
+import { addDays, addMonths, set, subMonths } from "date-fns";
 import { ReccurrentProps } from "@/domain/schemas/reccurrent.schema";
 
 describe("Entidade Wallet", () => {
@@ -26,8 +23,18 @@ describe("Entidade Wallet", () => {
   });
 
   const getReccurrent = (props: Partial<ReccurrentProps>): Reccurrent => {
+    const dateBase =
+      props.startDate ??
+      set(new Date(), {
+        hours: 6,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
+      });
+
     const DTO = {
-      amount: props.amount ?? 200,
+      id: uuidv7(),
+      amount: props.amount?.toString() ?? "200",
       categoryId: props.categoryId ?? uuidv7(),
       description: props.description ?? "Conserto",
       frequency: props.frequency ?? "monthly",
@@ -36,21 +43,32 @@ describe("Entidade Wallet", () => {
       type: props.type ?? "debito",
       walletId: props.walletId ?? testWallet.id,
       countPaid: props.countPaid ?? 0,
+      payOnStartDate: props.payOnStartDate ?? false,
       installments: props.installments ?? 5,
-      startDate: props.startDate ?? subMonths(new Date(), 1),
-      endDate: props.endDate ?? null,
-      nextDueDate: props.nextDueDate ?? null,
+      startDate: props.startDate ?? dateBase,
+      endDate: props.endDate ?? addMonths(dateBase, 5),
+      nextDueDate: props.nextDueDate ?? addMonths(dateBase, 1),
     };
 
-    return (
-      Reccurrent.create(DTO) as returnCreateReccurrent & { success: true }
-    ).data;
+    return Reccurrent.with(DTO);
   };
 
-  test("generateMovementreccurrent() - Gera uma nova movimentação apartir de uma recorrência de debito valida", async () => {
+  function getMonthInMS(countMonth: number = 1) {
+    const date1 = new Date();
+    const date2 = new Date(date1);
+
+    date2.setMonth(date1.getMonth() + countMonth);
+
+    return date2.getTime() - date1.getTime();
+  }
+
+  test("#1 generateMovementReccurrent - Gera uma nova movimentação apartir de uma recorrência de debito valida", async () => {
     const reccurrentTest = getReccurrent({});
 
-    const result = testWallet.generateMovementFromreccurrent(
+    jest.useFakeTimers();
+    jest.advanceTimersByTime(getMonthInMS());
+
+    const result = testWallet.generateMovementFromReccurrent(
       reccurrentTest,
     ) as returnMovementFromreccurrent & { success: true };
 
@@ -58,14 +76,18 @@ describe("Entidade Wallet", () => {
     expect(reccurrentTest.mutateCountPaid(result.data)).toBeTruthy();
 
     expect(testWallet.balance).toBe(-reccurrentTest.amount);
+    jest.useRealTimers();
   });
 
-  test("generateMovementreccurrent() - Gera uma nova movimentação apartir de uma recorrência de credito valida", async () => {
+  test("#2 generateMovementReccurrent - Gera uma nova movimentação apartir de uma recorrência de credito valida", async () => {
     const reccurrentTest = getReccurrent({
       type: "credito",
     });
 
-    const result = testWallet.generateMovementFromreccurrent(
+    jest.useFakeTimers();
+    jest.advanceTimersByTime(getMonthInMS());
+
+    const result = testWallet.generateMovementFromReccurrent(
       reccurrentTest,
     ) as returnMovementFromreccurrent & { success: true };
 
@@ -73,28 +95,29 @@ describe("Entidade Wallet", () => {
     expect(reccurrentTest.mutateCountPaid(result.data)).toBeTruthy();
 
     expect(testWallet.balance).toBe(reccurrentTest.amount);
+    jest.useRealTimers();
   });
 
-  test("generateMovementreccurrent() - Recebe uma recorrência com startDate no futuro e nao gera movimentação", async () => {
-    const reccurrentTest = getReccurrent({
-      startDate: addDays(new Date(), 1),
-    });
+  test("#3 generateMovementReccurrent - Recebe uma recorrência com startDate no futuro e nao gera movimentação", async () => {
+    const reccurrentTest = getReccurrent({});
 
-    const result = testWallet.generateMovementFromreccurrent(
+    // jest.useFakeTimers().setSystemTime(new Date("2020-01-01"));
+    const result = testWallet.generateMovementFromReccurrent(
       reccurrentTest,
     ) as returnMovementFromreccurrent & { success: false };
 
     expect(result.success).toBeFalsy();
     expect(result.message).toBeDefined();
+    // jest.useRealTimers();
   });
 
-  test("generateMovementreccurrent() - Recebe uma recorrência ja chegou ao fim e nao gera movimentação", async () => {
+  test("#4 generateMovementReccurrent - Recebe uma recorrência ja chegou ao fim e nao gera movimentação", async () => {
     const reccurrentTest = getReccurrent({
       countPaid: 5,
       installments: 5,
     });
 
-    const result = testWallet.generateMovementFromreccurrent(
+    const result = testWallet.generateMovementFromReccurrent(
       reccurrentTest,
     ) as returnMovementFromreccurrent & { success: false };
 
@@ -102,12 +125,12 @@ describe("Entidade Wallet", () => {
     expect(result.message).toBeDefined();
   });
 
-  test("generateMovementreccurrent() - Recebe uma recorrência de outra carteira e nao gera movimentação", async () => {
+  test("#5 generateMovementReccurrent - Recebe uma recorrência de outra carteira e nao gera movimentação", async () => {
     const reccurrentTest = getReccurrent({
       walletId: uuidv7(),
     });
 
-    const result = testWallet.generateMovementFromreccurrent(
+    const result = testWallet.generateMovementFromReccurrent(
       reccurrentTest,
     ) as returnMovementFromreccurrent & { success: false };
 

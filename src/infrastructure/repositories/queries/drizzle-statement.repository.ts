@@ -6,6 +6,7 @@ import { categories } from "@/infrastructure/database/schemas/categories";
 
 import {
   eq,
+  or,
   inArray,
   SQL,
   and,
@@ -15,6 +16,7 @@ import {
   desc,
   lte,
   getTableColumns,
+  isNull,
 } from "drizzle-orm";
 import { templateReccurrent } from "@/infrastructure/database/schemas/templateReccurrent";
 
@@ -31,24 +33,21 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
     query,
   }) => {
     const filtersMov: SQL[] = [];
-    const filtersRec: SQL[] = [];
+    const filtersRecOwned: SQL[] = [];
 
     if (Array.isArray(walletId)) {
       filtersMov.push(inArray(movements.walletId, walletId));
 
-      filtersRec.push(inArray(templateReccurrent.walletId, walletId));
+      filtersRecOwned.push(inArray(templateReccurrent.walletId, walletId));
     } else {
       filtersMov.push(eq(movements.walletId, walletId));
 
-      filtersRec.push(eq(templateReccurrent.walletId, walletId));
+      filtersRecOwned.push(eq(templateReccurrent.walletId, walletId));
     }
 
     if (query?.date && query.date.start && query.date.end) {
       filtersMov.push(gte(movements.executedAt, query.date.start));
       filtersMov.push(lt(movements.executedAt, query.date.end));
-
-      filtersRec.push(lte(templateReccurrent.startDate, query.date.start));
-      filtersRec.push(gte(templateReccurrent.endDate, query.date.start));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -79,7 +78,19 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
           amount: sql<number>`${templateReccurrent.amount}`,
         })
         .from(templateReccurrent)
-        .where(and(...filtersRec))
+        .where(
+          and(
+            filtersRecOwned.length > 0
+              ? and(...filtersRecOwned)
+              : eq(templateReccurrent.walletId, walletId as string),
+            or(
+              query.date && query.date.end
+                ? and(lte(templateReccurrent.startDate, query.date.end))
+                : undefined,
+              isNull(templateReccurrent.endDate),
+            ),
+          ),
+        )
         .orderBy(desc(templateReccurrent.startDate)),
     ]);
 

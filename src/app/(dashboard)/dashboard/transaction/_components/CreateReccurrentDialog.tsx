@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { CreatereccurrentForm } from "./CreateReccurrentForm";
+import { CreateReccurrentForm } from "./CreateReccurrentForm";
 import { ButtonCreate } from "./ButtonCreate";
 
 export function CreatereccurrentDialog() {
@@ -22,7 +22,7 @@ export function CreatereccurrentDialog() {
         {/* <DialogHeader>
           <DialogTitle>Transação Recorrente</DialogTitle>
         </DialogHeader> */}
-        <CreatereccurrentForm />
+        <CreateReccurrentForm />
       </DialogContent>
     </Dialog>
   );
