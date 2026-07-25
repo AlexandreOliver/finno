@@ -6,7 +6,7 @@
     "url": "git@github.com:AlexandreOliver/finno.git"
   },
   "scripts": {
-    "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:push && pnpm db:seed && next dev",
+    "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:push && next dev",
     "dev:web": "next dev",
     "test:all": "pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
     "test:back": "pnpm service:db:up && jest --runInBand",
