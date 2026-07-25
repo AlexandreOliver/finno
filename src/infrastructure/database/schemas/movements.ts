@@ -1,5 +1,5 @@
 import {
-  pgTable,
+  snakeCase,
   uuid,
   text,
   decimal,
@@ -15,7 +15,7 @@ import { wallets } from "./wallets";
 import { templateReccurrent } from "./templateReccurrent";
 import { sql } from "drizzle-orm";
 
-export const movements = pgTable(
+export const movements = snakeCase.table(
   "movements",
   {
     id: uuid().primaryKey(),

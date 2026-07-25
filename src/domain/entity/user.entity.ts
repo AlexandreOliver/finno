@@ -1,5 +1,5 @@
 import { users } from "@/infrastructure/database/schemas/users";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema } from "drizzle-orm/zod";
 import { v7 as uuid7 } from "uuid";
 import zod from "zod";
 

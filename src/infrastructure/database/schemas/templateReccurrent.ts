@@ -3,7 +3,7 @@ import {
   check,
   decimal,
   integer,
-  pgTable,
+  snakeCase,
   text,
   timestamp,
   uuid,
@@ -13,7 +13,7 @@ import { categories } from "./categories";
 import { wallets } from "./wallets";
 import { sql } from "drizzle-orm";
 
-export const templateReccurrent = pgTable(
+export const templateReccurrent = snakeCase.table(
   "template_reccurrent",
   {
     id: uuid().primaryKey(),

@@ -1,14 +1,14 @@
 import { sql } from "drizzle-orm";
 import {
   index,
-  pgTable,
+  snakeCase,
   text,
   timestamp,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const users = pgTable(
+export const users = snakeCase.table(
   "users",
   {
     id: uuid().primaryKey(),

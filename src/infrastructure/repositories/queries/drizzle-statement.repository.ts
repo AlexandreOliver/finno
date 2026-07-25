@@ -15,7 +15,7 @@ import {
   sql,
   desc,
   lte,
-  getTableColumns,
+  getColumns,
   isNull,
 } from "drizzle-orm";
 import { templateReccurrent } from "@/infrastructure/database/schemas/templateReccurrent";
@@ -52,7 +52,7 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { categoryId, reccurrentId, ...selectTableMovements } =
-      getTableColumns(movements);
+      getColumns(movements);
 
     const [movementsFromDb, movreccurrentFromDb] = await Promise.all([
       this.dbInstance
@@ -74,7 +74,7 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
 
       this.dbInstance
         .select({
-          ...getTableColumns(templateReccurrent),
+          ...getColumns(templateReccurrent),
           amount: sql<number>`${templateReccurrent.amount}`,
         })
         .from(templateReccurrent)

@@ -1,8 +1,14 @@
-import { pgTable, varchar, timestamp, index, uuid } from "drizzle-orm/pg-core";
+import {
+  snakeCase,
+  varchar,
+  timestamp,
+  index,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { users } from "./users";
 
-export const sessions = pgTable(
+export const sessions = snakeCase.table(
   "sessions",
   {
     id: uuid()
