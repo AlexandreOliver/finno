@@ -5,6 +5,7 @@ import * as categories from "./categories";
 import * as transfers from "./transfers";
 import * as movements from "./movements";
 import * as templateReccurrent from "./templateReccurrent";
+import * as snapshotsWallet from "./snapshotsWallet";
 
 export const schemas = {
   ...users,
@@ -14,4 +15,5 @@ export const schemas = {
   ...transfers,
   ...movements,
   ...templateReccurrent,
+  ...snapshotsWallet,
 };

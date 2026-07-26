@@ -1,3 +1,4 @@
+import { startOfMonth, endOfMonth } from "date-fns";
 import {
   TYPES_TRANSACTION,
   FREQUENCIES_RECCURRENT,
@@ -5,7 +6,8 @@ import {
 } from "@/domain/enums";
 import bcrypt from "bcrypt";
 
-const hoje = new Date(new Date().setHours(6));
+const SEED_YEAR = 2026;
+const hoje = new Date(SEED_YEAR, 6, 26, 6);
 
 function hash(senha: string) {
   const salt = bcrypt.genSaltSync(1);
@@ -20,8 +22,8 @@ const seed_users = [
     email: "coroa@itaca.ageu",
     password: hash("rei-de-itaca"),
     features: ["demo"],
-    createdAt: new Date(hoje.getFullYear() - 1, 2, 12),
-    updatedAt: new Date(hoje.getFullYear() - 1, 2, 12),
+    createdAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 12),
+    updatedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 12),
   },
 ];
 
@@ -31,12 +33,14 @@ const seed_wallets = [
     labelName: "Patrimônio",
     ownerId: seed_users[0].id,
     balance: "-700.86",
+    created_at: seed_users[0].updatedAt,
   },
   {
     id: "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
     labelName: "Principal",
     ownerId: seed_users[0].id,
-    balance: "2743.52",
+    balance: "2743.51",
+    created_at: seed_users[0].createdAt,
   },
 ];
 
@@ -258,7 +262,7 @@ const seed_templateReccurrent = [
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
     startDate: new Date(
-      hoje.getFullYear() - 1,
+      hoje.getFullYear(),
       hoje.getMonth(),
       8,
       hoje.getHours(),
@@ -567,7 +571,7 @@ const seed_movements = [
     amount: "150.00",
     categoryId: seed_categorias[5].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 21, 6, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 21, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000019",
@@ -622,7 +626,7 @@ const seed_movements = [
     amount: "99.90",
     categoryId: seed_categorias[20].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 11, 2, 6, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 2, 6, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000001f",
@@ -712,7 +716,7 @@ const seed_movements = [
     amount: "48.00",
     categoryId: seed_categorias[20].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 15, 13, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 15, 13, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000029",
@@ -748,7 +752,7 @@ const seed_movements = [
     amount: "55.00",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 10, 12, 14, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 12, 14, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000002d",
@@ -802,7 +806,7 @@ const seed_movements = [
     amount: "210.50",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 27, 16, 30),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 27, 16, 30),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000033",
@@ -820,7 +824,7 @@ const seed_movements = [
     amount: "33.25",
     categoryId: seed_categorias[16].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 11, 6, 9, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 6, 9, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000035",
@@ -829,7 +833,7 @@ const seed_movements = [
     amount: "20.00",
     categoryId: seed_categorias[23].id,
     walletId: seed_wallets[1].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 10, 8, 18, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 8, 18, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-000000000036",
@@ -874,7 +878,7 @@ const seed_movements = [
     amount: "480.00",
     categoryId: seed_categorias[2].id,
     walletId: seed_wallets[0].id,
-    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 11, 5, 9, 0),
+    executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 8, 5, 9, 0),
   },
   {
     id: "7a1b2c3d-4e5f-7a01-8bcd-00000000003b",
@@ -938,6 +942,63 @@ const seed_transfers = [
   },
 ];
 
+const interval = {
+  start: startOfMonth(seed_wallets[1].created_at),
+  end: endOfMonth(seed_wallets[1].created_at),
+};
+
+function calculate() {
+  const sumaryPrincipal = seed_movements.reduce(
+    (newObj, mov) => {
+      if (
+        mov.walletId == seed_wallets[1].id &&
+        mov.executedAt >= interval.start &&
+        mov.executedAt < interval.end
+      ) {
+        if (mov.type === "credito") {
+          newObj.entradas += Number(mov.amount);
+        } else {
+          newObj.saidas += Number(mov.amount);
+        }
+
+        return newObj;
+      }
+      return newObj;
+    },
+    { entradas: 0, saidas: 0 },
+  );
+
+  const sumaryPatr = seed_movements.reduce(
+    (newObj, mov) => {
+      if (
+        mov.walletId == seed_wallets[0].id &&
+        mov.executedAt >= interval.start &&
+        mov.executedAt < interval.end
+      ) {
+        if (mov.type === "credito") {
+          newObj.entradas += Number(mov.amount);
+        } else {
+          newObj.saidas += Number(mov.amount);
+        }
+
+        return newObj;
+      }
+      return newObj;
+    },
+    { entradas: 0, saidas: 0 },
+  );
+
+  sumaryPrincipal["balance"] =
+    sumaryPrincipal.entradas - sumaryPrincipal.saidas;
+  sumaryPatr["balance"] = sumaryPatr.entradas - sumaryPatr.saidas;
+
+  console.log(interval);
+  console.log(sumaryPrincipal);
+  console.log(sumaryPatr);
+}
+
+// calculate();
+
 export {
   seed_categorias,
   seed_users,
@@ -945,4 +1006,5 @@ export {
   seed_movements,
   seed_transfers,
   seed_templateReccurrent,
+  seed_shapshotsWallet,
 };

@@ -1,13 +1,15 @@
 import { afterAll, beforeAll } from "@jest/globals";
 import { execSync } from "node:child_process";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
-import path from "node:path";
 import { sql } from "drizzle-orm";
-import db from "@/infrastructure/database";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 export default function setupTestDb() {
+  const db = drizzle({
+    client: new Pool({ connectionString: process.env.DATABASE_URL! }),
+  });
+
   beforeAll(async () => {
-    await runMigrations();
     await seeding();
   });
 
@@ -18,17 +20,6 @@ export default function setupTestDb() {
 
   const seeding = async () => {
     execSync("pnpm run db:seed", { stdio: "ignore" });
-  };
-
-  const runMigrations = async () => {
-    await migrate(db, {
-      migrationsFolder: path.resolve(
-        __dirname,
-        "..",
-        "src/infrastructure/database/migrations",
-      ),
-      migrationsSchema: "public",
-    });
   };
 
   const clearDatabase = async () => {
@@ -51,7 +42,6 @@ export default function setupTestDb() {
   return {
     db,
     seeding,
-    runMigrations,
     clearDatabase,
   };
 }
