@@ -3,12 +3,14 @@ import {
   seed_categorias,
   seed_movements,
   seed_templateReccurrent,
-  seed_transfers,
   seed_users,
+  seed_shapshotsWallet,
   seed_wallets,
 } from "../defaultData";
 import db from "../database/index";
 import { sql } from "drizzle-orm";
+// import { SnapshotWalletsCommandHanlder } from "@/features/Routines/create-snapshot-wallet/snapshot-wallet.command-handler";
+// import { FinanceSummaryQueryService } from "@/features/Services/finance-sumary.service-query";
 
 async function sedding() {
   console.log("Iniciando seeding...");
@@ -57,9 +59,42 @@ async function sedding() {
       });
 
     await db
-      .insert(schemas.transfers)
-      .values(seed_transfers)
-      .onConflictDoNothing();
+      .insert(schemas.snapshotsWallet)
+      .values(seed_shapshotsWallet)
+      .onConflictDoUpdate({
+        target: schemas.snapshotsWallet.id,
+        set: {
+          id: sql`excluded.id`,
+          walletId: sql`excluded.wallet_id`,
+          yearMonth: sql`excluded.year_month`,
+          openingBalance: sql`excluded.opening_balance`,
+          totalIncomes: sql`excluded.total_incomes`,
+          totalExpenses: sql`excluded.total_expenses`,
+          closingBalance: sql`excluded.closing_balance`,
+        },
+      });
+
+    // await db
+    //   .insert(schemas.transfers)
+    //   .values(seed_transfers)
+    //   .onConflictDoNothing();
+
+    // const genSnapshotWallets = new SnapshotWalletsCommandHanlder(
+    //   db,
+    //   new FinanceSummaryQueryService(db),
+    // );
+
+    // const result = await Promise.allSettled([
+    //   genSnapshotWallets.execute(new Date("2025-10-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2025-11-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2025-12-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2026-01-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2026-02-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2026-03-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2026-04-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2026-05-01T13:00:00")),
+    //   genSnapshotWallets.execute(new Date("2026-06-01T13:00:00")),
+    // ]);
   } catch (err) {
     const erro = err as Error;
     console.error(erro);

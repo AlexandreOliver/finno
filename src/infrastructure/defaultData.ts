@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth } from "date-fns";
+import { startOfMonth, addMonths, set } from "date-fns";
 import {
   TYPES_TRANSACTION,
   FREQUENCIES_RECCURRENT,
@@ -6,8 +6,7 @@ import {
 } from "@/domain/enums";
 import bcrypt from "bcrypt";
 
-const SEED_YEAR = 2026;
-const hoje = new Date(SEED_YEAR, 6, 26, 6);
+const hoje = set(new Date(), { year: 2026 });
 
 function hash(senha: string) {
   const salt = bcrypt.genSaltSync(1);
@@ -41,6 +40,171 @@ const seed_wallets = [
     ownerId: seed_users[0].id,
     balance: "2743.51",
     created_at: seed_users[0].createdAt,
+  },
+];
+
+const seed_shapshotsWallet = [
+  {
+    id: "019f9fe8-1948-703b-bcd3-afff37608dd6",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(seed_users[0].createdAt),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "0.00",
+    closingBalance: "0.00",
+  },
+  {
+    id: "019f9fe8-1947-70ed-ba4d-36a7d5d48b02",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(seed_users[0].createdAt),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "0.00",
+    closingBalance: "0.00",
+  },
+  {
+    id: "019f9fe8-194c-7028-af14-2e398b6b0d51",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 1)),
+    openingBalance: "0.00",
+    totalIncomes: "33.25",
+    totalExpenses: "690.50",
+    closingBalance: "-657.25",
+  },
+  {
+    id: "019f9fe8-194d-74ba-8a2d-edeb4aded5d7",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 1)),
+    openingBalance: "0.00",
+    totalIncomes: "85.00",
+    totalExpenses: "555.35",
+    closingBalance: "-470.35",
+  },
+  {
+    id: "019f9fe8-1949-744d-bbd1-2e96a8de3048",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 2)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "300.00",
+    closingBalance: "-300.00",
+  },
+  {
+    id: "019f9fe8-1949-744d-bbd1-33b84e84b816",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 2)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "95.00",
+    closingBalance: "-95.00",
+  },
+  {
+    id: "019f9fe8-1950-751c-bd81-36e638638c94",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 3)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "128.40",
+    closingBalance: "-128.40",
+  },
+  {
+    id: "019f9fe8-194f-7321-b315-9a47194f64e1",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 3)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "120.00",
+    closingBalance: "-120.00",
+  },
+  {
+    id: "019f9fe8-1958-7438-8afa-863ad59123cc",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 4)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "495.00",
+    closingBalance: "-495.00",
+  },
+  {
+    id: "019f9fe8-1958-7438-8afa-886690f8c90e",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 4)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "50.75",
+    closingBalance: "-50.75",
+  },
+  {
+    id: "019f9fe8-1956-712a-96c7-b600942bca91",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 5)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "180.00",
+    closingBalance: "-180.00",
+  },
+  {
+    id: "019f9fe8-1956-712a-96c7-bb43d2e2a1af",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 5)),
+    openingBalance: "0.00",
+    totalIncomes: "289.90",
+    totalExpenses: "458.38",
+    closingBalance: "-168.48",
+  },
+  {
+    id: "019f9fe8-1952-761b-9726-ff73d1a5d09e",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 6)),
+    openingBalance: "0.00",
+    totalIncomes: "150.00",
+    totalExpenses: "209.40",
+    closingBalance: "-59.40",
+  },
+  {
+    id: "019f9fe8-1951-7764-ba7d-c6bd2ed542af",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 6)),
+    openingBalance: "0.00",
+    totalIncomes: "120.50",
+    totalExpenses: "362.00",
+    closingBalance: "-241.50",
+  },
+  {
+    id: "019f9fe8-1954-77b8-91b5-8648573e3dac",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 7)),
+    openingBalance: "0.00",
+    totalIncomes: "0.00",
+    totalExpenses: "284.01",
+    closingBalance: "-284.01",
+  },
+  {
+    id: "019f9fe8-1954-77b8-91b5-839b9819a415",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 7)),
+    openingBalance: "0.00",
+    totalIncomes: "870.00",
+    totalExpenses: "470.34",
+    closingBalance: "399.66",
+  },
+  {
+    id: "019f9fe8-1966-718e-97c7-28dfb2106b32",
+    walletId: seed_wallets[0].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 8)),
+    openingBalance: "399.66",
+    totalIncomes: "980.00",
+    totalExpenses: "270.00",
+    closingBalance: "1109.66",
+  },
+  {
+    id: "019f9fe8-1966-718e-97c7-2e2cd4f0d6a3",
+    walletId: seed_wallets[1].id,
+    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 8)),
+    openingBalance: "-284.01",
+    totalIncomes: "2073.13",
+    totalExpenses: "393.78",
+    closingBalance: "1395.34",
   },
 ];
 
@@ -933,78 +1097,20 @@ const seed_movements = [
   },
 ];
 
-const seed_transfers = [
-  {
-    id: "019e1e03-e846-7cb5-b183-4d9c85984e61",
-    debitedWallet: seed_wallets[1].id,
-    creditedWallet: seed_wallets[0].id,
-    amount: "300",
-  },
-];
-
-const interval = {
-  start: startOfMonth(seed_wallets[1].created_at),
-  end: endOfMonth(seed_wallets[1].created_at),
-};
-
-function calculate() {
-  const sumaryPrincipal = seed_movements.reduce(
-    (newObj, mov) => {
-      if (
-        mov.walletId == seed_wallets[1].id &&
-        mov.executedAt >= interval.start &&
-        mov.executedAt < interval.end
-      ) {
-        if (mov.type === "credito") {
-          newObj.entradas += Number(mov.amount);
-        } else {
-          newObj.saidas += Number(mov.amount);
-        }
-
-        return newObj;
-      }
-      return newObj;
-    },
-    { entradas: 0, saidas: 0 },
-  );
-
-  const sumaryPatr = seed_movements.reduce(
-    (newObj, mov) => {
-      if (
-        mov.walletId == seed_wallets[0].id &&
-        mov.executedAt >= interval.start &&
-        mov.executedAt < interval.end
-      ) {
-        if (mov.type === "credito") {
-          newObj.entradas += Number(mov.amount);
-        } else {
-          newObj.saidas += Number(mov.amount);
-        }
-
-        return newObj;
-      }
-      return newObj;
-    },
-    { entradas: 0, saidas: 0 },
-  );
-
-  sumaryPrincipal["balance"] =
-    sumaryPrincipal.entradas - sumaryPrincipal.saidas;
-  sumaryPatr["balance"] = sumaryPatr.entradas - sumaryPatr.saidas;
-
-  console.log(interval);
-  console.log(sumaryPrincipal);
-  console.log(sumaryPatr);
-}
-
-// calculate();
+// const seed_transfers = [
+//   {
+//     id: "019e1e03-e846-7cb5-b183-4d9c85984e61",
+//     debitedWallet: seed_wallets[1].id,
+//     creditedWallet: seed_wallets[0].id,
+//     amount: "300",
+//   },
+// ];
 
 export {
   seed_categorias,
   seed_users,
   seed_wallets,
   seed_movements,
-  seed_transfers,
   seed_templateReccurrent,
   seed_shapshotsWallet,
 };
