@@ -90,10 +90,27 @@ export class GetStatementHandler {
         totalMovementsFromDb: count,
         page: pagination.page,
         limit: pagination.limit,
-        payload: transactions,
+        payload: this.formatedOutput(transactions),
       };
 
       return result;
     },
   );
+
+  private formatedOutput(transactions: TransactionDTO): TransactionDTO {
+    return {
+      movements: transactions.movements.map((mov) => {
+        return {
+          ...mov,
+          amount: mov.amount / 100,
+        };
+      }),
+      reccurrents: transactions.reccurrents.map((rec) => {
+        return {
+          ...rec,
+          amount: rec.amount / 100,
+        };
+      }),
+    };
+  }
 }
