@@ -36,7 +36,7 @@ export const reccurrentDomainSchema = movementDomainBaseSchema
       })
       .nullable()
       .nonoptional(),
-    amount: zod.number({ error: "O Valor precisa ser um Número" }).gt(0, {
+    amount: zod.int({ error: "O Valor precisa ser um numero inteiro" }).gt(0, {
       error: "O Valor Precisa ser maior do que 0",
     }),
     startDate: zod

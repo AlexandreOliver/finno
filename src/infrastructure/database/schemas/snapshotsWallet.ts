@@ -1,5 +1,5 @@
 import {
-  decimal,
+  bigint,
   snakeCase,
   timestamp,
   unique,
@@ -21,10 +21,10 @@ export const snapshotsWallet = snakeCase.table(
       })
       .notNull(),
     yearMonth: timestamp({ withTimezone: true }).notNull(),
-    openingBalance: decimal({ scale: 2, precision: 12 }).notNull(),
-    totalIncomes: decimal({ scale: 2, precision: 12 }).notNull(),
-    totalExpenses: decimal({ scale: 2, precision: 12 }).notNull(),
-    closingBalance: decimal({ scale: 2, precision: 12 }).notNull(),
+    openingBalance: bigint({ mode: "number" }).notNull(),
+    totalIncomes: bigint({ mode: "number" }).notNull(),
+    totalExpenses: bigint({ mode: "number" }).notNull(),
+    closingBalance: bigint({ mode: "number" }).notNull(),
   },
   (table) => [
     unique("unique_snapshot_WalletPerMonth").on(

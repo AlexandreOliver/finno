@@ -167,7 +167,7 @@ describe("Repositorio drizzle Movements", () => {
       walletId: seed_wallets[1].id,
       type: "debito" as const,
       description: "Teste de save",
-      amount: "100.00",
+      amount: 10000,
       isRefunded: false,
       isReversal: false,
       reversalOfId: null,

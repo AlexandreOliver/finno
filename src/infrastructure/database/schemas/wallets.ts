@@ -1,5 +1,5 @@
 import {
-  decimal,
+  bigint,
   index,
   snakeCase,
   timestamp,
@@ -16,7 +16,7 @@ export const wallets = snakeCase.table(
     ownerId: uuid()
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
-    balance: decimal({ precision: 12, scale: 2 }).default("0").notNull(),
+    balance: bigint({ mode: "number" }).notNull(),
     updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },

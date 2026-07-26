@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IMovementGateway } from "@/domain/repositories/movements.gateway";
 import { movements } from "@/infrastructure/database/schemas/movements";
 
 import { and, eq, SQL, desc, inArray, gte, lt, or, sql } from "drizzle-orm";
-import { PgSelect, PgDatabase } from "drizzle-orm/pg-core";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 import { categories } from "@/infrastructure/database/schemas/categories";
 import { Movement } from "@/domain/entity/movements.entity";
 
 export class MovementsRepositoryDrizzle implements IMovementGateway {
-  private constructor(private readonly dbInstance: PgDatabase<any, any>) {}
+  private constructor(private readonly dbInstance: NodePgDatabase) {}
 
-  public static create(dbInstance: PgDatabase<any, any>) {
+  public static create(dbInstance: NodePgDatabase) {
     return new MovementsRepositoryDrizzle(dbInstance);
   }
 
@@ -119,7 +118,7 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
 
     const result = await this.dbInstance
       .insert(movements)
-      .values({ ...valuesObject, amount: movement.amount.toString() })
+      .values({ ...valuesObject, amount: movement.amount })
       .onConflictDoUpdate({
         target: movements.id,
         set: {
@@ -137,14 +136,6 @@ export class MovementsRepositoryDrizzle implements IMovementGateway {
   };
 
   //#region Metodos Privados
-  async #whithCategory<T extends PgSelect>(query: T) {
-    return query.leftJoin(categories, eq(categories.id, movements.categoryId));
-  }
-
-  async #execute<T extends PgSelect>(qb: T) {
-    return qb;
-  }
-
   #collmnsInclude(include?: { category?: true | undefined }) {
     if (!include) {
       return {};

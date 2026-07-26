@@ -43,7 +43,7 @@ describe("Entidade Reccurrent", () => {
     const DTO = {
       id: uuidv7(),
       type: props.type ?? ("debito" as const),
-      amount: props.amount?.toString() ?? "271.54",
+      amount: props.amount ?? 27154,
       description: props.description ?? "Conserto",
       status: props.status ?? ("ativo" as const),
       categoryId: props.categoryId ?? uuidv7(),
@@ -87,7 +87,7 @@ describe("Entidade Reccurrent", () => {
   test("#1 Create - Cria uma recorrência com inicio imediato", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: uuidv7(),
       categoryId: uuidv7(),
@@ -130,7 +130,7 @@ describe("Entidade Reccurrent", () => {
   test("#2 Create - Cria uma recorrência díaria com execução imediata", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: uuidv7(),
       categoryId: uuidv7(),
@@ -178,7 +178,7 @@ describe("Entidade Reccurrent", () => {
   test("#3 Create - Cria uma recorrência sem parcelas definidas", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: uuidv7(),
       categoryId: uuidv7(),
@@ -224,7 +224,7 @@ describe("Entidade Reccurrent", () => {
   test("#4 Create - Cria uma recorrência com inicio futuro", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: uuidv7(),
       categoryId: uuidv7(),
@@ -277,7 +277,7 @@ describe("Entidade Reccurrent", () => {
   test("#5 Create - Cria uma recorrência semanal com inicio futuro e execução na data de inicio", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: uuidv7(),
       categoryId: uuidv7(),
@@ -325,7 +325,7 @@ describe("Entidade Reccurrent", () => {
   test("#1 mutateCountPaid - Muda o estado da recorrência quando recebe movimentacoes validas", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: testWallet.id,
       categoryId: uuidv7(),
@@ -366,7 +366,7 @@ describe("Entidade Reccurrent", () => {
   test("#2 mutateCountPaid - Muda o estado de recorrências com o campo payOnStartDate true", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: testWallet.id,
       categoryId: uuidv7(),
@@ -413,7 +413,7 @@ describe("Entidade Reccurrent", () => {
   test("#3 mutateCountPaid - Falha ao receber uma movimentação que nao corresponde a recorrência", async () => {
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: testWallet.id,
       categoryId: uuidv7(),
@@ -434,18 +434,14 @@ describe("Entidade Reccurrent", () => {
       ReccurrentTest,
     ) as returnMovementFromreccurrent & { success: true };
 
-    const movementFake1 = Movement.with({
-      ...movementTest.data.toJson(),
-      amount: "5363.63",
-    });
+    const movementFake1 = Movement.with(movementTest.data);
 
     const result = ReccurrentTest.mutateCountPaid(movementFake1);
 
     expect(result).toBeFalsy();
 
     const movementFake2 = Movement.with({
-      ...movementTest.data.toJson({ omit: ["amount", "executedAt"] }),
-      amount: String(movementTest.data.amount),
+      ...movementTest.data.toJson({ omit: ["executedAt"] }),
       executedAt: new Date(new Date().setFullYear(2025)),
     });
 

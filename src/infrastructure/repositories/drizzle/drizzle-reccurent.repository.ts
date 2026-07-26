@@ -15,10 +15,7 @@ export class ReccurrentRepositoryDrizzle implements IReccurrentGateway {
     try {
       const resultDb = await this.dbInstance
         .insert(templateReccurrent)
-        .values({
-          ...reccurrent.toJson(),
-          amount: reccurrent.amount.toString(),
-        })
+        .values(reccurrent.toJson())
         .returning();
 
       return { id: resultDb[0].id };

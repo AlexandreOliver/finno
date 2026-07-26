@@ -20,9 +20,7 @@ import {
 } from "../schemas/reccurrent.schema";
 import { StatusTransaction } from "../enums";
 
-export type ReccurrentFromDb = Omit<ReccurrentProps, "amount"> & {
-  amount: string;
-};
+export type ReccurrentFromDb = ReccurrentProps;
 
 export type returnCreateReccurrent =
   | { success: true; data: Reccurrent }
@@ -60,7 +58,6 @@ export class Reccurrent {
   public static with(props: ReccurrentFromDb) {
     return new Reccurrent({
       ...props,
-      amount: Number.parseFloat(props.amount),
       installments: props.installments,
       startDate: props.startDate,
     });

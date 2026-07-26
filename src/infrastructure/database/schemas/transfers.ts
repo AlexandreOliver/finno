@@ -1,10 +1,4 @@
-import {
-  check,
-  decimal,
-  snakeCase,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { bigint, check, snakeCase, timestamp, uuid } from "drizzle-orm/pg-core";
 import { wallets } from "./wallets";
 import { sql } from "drizzle-orm";
 
@@ -20,7 +14,7 @@ export const transfers = snakeCase.table(
     creditedWallet: uuid()
       .references(() => wallets.id)
       .notNull(),
-    amount: decimal({ scale: 2, precision: 12 }).notNull(),
+    amount: bigint({ mode: "number" }).notNull(),
     createdAt: timestamp({ withTimezone: true }).defaultNow(),
   },
   (table) => [

@@ -9,9 +9,7 @@ import {
 
 export type MovementCreateProps = Omit<MovementProps, "id">;
 
-export type MovementsFromDb = Omit<MovementProps, "amount"> & {
-  amount: string;
-};
+export type MovementsFromDb = MovementProps;
 
 export type resultCreateMovement =
   | {
@@ -48,7 +46,6 @@ export class Movement {
   public static with(props: MovementsFromDb) {
     return new Movement({
       ...props,
-      amount: Number.parseFloat(props.amount),
       executedAt: props.executedAt as Date,
     });
   }

@@ -92,7 +92,7 @@ export class Wallet {
   }
 
   public static with(props: WalletsFromDb) {
-    return new Wallet({ ...props, balance: Number.parseFloat(props.balance) });
+    return new Wallet({ ...props });
   }
 
   //#region Getters

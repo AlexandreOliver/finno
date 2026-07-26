@@ -35,8 +35,9 @@ const CreateReccurentCommandSchema = z
     walletId: z.coerce.string({ error: "Forneça a id de uma wallet" }),
     categoryId: z.coerce.string({ error: "Forneça a id de uma categoria" }),
     amount: z.coerce
-      .number()
-      .gt(0, { error: "A valor precisa ser maior do que 0" }),
+      .number({ error: "Forneça um valor numerico" })
+      .gt(0, { error: "A valor precisa ser maior do que 0" })
+      .transform((val) => val * 100),
     frequency: z.enum(FREQUENCIES_RECCURRENT).nonoptional(),
     interval: z.coerce
       .number({ error: "Forneça um numero" })

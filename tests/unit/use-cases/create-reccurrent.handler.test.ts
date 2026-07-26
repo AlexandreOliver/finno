@@ -68,7 +68,7 @@ describe("Caso de Uso - Criar uma recorrência", () => {
 
     const input = {
       type: "debito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: walletTest.id,
       categoryId: uuid7(),
@@ -122,7 +122,7 @@ describe("Caso de Uso - Criar uma recorrência", () => {
 
     const input = {
       type: "credito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: walletTest.id,
       categoryId: uuid7(),
@@ -166,7 +166,7 @@ describe("Caso de Uso - Criar uma recorrência", () => {
 
     const input = {
       type: "credito" as const,
-      amount: 201.31,
+      amount: 20131,
       description: "Teste-Recorrencia",
       walletId: walletTest.id,
       categoryId: uuid7(),

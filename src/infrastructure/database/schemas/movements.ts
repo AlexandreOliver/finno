@@ -8,6 +8,7 @@ import {
   boolean,
   AnyPgColumn,
   index,
+  bigint,
 } from "drizzle-orm/pg-core";
 import { typesEnum } from "./Enums";
 import { categories } from "./categories";
@@ -21,7 +22,7 @@ export const movements = snakeCase.table(
     id: uuid().primaryKey(),
     type: typesEnum().notNull(),
     description: text().notNull(),
-    amount: decimal({ scale: 2, precision: 12 }).notNull(),
+    amount: bigint({ mode: "number" }).notNull(),
     isRefunded: boolean().default(false).notNull(),
     isReversal: boolean().default(false).notNull(),
     reversalOfId: uuid().references((): AnyPgColumn => movements.id, {

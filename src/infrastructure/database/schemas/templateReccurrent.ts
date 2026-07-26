@@ -1,7 +1,7 @@
 import {
+  bigint,
   boolean,
   check,
-  decimal,
   integer,
   snakeCase,
   text,
@@ -20,7 +20,7 @@ export const templateReccurrent = snakeCase.table(
     type: typesEnum().notNull(),
     status: statusEnum().notNull(),
     description: text().notNull(),
-    amount: decimal({ scale: 2, precision: 12 }).notNull(),
+    amount: bigint({ mode: "number" }).notNull(),
     frequency: frequencyEnum().notNull(),
     interval: integer().notNull(),
     installments: integer(),

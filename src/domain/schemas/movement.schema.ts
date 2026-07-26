@@ -14,7 +14,7 @@ export const movementDomainBaseSchema = zod.object({
   description: zod
     .string({ error: "Forneça uma desrição" })
     .min(2, { error: "Descrição curta demais" }),
-  amount: zod.number({ error: "Forneça um valor valido" }).gt(0, {
+  amount: zod.int({ error: "Forneça um numero inteiro" }).gt(0, {
     error: "O Valor Precisa ser maior do que 0",
   }),
   walletId: zod.uuidv7({ error: "Forneça uma uuid na versão 7" }),

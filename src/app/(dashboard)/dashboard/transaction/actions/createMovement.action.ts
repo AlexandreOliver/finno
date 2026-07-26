@@ -31,7 +31,8 @@ const CreateMovementRequestSchema = movementDomainBaseSchema
       .min(2, { error: "Descrição muito curta" }),
     amount: z.coerce
       .number<number>({ error: "Forneça um valor valido" })
-      .gt(0, { error: "O valor precisa ser maior que 0" }),
+      .gt(0, { error: "O valor precisa ser maior que 0" })
+      .transform((val) => val * 100),
     categoryId: z.uuidv7({ error: "Forneça uma uuid v7" }),
     walletId: z.uuidv7({ error: "Forneça uma uuid v7" }),
     executedAt: z.coerce

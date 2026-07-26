@@ -32,20 +32,20 @@ describe("SnapShot Wallet", () => {
       id: snap[0].id,
       walletId: seed_wallets[0].id,
       yearMonth: startOfMonth(new Date()),
-      openingBalance: "1109.66",
-      totalIncomes: "183.23",
-      totalExpenses: "0.00",
-      closingBalance: "1292.89",
+      openingBalance: 711091,
+      totalIncomes: 18323,
+      totalExpenses: 0,
+      closingBalance: 729414,
     });
 
     expect(snap[1]).toStrictEqual({
       id: snap[1].id,
       walletId: seed_wallets[1].id,
       yearMonth: startOfMonth(new Date()),
-      openingBalance: "1395.34",
-      totalIncomes: "3606.46",
-      totalExpenses: "1285.91",
-      closingBalance: "3715.89",
+      openingBalance: 396286,
+      totalIncomes: 390646,
+      totalExpenses: 73591,
+      closingBalance: 713341,
     });
   });
 });

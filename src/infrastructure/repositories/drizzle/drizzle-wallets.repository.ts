@@ -14,10 +14,7 @@ export class WalletsRepositoryDrizzle implements IWalletsGateway {
 
   public saveOrUpdate: IWalletsGateway["saveOrUpdate"] = cache(
     async (props) => {
-      const aWallet = {
-        ...props.toJson(),
-        balance: String(props.balance),
-      };
+      const aWallet = props.toJson();
 
       const result = await this.dbInstance
         .insert(wallets)

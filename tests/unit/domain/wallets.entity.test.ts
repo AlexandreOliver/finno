@@ -34,7 +34,7 @@ describe("Entidade Wallet", () => {
 
     const DTO = {
       id: uuidv7(),
-      amount: props.amount?.toString() ?? "200",
+      amount: props.amount ?? 200,
       categoryId: props.categoryId ?? uuidv7(),
       description: props.description ?? "Conserto",
       frequency: props.frequency ?? "monthly",
