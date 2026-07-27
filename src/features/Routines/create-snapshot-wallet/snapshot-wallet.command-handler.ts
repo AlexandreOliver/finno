@@ -3,7 +3,7 @@ import { wallets } from "@/infrastructure/database/schemas/wallets";
 import { snapshotsWallet } from "@/infrastructure/database/schemas/snapshotsWallet";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { eq } from "drizzle-orm";
-import { FinanceSummaryQueryService } from "@/features/Services/finance-sumary.service-query";
+import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 
 export class SnapshotWalletsCommandHanlder {
   constructor(
@@ -27,6 +27,7 @@ export class SnapshotWalletsCommandHanlder {
       this.financeSumaryService.sumaryOfWalletsAtInverval({
         interval: intervalSummaryFinance,
         walletIds: walletsIds,
+        excludeRefundedFromTotals: false,
       }),
 
       this.db

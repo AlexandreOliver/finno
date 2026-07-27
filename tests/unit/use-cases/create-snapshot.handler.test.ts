@@ -1,7 +1,7 @@
 import { describe, expect, test } from "@jest/globals";
 import setupTestDb from "../../db-test";
 import { SnapshotWalletsCommandHanlder } from "@/features/Routines/create-snapshot-wallet/snapshot-wallet.command-handler";
-import { FinanceSummaryQueryService } from "@/features/Services/finance-sumary.service-query";
+import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 import { snapshotsWallet } from "@/infrastructure/database/schemas/snapshotsWallet";
 import { eq } from "drizzle-orm";
 import { startOfMonth } from "date-fns";

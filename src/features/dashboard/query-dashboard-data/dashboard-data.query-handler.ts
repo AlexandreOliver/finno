@@ -5,7 +5,7 @@ import {
 } from "./dashboard-data.query";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { inArray, sql } from "drizzle-orm";
-import { FinanceSummaryQueryService } from "@/features/Services/finance-sumary.service-query";
+import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 import { snapshotsWallet } from "@/infrastructure/database/schemas/snapshotsWallet";
 
 export class DasboardDataQueryHandler {
@@ -62,10 +62,12 @@ export class DasboardDataQueryHandler {
         this.financeSumaryService.sumaryOfWalletsAtInverval({
           interval,
           walletIds: wallatsIds,
+          excludeRefundedFromTotals: true,
         }),
         this.financeSumaryService.sumaryOfWalletsAtInverval({
           interval: intervalLastMonth,
           walletIds: wallatsIds,
+          excludeRefundedFromTotals: true,
         }),
         this.db.execute<{ networthlastmonth: string }>(sql`
           SELECT
