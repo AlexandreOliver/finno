@@ -75,10 +75,10 @@ export class SnapshotWalletsCommandHanlder {
       return {
         walletId: w.id,
         yearMonth: intervalSummaryFinance.start,
-        openingBalance: openingBalance.toString(),
-        totalIncomes: summary.incomes.toString(),
-        totalExpenses: summary.expenses.toString(),
-        closingBalance: closingBalance.toString(),
+        openingBalance: openingBalance,
+        totalIncomes: summary.incomes,
+        totalExpenses: summary.expenses,
+        closingBalance: closingBalance,
       };
     });
 
