@@ -31,3 +31,14 @@ export const walletsQuerys = createQueryKeys("wallets", {
     queryKey: [userId],
   }),
 });
+
+export const dashboardQuery = createQueryKeys("dashboard", {
+  owned: (userId: string) => ({
+    queryKey: [userId],
+    contextQueries: {
+      referenceDate: (referenceDate: string) => ({
+        queryKey: [referenceDate],
+      }),
+    },
+  }),
+});

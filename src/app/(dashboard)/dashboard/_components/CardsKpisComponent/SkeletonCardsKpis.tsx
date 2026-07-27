@@ -11,7 +11,10 @@ export function SkeletonCardsKpis({ countCards = 1 }: { countCards: number }) {
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             <Skeleton className="h-8 w-3/6 bg-gray-400/20" />
-            <Skeleton className="h-3 w-4/5 bg-gray-400/20" />
+            <div className="flex flex-row justify-between">
+              <Skeleton className="h-3 w-4/5 bg-gray-400/20" />
+              <Skeleton className="h-3 w-10 bg-gray-400/20" />
+            </div>
           </CardContent>
         </Card>
       ))}

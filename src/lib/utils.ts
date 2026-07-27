@@ -42,6 +42,7 @@ export function formatCurrency(
     minimumFractionDigits?: number;
     maximumFractionDigits?: number;
     noDecimals?: boolean;
+    signDisplay?: Intl.NumberFormatOptionsSignDisplay;
   },
 ) {
   const {
@@ -50,6 +51,7 @@ export function formatCurrency(
     minimumFractionDigits,
     maximumFractionDigits,
     noDecimals,
+    signDisplay,
   } = opts ?? {};
 
   const formatOptions: Intl.NumberFormatOptions = {
@@ -57,6 +59,7 @@ export function formatCurrency(
     currency,
     minimumFractionDigits: noDecimals ? 0 : minimumFractionDigits,
     maximumFractionDigits: noDecimals ? 0 : maximumFractionDigits,
+    signDisplay,
   };
 
   return new Intl.NumberFormat(locale, formatOptions).format(amount);
