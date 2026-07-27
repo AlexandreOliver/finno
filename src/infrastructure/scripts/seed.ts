@@ -6,9 +6,10 @@ import {
   seed_users,
   seed_shapshotsWallet,
   seed_wallets,
+  walletsIds,
 } from "../defaultData";
 import db from "../database/index";
-import { sql } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 // import { SnapshotWalletsCommandHanlder } from "@/features/Routines/create-snapshot-wallet/snapshot-wallet.command-handler";
 // import { FinanceSummaryQueryService } from "@/features/Services/finance-sumary.service-query";
 
@@ -59,6 +60,10 @@ async function sedding() {
       });
 
     await db
+      .delete(schemas.snapshotsWallet)
+      .where(inArray(schemas.snapshotsWallet.walletId, walletsIds));
+
+    await db
       .insert(schemas.snapshotsWallet)
       .values(seed_shapshotsWallet)
       .onConflictDoUpdate({
@@ -84,17 +89,15 @@ async function sedding() {
     //   new FinanceSummaryQueryService(db),
     // );
 
-    // const result = await Promise.allSettled([
-    //   genSnapshotWallets.execute(new Date("2025-10-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2025-11-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2025-12-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2026-01-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2026-02-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2026-03-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2026-04-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2026-05-01T13:00:00")),
-    //   genSnapshotWallets.execute(new Date("2026-06-01T13:00:00")),
-    // ]);
+    // await genSnapshotWallets.execute(new Date("2025-10-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2025-11-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2025-12-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2026-01-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2026-02-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2026-03-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2026-04-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2026-05-01T13:00:00"));
+    // await genSnapshotWallets.execute(new Date("2026-06-01T13:00:00"));
   } catch (err) {
     const erro = err as Error;
     console.error(erro);
