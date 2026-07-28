@@ -4,7 +4,7 @@ import { SnapshotWalletsCommandHanlder } from "@/features/Routines/create-snapsh
 import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 import { snapshotsWallet } from "@/infrastructure/database/schemas/snapshotsWallet";
 import { eq } from "drizzle-orm";
-import { startOfMonth } from "date-fns";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { seed_wallets } from "@/infrastructure/defaultData";
 
 const testDb = setupTestDb();
@@ -19,7 +19,7 @@ describe("SnapShot Wallet", () => {
   test("gera novos snapshots", async () => {
     const genSnapshot = startUseCase();
 
-    const result = await genSnapshot.execute();
+    const result = await genSnapshot.execute(endOfMonth(new Date()));
 
     expect(result).toBe(true);
 

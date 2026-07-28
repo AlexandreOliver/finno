@@ -11,16 +11,25 @@ export class SnapshotWalletsCommandHanlder {
     private readonly financeSumaryService: FinanceSummaryQueryService,
   ) {}
 
-  public async execute(): Promise<boolean> {
+  public async execute(referenceMonth?: Date): Promise<boolean> {
+    const date = referenceMonth ?? new Date();
+
+    if (
+      date.toLocaleDateString("pt-BR") !=
+      endOfMonth(new Date()).toLocaleDateString("pt-BR")
+    ) {
+      throw new Error("Um Snapshot só pode ser gerado no fim do mes");
+    }
+
     const all_Wallets = await this.db.select({ id: wallets.id }).from(wallets);
 
     const walletsIds = all_Wallets.map((w) => w.id);
 
-    const lastMonth = startOfMonth(subMonths(new Date(), 1));
+    const lastMonth = startOfMonth(subMonths(date, 1));
 
     const intervalSummaryFinance = {
-      start: startOfMonth(new Date()),
-      end: endOfMonth(new Date()),
+      start: startOfMonth(date),
+      end: endOfMonth(date),
     };
 
     const [all_SummaryFinanceWallets, all_LastSnapshots] = await Promise.all([
@@ -85,7 +94,10 @@ export class SnapshotWalletsCommandHanlder {
 
     // console.log(newSnapshots);
 
-    await this.db.insert(snapshotsWallet).values(newSnapshots);
+    await this.db
+      .insert(snapshotsWallet)
+      .values(newSnapshots)
+      .onConflictDoNothing();
 
     return true;
   }
