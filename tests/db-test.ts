@@ -1,8 +1,9 @@
 import { afterAll, beforeAll } from "@jest/globals";
-import { execSync } from "node:child_process";
+// import { execSync } from "node:child_process";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import { seeding } from "../src/infrastructure/scripts/seed";
 
 export default function setupTestDb() {
   const db = drizzle({
@@ -18,9 +19,9 @@ export default function setupTestDb() {
     await db.$client.end();
   });
 
-  const seeding = async () => {
-    execSync("pnpm run db:seed", { stdio: "ignore" });
-  };
+  // const seeding = async () => {
+  //   execSync("pnpm run db:seed", { stdio: "ignore" });
+  // };
 
   const clearDatabase = async () => {
     // await db.execute(sql`DROP TABLE __drizzle_migrations`);

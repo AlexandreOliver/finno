@@ -1,3 +1,4 @@
+import { drizzle } from "drizzle-orm/node-postgres";
 import { schemas } from "../database/schemas";
 import {
   seed_categorias,
@@ -8,13 +9,17 @@ import {
   seed_wallets,
   walletsIds,
 } from "../defaultData";
-import db from "../database/index";
 import { inArray, sql } from "drizzle-orm";
 // import { SnapshotWalletsCommandHanlder } from "@/features/Routines/create-snapshot-wallet/snapshot-wallet.command-handler";
 // import { FinanceSummaryQueryService } from "@/features/Services/finance-sumary.service-query";
 
-async function sedding() {
-  console.log("Iniciando seeding...");
+export async function seeding(verbose: boolean = false) {
+  if (!("DATABASE_URL" in process.env)) {
+    throw new Error("DATABASE_URL não existe em process.env");
+  }
+
+  const db = drizzle({ connection: process.env.DATABASE_URL! });
+  if (verbose) console.log("Iniciando seeding...");
 
   try {
     await db.insert(schemas.users).values(seed_users).onConflictDoNothing();
@@ -106,7 +111,5 @@ async function sedding() {
     await db.$client.end();
   }
 
-  console.log("Sedding Completa\n");
+  if (verbose) console.log("Sedding Completa\n");
 }
-
-sedding();
