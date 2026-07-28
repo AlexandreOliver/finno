@@ -1,6 +1,5 @@
 import { User } from "@/domain/entity/user.entity";
 import { Wallet } from "@/domain/entity/wallets.entity";
-import { Session } from "@/domain/entity/session.entity";
 
 import { IUserGateway } from "@/domain/repositories/user.gateway";
 import { IWalletsGateway } from "@/domain/repositories/wallets.gateway";
@@ -75,15 +74,6 @@ export class CreateUserHandler {
       return {
         success: false,
         message: "Erro ao criar uma conta",
-      };
-    }
-
-    const sessionOrError = Session.create({ userId: userOrError.user.id });
-
-    if (!sessionOrError.success) {
-      return {
-        success: false,
-        message: "Erro ao criar uma sessão",
       };
     }
 
