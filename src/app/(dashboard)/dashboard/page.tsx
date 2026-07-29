@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { CardsKpis } from "./_components/CardsKpisComponent/CardsKpis";
 import { SkeletonCardsKpis } from "./_components/CardsKpisComponent/SkeletonCardsKpis";
 import { CardsWrapper } from "./_components/CardsKpisComponent/CardsWrapper";
+import { ChartIncomesExpenses } from "./transaction/_components/ChartIncomesExpenses";
 
 export const metadata = {
   title: "Dashboard",
@@ -53,6 +54,12 @@ export default async function Page() {
         </div>
         <div className="col-span-5"></div>
       </div>
+      {/* <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
+        <div className="col-span-7">
+          <ChartIncomesExpenses />
+        </div>
+        <div className="col-span-5"></div>
+      </div> */}
     </section>
   );
 }

@@ -7,12 +7,14 @@ import { verifySession } from "@/features/authorization/services/verifysession";
 import { cookies } from "next/headers";
 import { StatementRepositoryDrizzle } from "@/infrastructure/repositories/queries/drizzle-statement.repository";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
+import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 
 // Instancia as dependências
 
 const getTransacoesUseCase = GetStatementHandler.create(
   StatementRepositoryDrizzle.create(db),
   MovementsRepositoryDrizzle.create(db),
+  new FinanceSummaryQueryService(db),
 );
 
 export async function getStatement({

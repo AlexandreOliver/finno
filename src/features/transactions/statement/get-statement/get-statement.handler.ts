@@ -7,12 +7,20 @@ import {
   StatusTransaction,
   TypesTransaction,
 } from "@/domain/enums";
+import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
+import { addHours } from "date-fns";
 
 export interface StatementOutput {
   totalMovementsFromDb: number;
   page: number;
   limit: number;
   payload: TransactionDTO | null;
+  summaryPerDays: {
+    day: string;
+    incomes: number;
+    expenses: number;
+    balanceAcc: number;
+  }[];
 }
 
 export interface TransactionDTO {
@@ -54,13 +62,19 @@ export class GetStatementHandler {
   private constructor(
     private readonly transactionRepository: IStatementRepository,
     private readonly movementsRepository: IMovementGateway,
+    private readonly financeSummaryService: FinanceSummaryQueryService,
   ) {}
 
   public static create(
     transactionRepository: IStatementRepository,
     movementsRepository: IMovementGateway,
+    financeSummaryService: FinanceSummaryQueryService,
   ) {
-    return new GetStatementHandler(transactionRepository, movementsRepository);
+    return new GetStatementHandler(
+      transactionRepository,
+      movementsRepository,
+      financeSummaryService,
+    );
   }
 
   public execute = cache(
@@ -86,11 +100,27 @@ export class GetStatementHandler {
         },
       });
 
+      const query = await this.financeSummaryService.summaryPerDaysAtMonth({
+        walletId: walletId as string[],
+        referenceMonth: addHours(date.start, 3),
+        excludeRefundedFromTotals: true,
+      });
+
+      const summaryPerDays = query.summaryPerDays.map((sum) => {
+        return {
+          day: sum.day,
+          incomes: sum.incomes / 100,
+          expenses: sum.expenses / 100,
+          balanceAcc: sum.balanceAcc / 100,
+        };
+      });
+
       const result = {
         totalMovementsFromDb: count,
         page: pagination.page,
         limit: pagination.limit,
         payload: this.formatedOutput(transactions),
+        summaryPerDays,
       };
 
       return result;

@@ -11,6 +11,7 @@ import { TableReccurrent } from "./_components/TableReccurrent";
 
 import { RangeDateProvider } from "@/features/transactions/contexts/rangeDateProvider";
 import { Separator } from "@/components/ui/separator";
+import { ChartIncomesExpenses } from "./_components/ChartIncomesExpenses";
 
 export const metadata = {
   title: "Transações",
@@ -52,6 +53,10 @@ export default async function Page() {
           </div>
         </header>
         <main>
+          <section className="p-4 flex flex-row justify-center">
+            <ChartIncomesExpenses />
+          </section>
+
           <TableMovements />
 
           <Separator className="my-8" />
