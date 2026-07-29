@@ -8,6 +8,7 @@ import { seed_movements, seed_wallets } from "@/infrastructure/defaultData";
 import setupTestDb from "../db-test";
 
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
+import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 
 const testDb = setupTestDb();
 
@@ -22,6 +23,7 @@ describe("Statement - Handler", () => {
     getStatementHanlder = GetStatementHandler.create(
       statementRepository,
       movementsRepository,
+      new FinanceSummaryQueryService(testDb.db),
     );
   });
 

@@ -1,6 +1,7 @@
 import { movements } from "@/infrastructure/database/schemas/movements";
 import { wallets } from "@/infrastructure/database/schemas/wallets";
-import { inArray, sql, eq, and, gte, lt } from "drizzle-orm";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { inArray, sql, eq, and, gte, lt, asc } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export class FinanceSummaryQueryService {
@@ -43,7 +44,94 @@ export class FinanceSummaryQueryService {
 
     return summaryFinance;
   }
+
+  public summaryPerDaysAtMonth: FunctionSummaryPerDaysAtMonth = async (
+    props,
+  ) => {
+    const { referenceMonth, walletId, excludeRefundedFromTotals } = props;
+
+    const date = startOfMonth(referenceMonth);
+
+    const subquery = this.db
+      .select({
+        day: sql`CAST(${movements.executedAt} AS DATE) `.as("date"),
+        amount: movements.amount,
+        type: movements.type,
+      })
+      .from(movements)
+      .where(
+        and(
+          inArray(movements.walletId, walletId),
+          gte(movements.executedAt, date),
+          lt(movements.executedAt, endOfMonth(date)),
+          excludeRefundedFromTotals
+            ? eq(movements.isReversal, false)
+            : undefined,
+          excludeRefundedFromTotals
+            ? eq(movements.isRefunded, false)
+            : undefined,
+        ),
+      )
+      .as("subquery");
+
+    const summaryFinance = await this.db
+      .select({
+        day: sql`${subquery.day}`.mapWith({
+          mapFromDriverValue: (value) => {
+            return `${value}T03:00:00.000Z`;
+          },
+        }),
+        incomes:
+          sql<number>`SUM(CASE WHEN ${subquery.type} = 'credito' THEN amount ELSE 0 END)`.mapWith(
+            Number,
+          ),
+        expenses:
+          sql<number>`SUM(CASE WHEN ${subquery.type} = 'debito' THEN amount ELSE 0 END)`.mapWith(
+            Number,
+          ),
+      })
+      .from(subquery)
+      .groupBy(subquery.day)
+      .orderBy(asc(subquery.day));
+
+    let accExpenses = 0;
+    let accIncomes = 0;
+    const sum = summaryFinance.map((s) => {
+      accExpenses += s.expenses;
+      accIncomes += s.incomes;
+
+      return {
+        ...s,
+        balanceAcc: accIncomes - accExpenses,
+      };
+    });
+
+    return {
+      month: referenceMonth.toLocaleDateString("pt-BR", { month: "long" }),
+      summaryPerDays: sum,
+    };
+  };
 }
+
+type FunctionSummaryPerDaysAtMonth = (props: {
+  walletId: string[];
+  referenceMonth: Date;
+  excludeRefundedFromTotals: boolean;
+}) => Promise<{
+  month: string;
+  summaryPerDays: TSummaryPerDays[];
+}>;
+
+export type ReturnSummaryDaysAtMonth = Awaited<
+  ReturnType<FunctionSummaryPerDaysAtMonth>
+>;
+
+export type TSummaryPerDays = {
+  day: string;
+  incomes: number;
+  expenses: number;
+  balanceAcc: number;
+};
 
 export type TSumaryOfWallet = {
   wallet: string;
