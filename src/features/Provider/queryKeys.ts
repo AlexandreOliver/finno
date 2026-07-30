@@ -12,23 +12,20 @@ export const movementsQuerys = createQueryKeys("movements", {
           pagination: (limit: number, page: number) => ({
             queryKey: [{ limit, page }],
             queryFn: async () => {
-              const response = await fetch(
-                "http://localhost:3000/api/dashboard/transactions",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    walletId: walletsId,
-                    pagination: {
-                      limit: limit,
-                      page: page,
-                    },
-                    filters: query,
-                  }),
+              const response = await fetch("/api/dashboard/transactions", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
                 },
-              );
+                body: JSON.stringify({
+                  walletId: walletsId,
+                  pagination: {
+                    limit: limit,
+                    page: page,
+                  },
+                  filters: query,
+                }),
+              });
 
               if (!response.ok) {
                 throw new Error("Houve um erro na requisição");

@@ -24,7 +24,7 @@ export function CardsKpisContent(props: CardsKpisProps) {
     queryKey: dashboardQuery.owned(props.userId ?? "")._ctx.referenceDate(date)
       .queryKey,
     queryFn: async () => {
-      const response = await fetch("http://localhost:3000/api/dashboard/", {
+      const response = await fetch("/api/dashboard/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
