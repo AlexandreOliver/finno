@@ -4,7 +4,6 @@ import { ChartTransactions } from "./_components/ChartTransactions";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { CardsKpis } from "./_components/CardsKpisComponent/CardsKpis";
 import { SkeletonCardsKpis } from "./_components/CardsKpisComponent/SkeletonCardsKpis";
@@ -15,11 +14,7 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const cookieStore = await cookies();
-
-  const auth = await verifySession(
-    cookieStore.get("session_token")?.value as string,
-  );
+  const auth = await verifySession();
   const dateFormated = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
   });

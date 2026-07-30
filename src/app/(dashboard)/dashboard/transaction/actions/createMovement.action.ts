@@ -6,7 +6,6 @@ import { pt } from "zod/locales";
 z.config(pt());
 
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { cookies } from "next/headers";
 
 import db from "@/infrastructure/database";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
@@ -52,9 +51,7 @@ export interface StateFormMovement {
 export async function CreateAction(
   formData: FormData,
 ): Promise<StateFormMovement> {
-  const { isAuth } = await verifySession(
-    (await cookies()).get("session_token")?.value as string,
-  );
+  const { isAuth } = await verifySession();
 
   if (!isAuth) throw new Error("Não autorizado");
 

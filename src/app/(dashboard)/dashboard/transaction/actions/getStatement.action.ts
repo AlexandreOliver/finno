@@ -4,7 +4,6 @@ import { GetStatementHandler } from "@/features/transactions/statement/get-state
 
 import db from "@/infrastructure/database";
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { cookies } from "next/headers";
 import { StatementRepositoryDrizzle } from "@/infrastructure/repositories/queries/drizzle-statement.repository";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
 import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
@@ -26,9 +25,7 @@ export async function getStatement({
   pagination: { limit: number; page: number };
   query: { date: { end: string; start: string } };
 }) {
-  const { isAuth } = await verifySession(
-    (await cookies()).get("session_token")?.value as string,
-  );
+  const { isAuth } = await verifySession();
 
   if (!isAuth) throw new Error("Não autorizado");
 

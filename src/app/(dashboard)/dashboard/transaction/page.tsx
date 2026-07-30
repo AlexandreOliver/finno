@@ -5,7 +5,6 @@ import { TableMovements } from "@/app/(dashboard)/dashboard/transaction/_compone
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { TableReccurrent } from "./_components/TableReccurrent";
 
@@ -21,9 +20,8 @@ export default async function Page() {
   const dateFormated = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
   });
-  const sessionCookie = (await cookies()).get("session_token");
 
-  const authUser = await verifySession(sessionCookie?.value as string);
+  const authUser = await verifySession();
   if (!authUser.isAuth) redirect("/auth/signin");
 
   return (

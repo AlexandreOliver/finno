@@ -1,7 +1,6 @@
 "use server";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { cookies } from "next/headers";
 
 import db from "@/infrastructure/database";
 
@@ -19,9 +18,7 @@ export const getCategories = async <K extends keyof categoriesProps>({
   userId: string;
   returnFields: K[];
 }) => {
-  const { isAuth } = await verifySession(
-    (await cookies()).get("session_token")?.value as string,
-  );
+  const { isAuth } = await verifySession();
 
   if (!isAuth) throw new Error("Não autorizado");
 

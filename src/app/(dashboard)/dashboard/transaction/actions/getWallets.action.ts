@@ -6,8 +6,6 @@ import { WalletsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/
 import { GetWalletsHandler } from "@/features/dashboard/get-wallets/get-wallets.handler";
 import db from "@/infrastructure/database";
 
-import { cookies } from "next/headers";
-
 const WalletsRepository = WalletsRepositoryDrizzle.create(db);
 const walletsHandler = GetWalletsHandler.create(WalletsRepository);
 export type Wallet = {
@@ -16,9 +14,7 @@ export type Wallet = {
 };
 
 export const findWallets = async (ownerId: string) => {
-  const { isAuth } = await verifySession(
-    (await cookies()).get("session_token")?.value as string,
-  );
+  const { isAuth } = await verifySession();
 
   if (!isAuth) throw new Error("Não autorizado");
 

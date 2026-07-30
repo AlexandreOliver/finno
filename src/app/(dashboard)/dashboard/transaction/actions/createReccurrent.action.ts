@@ -3,7 +3,6 @@
 import z from "zod";
 import { verifySession } from "@/features/authorization/services/verifysession";
 import { StateFormMovement } from "./createMovement.action";
-import { cookies } from "next/headers";
 import { FREQUENCIES_RECCURRENT, TYPES_TRANSACTION } from "@/domain/enums";
 
 import { ReccurrentRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-reccurent.repository";
@@ -59,13 +58,9 @@ const CreateReccurentCommandSchema = z
 export async function CreateReccurrentAction(
   formData: FormData,
 ): Promise<StateFormReccurent> {
-  const { isAuth } = await verifySession(
-    (await cookies()).get("session_token")?.value as string,
-  );
+  const { isAuth } = await verifySession();
 
   if (!isAuth) throw new Error("Não autorizado");
-
-  console.log(Object.fromEntries(formData.entries()));
 
   const rawData = CreateReccurentCommandSchema.safeParse(
     Object.fromEntries(formData.entries()),

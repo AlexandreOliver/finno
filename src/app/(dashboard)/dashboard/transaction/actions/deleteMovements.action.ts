@@ -1,7 +1,6 @@
 "use server";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
-import { cookies } from "next/headers";
 
 import db from "@/infrastructure/database";
 import { MovementsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-movements.repository";
@@ -18,9 +17,7 @@ const deleteMovementsUseCase = DeleteMovementHandler.create(
 );
 
 export const deleteMovement = async (id: string) => {
-  const { isAuth } = await verifySession(
-    (await cookies()).get("session_token")?.value as string,
-  );
+  const { isAuth } = await verifySession();
 
   if (!isAuth) throw new Error("Não autorizado");
 

@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { verifySession } from "@/features/authorization/services/verifysession";
@@ -24,9 +23,7 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sessionCookie = (await cookies()).get("session_token");
-
-  const authUser = await verifySession(sessionCookie?.value as string);
+  const authUser = await verifySession();
   if (!authUser.isAuth) redirect("/auth/signin");
 
   const queryClient = getQueryClient();
