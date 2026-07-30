@@ -6,7 +6,7 @@ import {
 } from "@/domain/enums";
 import bcrypt from "bcrypt";
 
-const hoje = set(new Date(), { year: 2026 });
+const hoje = set(new Date(), { year: 2026, hours: 6 });
 
 function hash(senha: string) {
   const salt = bcrypt.genSaltSync(1);
@@ -21,8 +21,8 @@ const seed_users = [
     email: "coroa@itaca.ageu",
     password: hash("rei-de-itaca"),
     features: ["demo"],
-    createdAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 12),
-    updatedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 12),
+    createdAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 12, 3),
+    updatedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 9, 12, 3),
   },
 ];
 
@@ -49,7 +49,7 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1948-703b-bcd3-afff37608dd6",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(seed_users[0].createdAt),
+    yearMonth: set(startOfMonth(seed_users[0].createdAt), { hours: 3 }),
     openingBalance: 0,
     totalIncomes: 0,
     totalExpenses: 0,
@@ -58,7 +58,7 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1947-70ed-ba4d-36a7d5d48b02",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(seed_users[0].createdAt),
+    yearMonth: set(startOfMonth(seed_users[0].createdAt), { hours: 3 }),
     openingBalance: 0,
     totalIncomes: 0,
     totalExpenses: 0,
@@ -67,7 +67,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-194c-7028-af14-2e398b6b0d51",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 1)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 1)), {
+      hours: 3,
+    }),
     openingBalance: 0,
     totalIncomes: 533525,
     totalExpenses: 11050,
@@ -76,7 +78,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-194d-74ba-8a2d-edeb4aded5d7",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 1)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 1)), {
+      hours: 3,
+    }),
     openingBalance: 0,
     totalIncomes: 91245,
     totalExpenses: 36290,
@@ -85,7 +89,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1949-744d-bbd1-2e96a8de3048",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 2)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 2)), {
+      hours: 3,
+    }),
     openingBalance: 522475,
     totalIncomes: 0,
     totalExpenses: 30000,
@@ -94,7 +100,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1949-744d-bbd1-33b84e84b816",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 2)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 2)), {
+      hours: 3,
+    }),
     openingBalance: 54955,
     totalIncomes: 0,
     totalExpenses: 9500,
@@ -103,7 +111,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1950-751c-bd81-36e638638c94",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 3)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 3)), {
+      hours: 3,
+    }),
     openingBalance: 492475,
     totalIncomes: 12300,
     totalExpenses: 0,
@@ -112,7 +122,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-194f-7321-b315-9a47194f64e1",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 3)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 3)), {
+      hours: 3,
+    }),
     openingBalance: 45455,
     totalIncomes: 0,
     totalExpenses: 12840,
@@ -121,7 +133,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1958-7438-8afa-863ad59123cc",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 4)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 4)), {
+      hours: 3,
+    }),
     openingBalance: 504775,
     totalIncomes: 0,
     totalExpenses: 19500,
@@ -130,7 +144,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1958-7438-8afa-886690f8c90e",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 4)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 4)), {
+      hours: 3,
+    }),
     openingBalance: 32615,
     totalIncomes: 0,
     totalExpenses: 3075,
@@ -139,7 +155,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1956-712a-96c7-b600942bca91",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 5)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 5)), {
+      hours: 3,
+    }),
     openingBalance: 485275,
     totalIncomes: 0,
     totalExpenses: 8000,
@@ -148,7 +166,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1956-712a-96c7-bb43d2e2a1af",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 5)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 5)), {
+      hours: 3,
+    }),
     openingBalance: 29540,
     totalIncomes: 58990,
     totalExpenses: 22838,
@@ -157,7 +177,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1952-761b-9726-ff73d1a5d09e",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 6)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 6)), {
+      hours: 3,
+    }),
     openingBalance: 477275,
     totalIncomes: 12050,
     totalExpenses: 33200,
@@ -166,7 +188,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1951-7764-ba7d-c6bd2ed542af",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 6)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 6)), {
+      hours: 3,
+    }),
     openingBalance: 65692,
     totalIncomes: 133900,
     totalExpenses: 11040,
@@ -175,7 +199,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1954-77b8-91b5-8648573e3dac",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 7)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 7)), {
+      hours: 3,
+    }),
     openingBalance: 456125,
     totalIncomes: 127000,
     totalExpenses: 47034,
@@ -184,7 +210,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1954-77b8-91b5-839b9819a415",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 7)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 7)), {
+      hours: 3,
+    }),
     openingBalance: 188552,
     totalIncomes: 0,
     totalExpenses: 25401,
@@ -193,7 +221,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1966-718e-97c7-28dfb2106b32",
     walletId: seed_wallets[0].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 8)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 8)), {
+      hours: 3,
+    }),
     openingBalance: 536091,
     totalIncomes: 198000,
     totalExpenses: 23000,
@@ -202,7 +232,9 @@ const seed_shapshotsWallet = [
   {
     id: "019f9fe8-1966-718e-97c7-2e2cd4f0d6a3",
     walletId: seed_wallets[1].id,
-    yearMonth: startOfMonth(addMonths(seed_users[0].createdAt, 8)),
+    yearMonth: set(startOfMonth(addMonths(seed_users[0].createdAt, 8)), {
+      hours: 3,
+    }),
     openingBalance: 163151,
     totalIncomes: 251513,
     totalExpenses: 18378,
