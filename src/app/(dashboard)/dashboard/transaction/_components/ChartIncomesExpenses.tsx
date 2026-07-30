@@ -23,14 +23,12 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { formatCurrency } from "@/lib/utils";
-import { getStatement } from "@/app/(dashboard)/dashboard/transaction/actions/getStatement.action";
 import { useSession } from "@/hooks/useSession";
 import { useWallets } from "@/features/dashboard/hooks/useWallets";
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
 import { useQuery } from "@tanstack/react-query";
 
-import { StatementOutput } from "@/features/transactions/statement/get-statement/get-statement.handler";
 import { useMemo } from "react";
 import { ChartAreaIcon } from "lucide-react";
 
@@ -67,7 +65,7 @@ export function ChartIncomesExpenses() {
   const walletsId = wallets?.map((w) => w.id) ?? [];
 
   const { data, isPending } = useQuery({
-    queryKey: movementsQuerys
+    ...movementsQuerys
       .owned(walletsId)
       ._ctx.query({
         date: {
@@ -75,29 +73,14 @@ export function ChartIncomesExpenses() {
           end: range.end.toISOString().slice(0, 10),
         },
       })
-      ._ctx.pagination(10, 1).queryKey,
-
-    queryFn: () =>
-      getStatement({
-        walletId: walletsId,
-        query: {
-          date: {
-            start: range.start.toISOString().slice(0, 10),
-            end: range.end.toISOString().slice(0, 10),
-          },
-        },
-        pagination: {
-          limit: 10,
-          page: 1,
-        },
-      }),
+      ._ctx.pagination(10, 1),
 
     throwOnError: (err) => {
       throw err;
     },
 
     select: (data) => {
-      return (data as StatementOutput).summaryPerDays.map((mov) => {
+      return data.summaryPerDays.map((mov) => {
         return {
           ...mov,
           date: mov.day,

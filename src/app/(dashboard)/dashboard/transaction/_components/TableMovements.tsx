@@ -41,10 +41,10 @@ import { useDeleteMovement } from "@/features/transactions/hooks/useDeleteMoveme
 
 import { movementsQuerys } from "@/features/Provider/queryKeys";
 
-import { useStatement } from "@/features/transactions/hooks/useStatement";
 import { useWallets } from "@/features/dashboard/hooks/useWallets";
 import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
 import { ControlsTableMovements } from "./ControlsTableMovements";
+import { useQuery } from "@tanstack/react-query";
 
 export function TableMovements() {
   const { range } = useRangeDate();
@@ -69,11 +69,16 @@ export function TableMovements() {
   }, [range.start, range.end]);
 
   const limit = 10;
-  const { data: movements, isPending } = useStatement(
-    wallets_Ids as string[],
-    { limit, page },
-    { date: rangeDate },
-  );
+
+  const { data: movements, isPending } = useQuery({
+    ...movementsQuerys
+      .owned(wallets_Ids as string[])
+      ._ctx.query({ date: rangeDate })
+      ._ctx.pagination(limit, page),
+
+    select: (data) => ({ ...data, summaryPerDays: undefined }),
+    placeholderData: (data) => data,
+  });
 
   const totalPages = useMemo(
     () =>

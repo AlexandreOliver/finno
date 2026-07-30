@@ -82,7 +82,7 @@ export class GetStatementHandler {
       const { walletId, pagination, filters } = props;
 
       const date = {
-        start: new Date(filters?.date.start),
+        start: new Date(filters?.date.start + "T00:00:00.000"),
         end: new Date(filters?.date.end + "T23:59:59.999"),
       };
 

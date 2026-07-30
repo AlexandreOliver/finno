@@ -1,14 +1,43 @@
 import { createQueryKeys } from "@lukemorales/query-key-factory";
+import { StatementOutput } from "../transactions/statement/get-statement/get-statement.handler";
 
 export const movementsQuerys = createQueryKeys("movements", {
-  owned: (walelletsId: string[]) => ({
-    queryKey: [walelletsId],
+  owned: (walletsId: string[]) => ({
+    queryKey: [walletsId],
     contextQueries: {
       query: (query: { date: { start?: string; end?: string } }) => ({
         queryKey: [{ date: query.date }],
         contextQueries: {
+          // eslint-disable-next-line @tanstack/query/exhaustive-deps
           pagination: (limit: number, page: number) => ({
             queryKey: [{ limit, page }],
+            queryFn: async () => {
+              const response = await fetch(
+                "http://localhost:3000/api/dashboard/transactions",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    walletId: walletsId,
+                    pagination: {
+                      limit: limit,
+                      page: page,
+                    },
+                    filters: query,
+                  }),
+                },
+              );
+
+              if (!response.ok) {
+                throw new Error("Houve um erro na requisição");
+              }
+
+              return response.json() as Promise<StatementOutput>;
+            },
+
+            enabled: !!walletsId,
           }),
         },
       }),

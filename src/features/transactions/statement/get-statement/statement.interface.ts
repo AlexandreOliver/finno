@@ -6,7 +6,7 @@ export interface IStatementRepository {
 }
 
 export type FunctionStatement = (args: {
-  walletId: string | string[];
+  walletId: string[];
   query: QueryParams;
   pagination: Pagination;
 }) => Promise<TransactionDTO>;

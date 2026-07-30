@@ -11,7 +11,6 @@ import {
 import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
 import { useRangeDate } from "@/features/transactions/hooks/use-rangeDate";
-import { useStatement } from "@/features/transactions/hooks/useStatement";
 import { useSession } from "@/hooks/useSession";
 import { useWallets } from "@/features/dashboard/hooks/useWallets";
 import { useMemo } from "react";
@@ -21,6 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import clsx from "clsx";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { CreatereccurrentDialog } from "./CreateReccurrentDialog";
+import { useQuery } from "@tanstack/react-query";
+import { movementsQuerys } from "@/features/Provider/queryKeys";
 
 export function TableReccurrent() {
   const { user } = useSession();
@@ -31,23 +32,24 @@ export function TableReccurrent() {
 
   const wallets_Ids = useMemo(() => wallets?.map((w) => w.id), [wallets]);
 
-  const { data: mov, isPending } = useStatement(
-    wallets_Ids as string[],
-    {
-      limit: 10,
-      page: 1,
-    },
-    {
-      date: {
-        start: range.start.toISOString().slice(0, 10),
-        end: range.end.toISOString().slice(0, 10),
-      },
-    },
-  );
+  const { data: reccurrents, isPending } = useQuery({
+    ...movementsQuerys
+      .owned(wallets_Ids as string[])
+      ._ctx.query({
+        date: {
+          start: range.start.toISOString().slice(0, 10),
+          end: range.end.toISOString().slice(0, 10),
+        },
+      })
+      ._ctx.pagination(10, 1),
+
+    select: (data) => data.payload?.reccurrents,
+    placeholderData: (data) => data,
+  });
 
   const dataTable = useMemo(() => {
     const onlyreccurrent =
-      mov?.payload?.reccurrents.map((re) => {
+      reccurrents?.map((re) => {
         const labels_reccurrent = {
           label_interval: "",
           label_installments: "",
@@ -113,7 +115,7 @@ export function TableReccurrent() {
       }) ?? [];
 
     return onlyreccurrent;
-  }, [mov?.payload?.reccurrents]);
+  }, [reccurrents]);
 
   return (
     <section>
