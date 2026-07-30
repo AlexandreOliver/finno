@@ -53,7 +53,6 @@ export function CardsKpisContent(props: CardsKpisProps) {
       const variacao = (final - inicial) / inicial;
       const percVariacao = variacao * 100;
       const absPerc = Math.abs(variacao);
-      console.log(percVariacao);
 
       let label;
       if (absPerc < 1) {

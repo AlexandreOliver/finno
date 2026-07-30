@@ -14,7 +14,7 @@ describe("Caso de uso - Dashboard Data Handler", () => {
     const dashboardData = startUseCase();
 
     const input: DashboardDataQuery = {
-      referenceMonth: new Date(),
+      referenceMonth: new Date().toISOString().slice(0, 7),
       userId: seed_users[0].id,
     };
 

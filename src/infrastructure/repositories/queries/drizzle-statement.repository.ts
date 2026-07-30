@@ -35,15 +35,8 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
     const filtersMov: SQL[] = [];
     const filtersRecOwned: SQL[] = [];
 
-    if (Array.isArray(walletId)) {
-      filtersMov.push(inArray(movements.walletId, walletId));
-
-      filtersRecOwned.push(inArray(templateReccurrent.walletId, walletId));
-    } else {
-      filtersMov.push(eq(movements.walletId, walletId));
-
-      filtersRecOwned.push(eq(templateReccurrent.walletId, walletId));
-    }
+    filtersMov.push(inArray(movements.walletId, walletId));
+    filtersRecOwned.push(inArray(templateReccurrent.walletId, walletId));
 
     if (query?.date && query.date.start && query.date.end) {
       filtersMov.push(gte(movements.executedAt, query.date.start));
@@ -80,9 +73,7 @@ export class StatementRepositoryDrizzle implements IStatementRepository {
         .from(templateReccurrent)
         .where(
           and(
-            filtersRecOwned.length > 0
-              ? and(...filtersRecOwned)
-              : eq(templateReccurrent.walletId, walletId as string),
+            inArray(templateReccurrent.walletId, walletId),
             or(
               query.date && query.date.end
                 ? and(lte(templateReccurrent.startDate, query.date.end))
