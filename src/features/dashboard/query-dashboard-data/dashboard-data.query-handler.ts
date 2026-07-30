@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { endOfMonth, subMonths } from "date-fns";
 import {
   DasboardDataQueryOutput,
   DashboardDataQuery,
@@ -24,9 +24,11 @@ export class DasboardDataQueryHandler {
   ): Promise<DasboardDataQueryOutput> {
     const { referenceMonth, userId } = props;
 
+    const date = new Date(`${referenceMonth}-01T03:00:00.000Z`);
+
     const interval = {
-      start: startOfMonth(referenceMonth),
-      end: endOfMonth(referenceMonth),
+      start: date,
+      end: endOfMonth(date),
     };
 
     const intervalLastMonth = {

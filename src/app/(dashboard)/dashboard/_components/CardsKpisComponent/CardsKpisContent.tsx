@@ -5,18 +5,12 @@ import { cn, formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { SkeletonCardsKpis } from "./SkeletonCardsKpis";
-import { obterDadosDashboard } from "../../actions/dashboardService";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useCallback } from "react";
-
-const card_Disponivel = {
-  total: 34343.1,
-  diff_lastMonth: 123,
-  percent_diff: 1.2,
-};
+import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 
 interface CardsKpisProps {
-  userId: string;
+  userId?: string;
 }
 
 export function CardsKpisContent(props: CardsKpisProps) {
@@ -27,13 +21,26 @@ export function CardsKpisContent(props: CardsKpisProps) {
     isPending,
     isSuccess,
   } = useQuery({
-    queryKey: dashboardQuery.owned(props.userId)._ctx.referenceDate(date)
+    queryKey: dashboardQuery.owned(props.userId ?? "")._ctx.referenceDate(date)
       .queryKey,
-    queryFn: () =>
-      obterDadosDashboard({
-        userId: props.userId,
-        referenceMonth: date,
-      }),
+    queryFn: async () => {
+      const response = await fetch("http://localhost:3000/api/dashboard/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: props.userId,
+          referenceMonth: date,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Houve um erro na requisição");
+      }
+
+      return response.json() as Promise<DasboardDataQueryOutput>;
+    },
 
     select: (data) => {
       return data?.data.financeSummary;
@@ -144,7 +151,7 @@ export function CardsKpisContent(props: CardsKpisProps) {
                   ? formatCurrency(cardGastos.amount, {
                       maximumFractionDigits: 2,
                     })
-                  : "R$  ---,--"}
+                  : "R$  0,00"}
               </p>
               <p className="text-muted-foreground text-xs">
                 {cardGastos.diferenceAmount > 0
@@ -187,7 +194,7 @@ export function CardsKpisContent(props: CardsKpisProps) {
                   ? formatCurrency(cardEntradas.amount, {
                       maximumFractionDigits: 2,
                     })
-                  : "R$ ---,--"}
+                  : "R$ 0,00"}
               </div>
               <p className="text-muted-foreground text-xs">
                 {cardEntradas.diferenceAmount > 1
@@ -231,7 +238,7 @@ export function CardsKpisContent(props: CardsKpisProps) {
                   ? formatCurrency(cardPatrimonio.netWorth, {
                       maximumFractionDigits: 2,
                     })
-                  : "R$ ---,--"}
+                  : "R$ 0,00"}
               </div>
               <p className="text-muted-foreground text-xs">
                 {`${formatCurrency(cardPatrimonio.diferenceLastMonth, {
@@ -274,7 +281,7 @@ export function CardsKpisContent(props: CardsKpisProps) {
                 ? formatCurrency(cardDisponivel.amount, {
                     maximumFractionDigits: 2,
                   })
-                : "R$ ---,--"}
+                : "R$ 0,00"}
             </div>
             {/* <div> */}
             {/* <p className="text-muted-foreground text-xs">
