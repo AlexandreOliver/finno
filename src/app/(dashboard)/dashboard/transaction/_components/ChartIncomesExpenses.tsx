@@ -31,6 +31,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useMemo } from "react";
 import { ChartAreaIcon } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const dayFormatter = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
@@ -60,6 +61,7 @@ const chartConfig = {
 export function ChartIncomesExpenses() {
   const { user } = useSession();
   const { range } = useRangeDate();
+  const isMobile = useIsMobile();
 
   const { data: wallets } = useWallets(user?.id as string);
   const walletsId = wallets?.map((w) => w.id) ?? [];
@@ -92,8 +94,8 @@ export function ChartIncomesExpenses() {
   });
 
   const chartWidth = useMemo(
-    () => Math.max((data?.length ?? 7) * 80, 800),
-    [data],
+    () => (isMobile ? 490 : Math.max((data?.length ?? 7) * 80, 800)),
+    [data, isMobile],
   );
 
   const saldos = useMemo(() => data?.map((d) => d.balanceAcc) ?? [0], [data]);
@@ -106,20 +108,20 @@ export function ChartIncomesExpenses() {
   }
 
   return (
-    <Card className="w-2/3">
-      <CardHeader>
+    <Card className="w-full md:w-2/3">
+      <CardHeader className="flex md:flex-row gap-3">
         <CardTitle className="font-medium">{`Visão Geral - ${range.start.toLocaleDateString("pt-BR", { month: "long" })}`}</CardTitle>
         <CardDescription>Despesas x Receitas</CardDescription>
       </CardHeader>
 
       <CardContent>
         {!isPending ? (
-          <div className="w-full overflow-x-auto pb-4">
+          <div className="w-full overflow-x-auto pb-4 flex justify-center items-center">
             <div style={{ width: `${chartWidth}px`, height: "250px" }}>
               <ChartContainer config={chartConfig} className="h-full w-full">
                 <ComposedChart
                   data={data}
-                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                  margin={{ top: 20, right: 10, bottom: 10, left: 10 }}
                   barGap={4}
                   barCategoryGap="15%"
                 >
@@ -179,13 +181,13 @@ export function ChartIncomesExpenses() {
                     dataKey="incomes"
                     fill={chartConfig.incomes.color}
                     radius={[4, 4, 0, 0]}
-                    maxBarSize={15}
+                    maxBarSize={isMobile ? 6 : 15}
                   />
                   <Bar
                     dataKey="expenses"
                     fill={chartConfig.expenses.color}
                     radius={[4, 4, 0, 0]}
-                    maxBarSize={15}
+                    maxBarSize={isMobile ? 6 : 15}
                   />
                   <Line
                     connectNulls
