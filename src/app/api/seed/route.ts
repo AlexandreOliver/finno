@@ -5,6 +5,7 @@ export async function GET() {
     await seeding();
   } catch (err) {
     const error = err as Error;
+    console.log(error);
     const formData = new FormData();
     formData.set("message", "DATABASE_URL não encontrada");
     return new Response(JSON.stringify({ message: error.message }), {
