@@ -8,7 +8,7 @@ import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.
 export class SnapshotWalletsCommandHanlder {
   constructor(
     private readonly db: NodePgDatabase,
-    private readonly financeSumaryService: FinanceSummaryQueryService,
+    private readonly financeSummaryService: FinanceSummaryQueryService,
   ) {}
 
   public async execute(referenceMonth?: Date): Promise<boolean> {
@@ -33,7 +33,7 @@ export class SnapshotWalletsCommandHanlder {
     };
 
     const [all_SummaryFinanceWallets, all_LastSnapshots] = await Promise.all([
-      this.financeSumaryService.sumaryOfWalletsAtInverval({
+      this.financeSummaryService.summaryOfWalletsAtInverval({
         interval: intervalSummaryFinance,
         walletIds: walletsIds,
         excludeRefundedFromTotals: false,
@@ -57,7 +57,7 @@ export class SnapshotWalletsCommandHanlder {
       { incomes: number; expenses: number }
     >();
 
-    all_SummaryFinanceWallets.forEach((sum) =>
+    all_SummaryFinanceWallets.summaryOfWallets.forEach((sum) =>
       Map_SummaryFincanceWallets.set(sum.wallet, {
         expenses: Number(sum.expenses),
         incomes: Number(sum.incomes),

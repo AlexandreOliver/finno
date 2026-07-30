@@ -9,7 +9,6 @@ import { Suspense } from "react";
 import { CardsKpis } from "./_components/CardsKpisComponent/CardsKpis";
 import { SkeletonCardsKpis } from "./_components/CardsKpisComponent/SkeletonCardsKpis";
 import { CardsWrapper } from "./_components/CardsKpisComponent/CardsWrapper";
-import { ChartIncomesExpenses } from "./transaction/_components/ChartIncomesExpenses";
 
 export const metadata = {
   title: "Dashboard",

@@ -7,48 +7,60 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 export class FinanceSummaryQueryService {
   constructor(private readonly db: NodePgDatabase) {}
 
-  public async sumaryOfWalletsAtInverval(props: {
-    interval: { start: Date; end: Date };
-    walletIds: string[];
-    excludeRefundedFromTotals: boolean;
-  }): Promise<TSumaryOfWallet[]> {
-    const { interval, walletIds, excludeRefundedFromTotals } = props;
-    if (excludeRefundedFromTotals === undefined) {
-      throw new Error(
-        "O campo excludeRefundedFromTotals precisa ser fornecido",
-      );
-    }
+  public summaryOfWalletsAtInverval: FunctionSummaryOfWalletsAtInterval =
+    async (props) => {
+      const { interval, walletIds, excludeRefundedFromTotals } = props;
+      if (excludeRefundedFromTotals === undefined) {
+        throw new Error(
+          "O campo excludeRefundedFromTotals precisa ser fornecido",
+        );
+      }
 
-    const summaryFinance = await this.db
-      .select({
-        wallet: wallets.id,
-        incomes: sql<string>`SUM(CASE WHEN type = 'credito' THEN amount ELSE 0 END)`,
-        expenses: sql<string>`SUM(CASE WHEN type = 'debito' THEN amount ELSE 0 END)`,
-      })
-      .from(movements)
-      .innerJoin(wallets, eq(movements.walletId, wallets.id))
-      .where(
-        and(
-          inArray(movements.walletId, walletIds),
-          excludeRefundedFromTotals
-            ? eq(movements.isReversal, false)
-            : undefined,
-          excludeRefundedFromTotals
-            ? eq(movements.isRefunded, false)
-            : undefined,
-          gte(movements.executedAt, interval.start),
-          lt(movements.executedAt, interval.end),
-        ),
-      )
-      .groupBy(wallets.id);
+      const summaryFinance = await this.db
+        .select({
+          wallet: wallets.id,
+          incomes:
+            sql`SUM(CASE WHEN type = 'credito' THEN amount ELSE 0 END)`.mapWith(
+              Number,
+            ),
+          expenses:
+            sql`SUM(CASE WHEN type = 'debito' THEN amount ELSE 0 END)`.mapWith(
+              Number,
+            ),
+        })
+        .from(movements)
+        .innerJoin(wallets, eq(movements.walletId, wallets.id))
+        .where(
+          and(
+            inArray(movements.walletId, walletIds),
+            excludeRefundedFromTotals
+              ? eq(movements.isReversal, false)
+              : undefined,
+            excludeRefundedFromTotals
+              ? eq(movements.isRefunded, false)
+              : undefined,
+            gte(movements.executedAt, interval.start),
+            lt(movements.executedAt, interval.end),
+          ),
+        )
+        .groupBy(wallets.id);
 
-    return summaryFinance;
-  }
+      return {
+        interval,
+        summaryOfWallets: summaryFinance,
+      };
+    };
 
   public summaryPerDaysAtMonth: FunctionSummaryPerDaysAtMonth = async (
     props,
   ) => {
     const { referenceMonth, walletId, excludeRefundedFromTotals } = props;
+
+    if (excludeRefundedFromTotals === undefined) {
+      throw new Error(
+        "O campo excludeRefundedFromTotals precisa ser fornecido",
+      );
+    }
 
     const date = startOfMonth(referenceMonth);
 
@@ -133,8 +145,20 @@ export type TSummaryPerDays = {
   balanceAcc: number;
 };
 
-export type TSumaryOfWallet = {
+type FunctionSummaryOfWalletsAtInterval = (props: {
+  walletIds: string[];
+  interval: { start: Date; end: Date };
+  excludeRefundedFromTotals: boolean;
+}) => Promise<{
+  interval: {
+    start: Date;
+    end: Date;
+  };
+  summaryOfWallets: TSummaryOfWallet[];
+}>;
+
+export type TSummaryOfWallet = {
   wallet: string;
-  incomes: string;
-  expenses: string;
+  incomes: number;
+  expenses: number;
 };

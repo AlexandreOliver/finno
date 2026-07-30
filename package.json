@@ -8,10 +8,11 @@
   "scripts": {
     "dev": "pnpm service:db:up && pnpm wait-for-database && pnpm run db:push && next dev",
     "dev:web": "next dev",
+    "dev:seed": "curl localhost:3000/api/seed -X GET",
     "test:all": "pnpm service:db:up && pnpm wait-for-database && concurrently --names n,j --hide n --kill-others --success command-jest 'next dev' 'jest --runInBand' ",
     "test:back": "pnpm service:db:up && jest --runInBand",
     "test:watch": "pnpm service:db:up && jest --runInBand --watch",
-    "build": "next build && pnpm db:push && pnpm db:seed",
+    "build": "next build && pnpm db:push",
     "lint": "eslint",
     "lint:tsc": "pnpm tsc --noEmit",
     "service:db:up": "docker compose -f src/infrastructure/compose.yaml up -d",

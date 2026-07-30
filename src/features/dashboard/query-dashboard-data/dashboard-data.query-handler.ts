@@ -11,12 +11,12 @@ import { snapshotsWallet } from "@/infrastructure/database/schemas/snapshotsWall
 export class DasboardDataQueryHandler {
   private constructor(
     private readonly db: NodePgDatabase,
-    private readonly financeSumaryService: FinanceSummaryQueryService,
+    private readonly financeSummaryService: FinanceSummaryQueryService,
   ) {}
 
   public static create(db: NodePgDatabase) {
-    const financeSumaryService = new FinanceSummaryQueryService(db);
-    return new DasboardDataQueryHandler(db, financeSumaryService);
+    const financeSummaryService = new FinanceSummaryQueryService(db);
+    return new DasboardDataQueryHandler(db, financeSummaryService);
   }
 
   public async execute(
@@ -59,12 +59,12 @@ export class DasboardDataQueryHandler {
 
     const [SummaryCurrent, SummaryLastMonth, netWorthLastMonthQuery] =
       await Promise.all([
-        this.financeSumaryService.sumaryOfWalletsAtInverval({
+        this.financeSummaryService.summaryOfWalletsAtInverval({
           interval,
           walletIds: wallatsIds,
           excludeRefundedFromTotals: true,
         }),
-        this.financeSumaryService.sumaryOfWalletsAtInverval({
+        this.financeSummaryService.summaryOfWalletsAtInverval({
           interval: intervalLastMonth,
           walletIds: wallatsIds,
           excludeRefundedFromTotals: true,
@@ -87,20 +87,20 @@ export class DasboardDataQueryHandler {
         ? Number.parseInt(netWorthLastMonthQuery.rows[0].networthlastmonth)
         : 0;
 
-    const summaryFinanceCurrent = SummaryCurrent.reduce(
+    const summaryFinanceCurrent = SummaryCurrent.summaryOfWallets.reduce(
       (sum, data) => {
-        sum.incomes += Number.parseInt(data.incomes);
-        sum.expenses += Number.parseInt(data.expenses);
+        sum.incomes += data.incomes;
+        sum.expenses += data.expenses;
 
         return sum;
       },
       { incomes: 0, expenses: 0 },
     );
 
-    const summaryFinanceLastMonth = SummaryLastMonth.reduce(
+    const summaryFinanceLastMonth = SummaryLastMonth.summaryOfWallets.reduce(
       (sum, data) => {
-        sum.incomes += Number.parseInt(data.incomes);
-        sum.expenses += Number.parseInt(data.expenses);
+        sum.incomes += data.incomes;
+        sum.expenses += data.expenses;
 
         return sum;
       },

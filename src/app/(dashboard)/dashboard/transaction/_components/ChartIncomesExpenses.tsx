@@ -98,7 +98,6 @@ export function ChartIncomesExpenses() {
 
     select: (data) => {
       return (data as StatementOutput).summaryPerDays.map((mov) => {
-        console.log("dsds");
         return {
           ...mov,
           date: mov.day,
@@ -139,7 +138,7 @@ export function ChartIncomesExpenses() {
                   data={data}
                   margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
                   barGap={4}
-                  barCategoryGap="25%"
+                  barCategoryGap="15%"
                 >
                   <CartesianGrid
                     vertical={false}
