@@ -123,7 +123,96 @@ export class FinanceSummaryQueryService {
       summaryPerDays: sum,
     };
   };
+
+  public summaryPerMonthAtYear: FunctionSummaryPerMonthAtInterval = async (
+    props,
+  ) => {
+    const { excludeRefundedFromTotals, referenceYear, walletIds } = props;
+
+    if (!Number.isInteger(referenceYear)) {
+      throw new Error("O campo Year precisa ser inteiro");
+    }
+
+    if (referenceYear < 2000) {
+      throw new Error("O campo Year não pode ser abaixo de 2000");
+    }
+
+    if (referenceYear >= new Date().getFullYear() + 1) {
+      throw new Error(
+        `O campo Year não pode ser acima de ${new Date().getFullYear() + 1}`,
+      );
+    }
+
+    const interval = {
+      start: new Date(referenceYear, 0, 1),
+      end: new Date(referenceYear, 11, 31, 23, 59, 59),
+    };
+
+    const subquery = this.db
+      .select({
+        date: sql`DATE_TRUNC('month', ${movements.executedAt}) `.as(
+          "dateMonth",
+        ),
+        type: movements.type,
+        amount: movements.amount,
+      })
+      .from(movements)
+      .where(
+        and(
+          inArray(movements.walletId, walletIds),
+          excludeRefundedFromTotals
+            ? eq(movements.isReversal, false)
+            : undefined,
+          excludeRefundedFromTotals
+            ? eq(movements.isRefunded, false)
+            : undefined,
+          gte(movements.executedAt, interval.start),
+          lt(movements.executedAt, interval.end),
+        ),
+      )
+      .as("subquery");
+
+    const queryResult = await this.db
+      .select({
+        month: sql`${subquery.date}`.mapWith({
+          mapFromDriverValue: (value) => {
+            const val = value as string;
+
+            return `${val.slice(0, 10)}T03:00:00.000Z`;
+          },
+        }),
+        incomes:
+          sql<number>`SUM(CASE WHEN ${subquery.type} = 'credito' THEN amount ELSE 0 END)`.mapWith(
+            Number,
+          ),
+        expenses:
+          sql<number>`SUM(CASE WHEN ${subquery.type} = 'debito' THEN amount ELSE 0 END)`.mapWith(
+            Number,
+          ),
+      })
+      .from(subquery)
+      .groupBy(subquery.date)
+      .orderBy(asc(subquery.date));
+
+    return {
+      referenceYear,
+      summaryPerMonth: queryResult,
+    };
+  };
 }
+
+type FunctionSummaryPerMonthAtInterval = (props: {
+  walletIds: string[];
+  referenceYear: number;
+  excludeRefundedFromTotals: boolean;
+}) => Promise<{
+  referenceYear: number;
+  summaryPerMonth: {
+    month: string;
+    incomes: number;
+    expenses: number;
+  }[];
+}>;
 
 type FunctionSummaryPerDaysAtMonth = (props: {
   walletId: string[];

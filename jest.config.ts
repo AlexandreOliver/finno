@@ -8,6 +8,7 @@ const createJestConfig = nextJest({
 const customConfig: Config = {
   verbose: true,
   moduleDirectories: ["node_modules", "<rootDir>"],
+  globalSetup: "./tests/setup.ts",
 };
 
 export default createJestConfig(customConfig);
