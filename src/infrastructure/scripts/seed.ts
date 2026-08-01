@@ -22,21 +22,7 @@ export async function seeding(verbose: boolean = false) {
   if (verbose) console.log("Iniciando seeding...");
 
   try {
-    await db
-      .insert(schemas.users)
-      .values(seed_users)
-      .onConflictDoUpdate({
-        target: schemas.users.id,
-        set: {
-          firstName: sql`excluded.first_name`,
-          lastName: sql`excluded.last_name`,
-          email: sql`excluded.email`,
-          password: sql`excluded.password`,
-          features: sql`excluded.features`,
-          createdAt: sql`excluded.created_at`,
-          updatedAt: sql`excluded.updated_at`,
-        },
-      });
+    await db.insert(schemas.users).values(seed_users).onConflictDoNothing();
 
     await db
       .insert(schemas.categories)
