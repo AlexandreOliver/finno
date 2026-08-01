@@ -42,18 +42,10 @@ export default async function Page() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
-        <div className="col-span-7">
-          <ChartTransactions />
-        </div>
-        <div className="col-span-5"></div>
+      {/* <div className="grid grid-cols-1 xl:grid-cols-12 gap-2"> */}
+      <div className="">
+        <ChartTransactions />
       </div>
-      {/* <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
-        <div className="col-span-7">
-          <ChartIncomesExpenses />
-        </div>
-        <div className="col-span-5"></div>
-      </div> */}
     </section>
   );
 }

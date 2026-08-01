@@ -1,3 +1,4 @@
+import { FunctionSummaryPerMonthAtYear } from "@/features/Services/finance-summary.service-query";
 import zod from "zod";
 
 export interface SumaryWalletsDTO {
@@ -24,6 +25,7 @@ export interface DasboardDataQueryOutput {
         currentAmount: number;
         amountLastMoth: number;
       };
+      summaryPerMonth: Awaited<ReturnType<FunctionSummaryPerMonthAtYear>>;
     };
   };
 }

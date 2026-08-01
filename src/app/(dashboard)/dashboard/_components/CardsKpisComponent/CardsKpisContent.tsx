@@ -14,7 +14,11 @@ interface CardsKpisProps {
 }
 
 export function CardsKpisContent(props: CardsKpisProps) {
-  const date = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const date = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60 * 1000,
+  )
+    .toISOString()
+    .slice(0, 7);
 
   const {
     data: summary,

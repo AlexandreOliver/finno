@@ -59,19 +59,28 @@ export class DasboardDataQueryHandler {
 
     const wallatsIds = queryWallet.rows.map((w) => w.id as string);
 
-    const [SummaryCurrent, SummaryLastMonth, netWorthLastMonthQuery] =
-      await Promise.all([
-        this.financeSummaryService.summaryOfWalletsAtInverval({
-          interval,
-          walletIds: wallatsIds,
-          excludeRefundedFromTotals: true,
-        }),
-        this.financeSummaryService.summaryOfWalletsAtInverval({
-          interval: intervalLastMonth,
-          walletIds: wallatsIds,
-          excludeRefundedFromTotals: true,
-        }),
-        this.db.execute<{ networthlastmonth: string }>(sql`
+    const [
+      SummaryCurrent,
+      SummaryLastMonth,
+      resultSummaryPerMonth,
+      netWorthLastMonthQuery,
+    ] = await Promise.all([
+      this.financeSummaryService.summaryOfWalletsAtInverval({
+        interval,
+        walletIds: wallatsIds,
+        excludeRefundedFromTotals: true,
+      }),
+      this.financeSummaryService.summaryOfWalletsAtInverval({
+        interval: intervalLastMonth,
+        walletIds: wallatsIds,
+        excludeRefundedFromTotals: true,
+      }),
+      this.financeSummaryService.summaryPerMonthAtYear({
+        referenceYear: interval.start.getFullYear(),
+        walletIds: wallatsIds,
+        excludeRefundedFromTotals: true,
+      }),
+      this.db.execute<{ networthlastmonth: string }>(sql`
           SELECT
             SUM(closing_balance) AS netWorthLastMonth
           FROM
@@ -82,7 +91,7 @@ export class DasboardDataQueryHandler {
           GROUP BY
             snapshots_wallet.year_month
           `),
-      ]);
+    ]);
 
     const netWorthLastMonth =
       netWorthLastMonthQuery.rowCount! > 0
@@ -109,6 +118,14 @@ export class DasboardDataQueryHandler {
       { incomes: 0, expenses: 0 },
     );
 
+    const SummaryPerMonth = resultSummaryPerMonth.summaryPerMonth.map(
+      (sum) => ({
+        ...sum,
+        incomes: sum.incomes / 100,
+        expenses: sum.expenses / 100,
+      }),
+    );
+
     const netWorthCurrent =
       netWorthLastMonth +
       summaryFinanceCurrent.incomes -
@@ -131,6 +148,10 @@ export class DasboardDataQueryHandler {
           netWorth: {
             currentAmount: netWorthCurrent / 100,
             amountLastMoth: netWorthLastMonth / 100,
+          },
+          summaryPerMonth: {
+            referenceYear: resultSummaryPerMonth.referenceYear,
+            summaryPerMonth: SummaryPerMonth,
           },
         },
       },

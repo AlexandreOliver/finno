@@ -124,7 +124,7 @@ export class FinanceSummaryQueryService {
     };
   };
 
-  public summaryPerMonthAtYear: FunctionSummaryPerMonthAtInterval = async (
+  public summaryPerMonthAtYear: FunctionSummaryPerMonthAtYear = async (
     props,
   ) => {
     const { excludeRefundedFromTotals, referenceYear, walletIds } = props;
@@ -201,7 +201,7 @@ export class FinanceSummaryQueryService {
   };
 }
 
-type FunctionSummaryPerMonthAtInterval = (props: {
+export type FunctionSummaryPerMonthAtYear = (props: {
   walletIds: string[];
   referenceYear: number;
   excludeRefundedFromTotals: boolean;
@@ -214,7 +214,7 @@ type FunctionSummaryPerMonthAtInterval = (props: {
   }[];
 }>;
 
-type FunctionSummaryPerDaysAtMonth = (props: {
+export type FunctionSummaryPerDaysAtMonth = (props: {
   walletId: string[];
   referenceMonth: Date;
   excludeRefundedFromTotals: boolean;

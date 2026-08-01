@@ -16,7 +16,11 @@ export async function CardsKpis(props: CardsKpisProps) {
   const queryClient = new QueryClient();
   const handlerDashboard = DasboardDataQueryHandler.create(db);
 
-  const date = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const date = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60 * 1000,
+  )
+    .toISOString()
+    .slice(0, 7); // YYYY-MM
   await queryClient.prefetchQuery({
     queryKey: dashboardQuery.owned(props.userId)._ctx.referenceDate(date)
       .queryKey,
