@@ -8,17 +8,14 @@ import { SkeletonCardsKpis } from "./SkeletonCardsKpis";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useCallback } from "react";
 import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
+import { format } from "date-fns";
 
 interface CardsKpisProps {
   userId?: string;
 }
 
 export function CardsKpisContent(props: CardsKpisProps) {
-  const date = new Date(
-    new Date().getTime() - new Date().getTimezoneOffset() * 60 * 1000,
-  )
-    .toISOString()
-    .slice(0, 7);
+  const date = format(new Date(), "yyyy-MM");
 
   const {
     data: summary,

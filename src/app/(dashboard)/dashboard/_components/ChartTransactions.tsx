@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
 import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
+import { format } from "date-fns";
 
 // const chartDomain = [weekStart, weekStart + 7 * DAY_MS];
 const formatTooltipCurrency = (value: number | string) =>
@@ -42,11 +43,7 @@ const chartConfig = {
 
 export function ChartTransactions() {
   const { user } = useSession();
-  const date = new Date(
-    new Date().getTime() - new Date().getTimezoneOffset() * 60 * 1000,
-  )
-    .toISOString()
-    .slice(0, 7); // YYYY-MM
+  const date = format(new Date(), "yyyy-MM");
 
   const dayFormatter = new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Sao_Paulo",

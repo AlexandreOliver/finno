@@ -19,7 +19,9 @@ describe("SnapShot Wallet", () => {
   test("gera novos snapshots", async () => {
     const genSnapshot = startUseCase();
 
-    const result = await genSnapshot.execute(endOfMonth(new Date()));
+    const input = endOfMonth(new Date());
+
+    const result = await genSnapshot.execute(input);
 
     expect(result).toBe(true);
 

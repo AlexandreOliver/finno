@@ -31,15 +31,17 @@ const seed_wallets = [
     id: "019e1dc7-df44-7810-afb6-5e56ac7becf1",
     labelName: "Patrimônio",
     ownerId: seed_users[0].id,
-    balance: -70086,
-    created_at: seed_users[0].updatedAt,
+    balance: 808491,
+    createdAt: seed_users[0].createdAt,
+    updatedAt: seed_users[0].updatedAt,
   },
   {
     id: "019e1dcf-f7dd-7c41-86c9-8da67aee78ee",
     labelName: "Principal",
     ownerId: seed_users[0].id,
-    balance: 274351,
-    created_at: seed_users[0].createdAt,
+    balance: 1676887,
+    createdAt: seed_users[0].createdAt,
+    updatedAt: seed_users[0].updatedAt,
   },
 ];
 

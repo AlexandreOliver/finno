@@ -8,7 +8,7 @@ import {
   TypesTransaction,
 } from "@/domain/enums";
 import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
-import { addHours } from "date-fns";
+import { addHours, parse } from "date-fns";
 
 export interface StatementOutput {
   totalMovementsFromDb: number;

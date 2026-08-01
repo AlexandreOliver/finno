@@ -1,9 +1,9 @@
 import { describe, expect, test } from "@jest/globals";
 import { DasboardDataQueryHandler } from "@/features/dashboard/query-dashboard-data/dashboard-data.query-handler";
 import { DashboardDataQuery } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
-// import { DashboardDataRepository } from "@/features/dashboard/query-dashboard-data/dashboard-data.interface";
 import setupTestDb from "../../db-test";
 import { seed_users } from "@/infrastructure/defaultData";
+import { format } from "date-fns";
 
 const dbTest = setupTestDb();
 
@@ -14,7 +14,7 @@ describe("Caso de uso - Dashboard Data Handler", () => {
     const dashboardData = startUseCase();
 
     const input: DashboardDataQuery = {
-      referenceMonth: new Date().toISOString().slice(0, 7),
+      referenceMonth: format(new Date(), "yyyy-MM"),
       userId: seed_users[0].id,
     };
 
