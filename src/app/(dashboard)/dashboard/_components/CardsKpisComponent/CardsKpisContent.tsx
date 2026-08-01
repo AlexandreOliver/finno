@@ -1,5 +1,11 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +15,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 import { useCallback } from "react";
 import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 import { format } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CardsKpisProps {
   userId?: string;
@@ -16,6 +23,7 @@ interface CardsKpisProps {
 
 export function CardsKpisContent(props: CardsKpisProps) {
   const date = format(new Date(), "yyyy-MM");
+  const isMobile = useIsMobile();
 
   const {
     data: summary,
@@ -85,12 +93,12 @@ export function CardsKpisContent(props: CardsKpisProps) {
 
   let cardDisponivel = {
     amount: 0,
-    // diferenceAmount: 0,
-    // diferencePerc: { label: "", value: 0 },
+    diferenceAmount: 0,
+    diferencePerc: { label: "", value: 0 },
   };
 
   let cardPatrimonio = {
-    netWorth: 34343.0,
+    netWorth: 0,
     diferenceLastMonth: 0,
     diferencePerc: { label: "", value: 0 },
   };
@@ -132,33 +140,31 @@ export function CardsKpisContent(props: CardsKpisProps) {
       amount:
         summary.walletsInQuery.current.incomes -
         summary.walletsInQuery.current.expenses,
+      diferenceAmount:
+        summary.walletsInQuery.current.incomes -
+        summary.walletsInQuery.current.expenses -
+        (summary.walletsInQuery.lastMonth.incomes -
+          summary.walletsInQuery.lastMonth.expenses),
+
+      diferencePerc: { label: "", value: 0 },
     };
+
+    cardDisponivel.diferencePerc = diferencaPercentual(
+      summary.walletsInQuery.lastMonth.incomes -
+        summary.walletsInQuery.lastMonth.expenses,
+      summary.walletsInQuery.current.incomes -
+        summary.walletsInQuery.current.expenses,
+    );
   }
 
-  if (isPending) {
-    return <SkeletonCardsKpis countCards={4} />;
-  } else {
-    return (
-      <>
-        <Card className="overflow-hidden rounded-none xl:col-span-4 ">
-          <CardHeader>
-            <CardTitle>Gastos Mensais</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-end justify-between">
-            <div>
-              <p className="text-2xl font-medium">
-                {summary
-                  ? formatCurrency(cardGastos.amount, {
-                      maximumFractionDigits: 2,
-                    })
-                  : "R$  0,00"}
-              </p>
-              <p className="text-muted-foreground text-xs">
-                {cardGastos.diferenceAmount > 0
-                  ? `${formatCurrency(cardGastos.diferenceAmount, { maximumFractionDigits: 2 })} mais do que no mês passado`
-                  : `${formatCurrency(cardGastos.diferenceAmount, { maximumFractionDigits: 2, signDisplay: "never" })} menos do que no mês passado`}
-              </p>
-            </div>
+  return isPending ? (
+    <SkeletonCardsKpis countCards={4} />
+  ) : (
+    <>
+      <Card className="">
+        <CardHeader>
+          <CardTitle>Gastos</CardTitle>
+          <CardAction>
             {cardGastos.diferenceAmount != 0 &&
               cardGastos.amount != 0 &&
               Math.abs(cardGastos.diferencePerc.value) > 1 && (
@@ -181,27 +187,29 @@ export function CardsKpisContent(props: CardsKpisProps) {
                   </div>
                 </Badge>
               )}
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden rounded-none xl:col-span-4 ">
-          <CardHeader>
-            <CardTitle>Entradas Mensais</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-end justify-between">
-            <div>
-              <div className="text-2xl font-medium">
-                {summary
-                  ? formatCurrency(cardEntradas.amount, {
-                      maximumFractionDigits: 2,
-                    })
-                  : "R$ 0,00"}
-              </div>
-              <p className="text-muted-foreground text-xs">
-                {cardEntradas.diferenceAmount > 1
-                  ? `${formatCurrency(cardEntradas.diferenceAmount, { maximumFractionDigits: 2 })} mais do que no mês passado`
-                  : `${formatCurrency(cardEntradas.diferenceAmount, { maximumFractionDigits: 2, signDisplay: "never" })} menos do que no mês passado`}
-              </p>
-            </div>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex items-end justify-between">
+          <div>
+            <p className="text-2xl font-medium">
+              {summary
+                ? formatCurrency(cardGastos.amount, {
+                    maximumFractionDigits: 2,
+                  })
+                : "R$  0,00"}
+            </p>
+            <p className="text-muted-foreground text-xs">
+              {cardGastos.diferenceAmount > 0
+                ? `${formatCurrency(cardGastos.diferenceAmount, { maximumFractionDigits: 2 })} mais do que no mês passado`
+                : `${formatCurrency(cardGastos.diferenceAmount, { maximumFractionDigits: 2, signDisplay: "never" })} menos do que no mês passado`}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="">
+        <CardHeader>
+          <CardTitle>Entradas</CardTitle>
+          <CardAction>
             {cardEntradas.diferenceAmount != 0 &&
               cardEntradas.amount != 0 &&
               Math.abs(cardEntradas.diferencePerc.value) > 1 && (
@@ -224,29 +232,76 @@ export function CardsKpisContent(props: CardsKpisProps) {
                   </div>
                 </Badge>
               )}
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden rounded-none xl:col-span-4">
-          <CardHeader>
-            <CardTitle>Patrimônio Líquido</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-end justify-between">
-            <div>
-              <div className="text-2xl font-medium">
-                {summary
-                  ? formatCurrency(cardPatrimonio.netWorth, {
-                      maximumFractionDigits: 2,
-                    })
-                  : "R$ 0,00"}
-              </div>
-              <p className="text-muted-foreground text-xs">
-                {`${formatCurrency(cardPatrimonio.diferenceLastMonth, {
-                  maximumFractionDigits: 2,
-                })} a mais que o último mês`}
-              </p>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex items-end justify-between">
+          <div>
+            <div className="text-2xl font-medium">
+              {summary
+                ? formatCurrency(cardEntradas.amount, {
+                    maximumFractionDigits: 2,
+                  })
+                : "R$ 0,00"}
             </div>
-
+            <p className="text-muted-foreground text-xs">
+              {cardEntradas.diferenceAmount > 1
+                ? `${formatCurrency(cardEntradas.diferenceAmount, { maximumFractionDigits: 2 })} mais do que no mês passado`
+                : `${formatCurrency(cardEntradas.diferenceAmount, { maximumFractionDigits: 2, signDisplay: "never" })} menos do que no mês passado`}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="">
+        <CardHeader>
+          <CardTitle>Dísponivel</CardTitle>
+          <CardAction>
+            {cardDisponivel.diferenceAmount != 0 &&
+              cardDisponivel.amount != 0 &&
+              Math.abs(cardDisponivel.diferencePerc.value) > 1 && (
+                <Badge
+                  variant="secondary"
+                  className={cn({
+                    "bg-red-500/10 text-red-700 dark:bg-red-500/15 dark:text-red-500":
+                      cardDisponivel.diferencePerc.value < 0,
+                    "bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300":
+                      cardDisponivel.diferencePerc.value > 0,
+                  })}
+                >
+                  <div className="flex gap-1">
+                    {cardDisponivel.diferencePerc.value > 0 ? (
+                      <TrendingUp size={14} />
+                    ) : (
+                      <TrendingDown size={14} />
+                    )}
+                    <span>{cardDisponivel.diferencePerc.label}</span>
+                  </div>
+                </Badge>
+              )}
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex items-end justify-between">
+          <div className="text-2xl font-medium">
+            <p>
+              {summary
+                ? formatCurrency(cardDisponivel.amount, {
+                    maximumFractionDigits: 2,
+                  })
+                : "R$ 0,00"}
+            </p>
+            <p className="text-muted-foreground text-xs">
+              {cardDisponivel.diferenceAmount > 1
+                ? `${formatCurrency(cardDisponivel.diferenceAmount, { maximumFractionDigits: 2 })} mais do que no mês passado`
+                : `${formatCurrency(cardDisponivel.diferenceAmount, { maximumFractionDigits: 2, signDisplay: "never" })} menos do que no mês passado`}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="">
+        <CardHeader>
+          <CardTitle>
+            {isMobile ? "Patrimônio" : "Patrimônio Líquido"}
+          </CardTitle>
+          <CardAction>
             {cardPatrimonio.diferenceLastMonth != 0 &&
               cardPatrimonio.netWorth != 0 &&
               Math.abs(cardPatrimonio.diferencePerc.value) > 1 && (
@@ -269,44 +324,25 @@ export function CardsKpisContent(props: CardsKpisProps) {
                   </div>
                 </Badge>
               )}
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden rounded-none xl:col-span-4">
-          <CardHeader>
-            <CardTitle>Dísponivel</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center">
-            <div className="text-2xl font-medium text-center">
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex items-end justify-between">
+          <div>
+            <div className="text-2xl font-medium">
               {summary
-                ? formatCurrency(cardDisponivel.amount, {
+                ? formatCurrency(cardPatrimonio.netWorth, {
                     maximumFractionDigits: 2,
                   })
                 : "R$ 0,00"}
             </div>
-            {/* <div> */}
-            {/* <p className="text-muted-foreground text-xs">
-                {`
-                ${card_Disponivel.diff_lastMonth.toLocaleString("pt-BR", {
-                  currency: "BRL",
-                  style: "currency",
-                })} 
-                acima de sua média de 30 dias`}
-              </p> */}
-            {/* </div> */}
-            {/* <Badge
-              variant="secondary"
-              className={cn({
-                "bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300":
-                  card_Disponivel.percent_diff >= 1,
-                "bg-red-500/10 text-red-700 dark:bg-red-500/15 dark:text-red-500":
-                  card_Disponivel.percent_diff < 1,
-              })}
-            >
-              {card_Disponivel.percent_diff}%
-            </Badge> */}
-          </CardContent>
-        </Card>
-      </>
-    );
-  }
+            <p className="text-muted-foreground text-xs">
+              {`${formatCurrency(cardPatrimonio.diferenceLastMonth, {
+                maximumFractionDigits: 2,
+              })} a mais que o último mês`}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
 }

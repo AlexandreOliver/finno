@@ -116,141 +116,148 @@ export function TableMovements() {
         setType={setType}
         setWallet={setWallet}
       />
-      <div className="rounded-md overflow-hidden border border-[#3a3f4d] max-h-176 bg-[#2A3040]/20 ">
-        <Table className="p-5 rounded-xl">
-          <TableHeader className="bg-[#0e1738]">
-            <TableRow className="font-bold text-xs md:text-lg">
-              <TableHead className="flex p-2 justify-center items-center w-auto">
-                DESCRIÇÃO
-              </TableHead>
-              <TableHead className="text-center p-2 w-22 md:w-32">
-                CATEGORIA
-              </TableHead>
-              <TableHead className="text-right p-2 w-18">VALOR</TableHead>
-              <TableHead className="text-center p-2 w-15 md:w-25">
-                AÇÕES
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="text-xs md:text-lg">
-            {payloadFiltred.length > 0 ? (
-              payloadFiltred.map((mov) => (
-                <TableRow key={mov.id} className="border-[#323A4D]">
-                  <TableCell className="text-xs md:text-lg">
-                    <div className="flex gap-4 ml-4">
-                      <div className="flex flex-col">
-                        <div className="text-xs md:text-sm text-white/60">
-                          <div className="flex gap-1">
-                            <span>
-                              {format(mov.executedAt as Date, "d 'de' MMMM", {
-                                locale: ptBR,
-                              })}
-                            </span>
-                            {mov.isRefunded &&
-                              (mov.type === "debito" ? (
-                                <span className="text-xs md:text-sm text-muted-foreground">
-                                  - Reembolsado
-                                </span>
-                              ) : (
-                                <span className="text-xs md:text-sm text-muted-foreground">
-                                  - Estornado
-                                </span>
-                              ))}
-                            {mov.reccurrent && (
-                              <a href={`#${mov.reccurrent}`}>
-                                <Badge className="ml-1 w-7">
-                                  <RefreshCcwIcon />
-                                </Badge>
-                              </a>
-                            )}
+      <div className="">
+        <div className="rounded-md overflow-hidden border min-h-176 border-[#3a3f4d] bg-[#2A3040]/20 ">
+          <Table className="p-5 rounded-xl">
+            <TableHeader className="bg-[#0e1738]">
+              <TableRow className="font-bold text-xs md:text-lg">
+                <TableHead className="flex p-2 justify-center items-center w-auto">
+                  DESCRIÇÃO
+                </TableHead>
+                <TableHead className="text-center p-2 w-22 md:w-32">
+                  CATEGORIA
+                </TableHead>
+                <TableHead className="text-right p-2 w-18">VALOR</TableHead>
+                <TableHead className="text-center p-2 w-15 md:w-25">
+                  AÇÕES
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-xs md:text-lg ">
+              {payloadFiltred.length > 0 ? (
+                payloadFiltred.map((mov) => (
+                  <TableRow key={mov.id} className="border-[#323A4D]">
+                    <TableCell className="text-xs md:text-lg">
+                      <div className="flex gap-4 ml-4">
+                        <div className="flex flex-col">
+                          <div className="text-xs md:text-sm text-white/60">
+                            <div className="flex gap-1">
+                              <span>
+                                {format(mov.executedAt as Date, "d 'de' MMMM", {
+                                  locale: ptBR,
+                                })}
+                              </span>
+                              {mov.isRefunded &&
+                                (mov.type === "debito" ? (
+                                  <span className="text-xs md:text-sm text-muted-foreground">
+                                    - Reembolsado
+                                  </span>
+                                ) : (
+                                  <span className="text-xs md:text-sm text-muted-foreground">
+                                    - Estornado
+                                  </span>
+                                ))}
+                              {mov.reccurrent && (
+                                <a href={`#${mov.reccurrent}`}>
+                                  <Badge className="ml-1 w-7">
+                                    <RefreshCcwIcon />
+                                  </Badge>
+                                </a>
+                              )}
+                            </div>
                           </div>
+                          <p
+                            className={clsx(
+                              { "text-muted-foreground": mov.isRefunded },
+                              "text-balance",
+                            )}
+                          >
+                            {mov.description}
+                          </p>
                         </div>
-                        <p
-                          className={clsx(
-                            { "text-muted-foreground": mov.isRefunded },
-                            "text-balance",
-                          )}
-                        >
-                          {mov.description}
-                        </p>
                       </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <p className="text-balance">
+                        {mov.category?.label ?? "-"}
+                      </p>
+                    </TableCell>
+                    <TableCell
+                      className={clsx("text-right", {
+                        "line-through": mov.isRefunded,
+                      })}
+                    >
+                      {mov.type === "debito" ? (
+                        <span className="dark:text-red-400 ">
+                          {`- ${formatCurrency(Number(mov.amount))}`}
+                        </span>
+                      ) : (
+                        <span className="dark:text-green-400 ">
+                          {`+ ${formatCurrency(Number(mov.amount))}`}
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          render={
+                            <Button variant="ghost">
+                              <Settings2Icon className="size-5" />
+                            </Button>
+                          }
+                        />
+                        <DropdownMenuContent
+                          align="center"
+                          className="min-w-22"
+                        >
+                          <DropdownMenuItem className="flex justify-center items-center h-8">
+                            <Link
+                              prefetch={false}
+                              href="#"
+                              className="flex justify-center items-center text-green-400 "
+                            >
+                              <Edit className="" />
+                              <span className="ml-2">Editar</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="flex justify-center items-center"
+                            hidden={mov.isReversal || mov.isRefunded}
+                          >
+                            <DelButtonMovement
+                              functionDelete={() =>
+                                deleteMovement(mov.id as string)
+                              }
+                            />
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow className="border-[#323A4D] hover:bg-bg-[#2A3040]/20">
+                  <TableCell colSpan={4} className="h-55 text-center">
+                    <div className="flex justify-center items-center gap-3">
+                      <DatabaseSearch />
+                      {isPending ? (
+                        <span className="text-gray-400">Pesquisando...</span>
+                      ) : (
+                        <span>Sem dados</span>
+                      )}
+                    </div>
+                    <div
+                      className="text-sm mt-1 text-muted-foreground"
+                      hidden={isPending}
+                    >
+                      Tente mudar os filtros
                     </div>
                   </TableCell>
-                  <TableCell className="text-center">
-                    <p className="text-balance">{mov.category?.label ?? "-"}</p>
-                  </TableCell>
-                  <TableCell
-                    className={clsx("text-right", {
-                      "line-through": mov.isRefunded,
-                    })}
-                  >
-                    {mov.type === "debito" ? (
-                      <span className="dark:text-red-400 ">
-                        {`- ${formatCurrency(Number(mov.amount))}`}
-                      </span>
-                    ) : (
-                      <span className="dark:text-green-400 ">
-                        {`+ ${formatCurrency(Number(mov.amount))}`}
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button variant="ghost">
-                            <Settings2Icon className="size-5" />
-                          </Button>
-                        }
-                      />
-                      <DropdownMenuContent align="center" className="min-w-22">
-                        <DropdownMenuItem className="flex justify-center items-center h-8">
-                          <Link
-                            prefetch={false}
-                            href="#"
-                            className="flex justify-center items-center text-green-400 "
-                          >
-                            <Edit className="" />
-                            <span className="ml-2">Editar</span>
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="flex justify-center items-center"
-                          hidden={mov.isReversal || mov.isRefunded}
-                        >
-                          <DelButtonMovement
-                            functionDelete={() =>
-                              deleteMovement(mov.id as string)
-                            }
-                          />
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow className="border-[#323A4D] hover:bg-bg-[#2A3040]/20">
-                <TableCell colSpan={4} className="h-55 text-center">
-                  <div className="flex justify-center items-center gap-3">
-                    <DatabaseSearch />
-                    {isPending ? (
-                      <span className="text-gray-400">Pesquisando...</span>
-                    ) : (
-                      <span>Sem dados</span>
-                    )}
-                  </div>
-                  <div
-                    className="text-sm mt-1 text-muted-foreground"
-                    hidden={isPending}
-                  >
-                    Tente mudar os filtros
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <div className="flex justify-between items-center px-2">
         <span className="text-sm md:text-lg">
