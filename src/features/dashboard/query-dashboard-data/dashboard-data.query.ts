@@ -27,6 +27,10 @@ export interface DasboardDataQueryOutput {
       };
       summaryPerMonth: Awaited<ReturnType<FunctionSummaryPerMonthAtYear>>;
     };
+    incomes: {
+      amount: number;
+      description: string;
+    }[];
   };
 }
 

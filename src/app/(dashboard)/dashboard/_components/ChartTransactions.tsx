@@ -21,6 +21,7 @@ import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
 import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 import { format } from "date-fns";
+import { DatabaseMinus } from "lucide-react";
 
 // const chartDomain = [weekStart, weekStart + 7 * DAY_MS];
 const formatTooltipCurrency = (value: number | string) =>
@@ -94,72 +95,79 @@ export function ChartTransactions() {
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-70 w-full">
-          <LineChart
-            accessibilityLayer
-            data={summaryPerMonth?.summaryPerMonth}
-            margin={{ bottom: 0, left: 15, right: 0, top: 0 }}
-          >
-            <CartesianGrid vertical={false} strokeDasharray="5, 5, 1, 5" />
-            <XAxis
-              axisLine={false}
-              dataKey="month"
-              tickFormatter={formatMonth}
-              tickLine={false}
-              tickMargin={10}
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis
-              hide
-              axisLine={false}
-              tickLine={false}
-              tickMargin={10}
-              tick={{ fontSize: 12 }}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={({ active, payload, label }) => (
-                <ChartTooltipContent
-                  active={active}
-                  hideLabel
-                  label={label}
-                  payload={payload?.map((item) => ({
-                    ...item,
-                    value:
-                      typeof item.value === "number"
-                        ? formatTooltipCurrency(item.value)
-                        : item.value,
-                  }))}
-                />
-              )}
-            />
-            <Line
-              connectNulls
-              dataKey="incomes"
-              dot={false}
-              stroke="var(--color-incomes)"
-              strokeLinecap="round"
-              strokeWidth={1}
-              type="monotone"
-            />
-            <Line
-              dataKey="expenses"
-              dot={false}
-              stroke="var(--color-expenses)"
-              strokeLinecap="round"
-              strokeWidth={1}
-              type="monotone"
-            />
-            <Line
-              dataKey="balance"
-              dot={false}
-              stroke="var(--color-balance)"
-              strokeLinecap="round"
-              strokeWidth={1}
-              type="monotone"
-            />
-          </LineChart>
-        </ChartContainer>
+        {summaryPerMonth && summaryPerMonth.summaryPerMonth.length > 1 ? (
+          <ChartContainer config={chartConfig} className="max-h-70 w-full">
+            <LineChart
+              accessibilityLayer
+              data={summaryPerMonth?.summaryPerMonth}
+              margin={{ bottom: 0, left: 15, right: 0, top: 0 }}
+            >
+              <CartesianGrid vertical={false} strokeDasharray="5, 5, 1, 5" />
+              <XAxis
+                axisLine={false}
+                dataKey="month"
+                tickFormatter={formatMonth}
+                tickLine={false}
+                tickMargin={10}
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                hide
+                axisLine={false}
+                tickLine={false}
+                tickMargin={10}
+                tick={{ fontSize: 12 }}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={({ active, payload, label }) => (
+                  <ChartTooltipContent
+                    active={active}
+                    hideLabel
+                    label={label}
+                    payload={payload?.map((item) => ({
+                      ...item,
+                      value:
+                        typeof item.value === "number"
+                          ? formatTooltipCurrency(item.value)
+                          : item.value,
+                    }))}
+                  />
+                )}
+              />
+              <Line
+                connectNulls
+                dataKey="incomes"
+                dot={false}
+                stroke="var(--color-incomes)"
+                strokeLinecap="round"
+                strokeWidth={1}
+                type="monotone"
+              />
+              <Line
+                dataKey="expenses"
+                dot={false}
+                stroke="var(--color-expenses)"
+                strokeLinecap="round"
+                strokeWidth={1}
+                type="monotone"
+              />
+              <Line
+                dataKey="balance"
+                dot={false}
+                stroke="var(--color-balance)"
+                strokeLinecap="round"
+                strokeWidth={1}
+                type="monotone"
+              />
+            </LineChart>
+          </ChartContainer>
+        ) : (
+          <div className="flex justify-center items-center gap-3 h-70">
+            <DatabaseMinus />
+            <span className="text-gray-400">Poucos dados</span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

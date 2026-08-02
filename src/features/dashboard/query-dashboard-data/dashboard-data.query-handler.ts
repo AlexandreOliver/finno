@@ -7,6 +7,7 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { inArray, sql } from "drizzle-orm";
 import { FinanceSummaryQueryService } from "@/features/Services/finance-summary.service-query";
 import { snapshotsWallet } from "@/infrastructure/database/schemas/snapshotsWallet";
+import { movements } from "@/infrastructure/database/schemas/movements";
 
 export class DasboardDataQueryHandler {
   private constructor(
@@ -64,6 +65,7 @@ export class DasboardDataQueryHandler {
       SummaryLastMonth,
       resultSummaryPerMonth,
       netWorthLastMonthQuery,
+      resultIncomesMonth,
     ] = await Promise.all([
       this.financeSummaryService.summaryOfWalletsAtInverval({
         interval,
@@ -91,6 +93,20 @@ export class DasboardDataQueryHandler {
           GROUP BY
             snapshots_wallet.year_month
           `),
+      this.db.execute<{ amount: number; description: string }>(sql`
+        SELECT
+          amount,
+          description
+        FROM
+          movements
+        WHERE
+          ${inArray(movements.walletId, wallatsIds)} AND
+          movements.executed_at >= ${interval.start.toISOString()} AND
+          movements.executed_at < ${interval.end.toISOString()} AND
+          movements.type = 'credito' AND
+          movements.is_refunded = false AND
+          movements.is_reversal = false
+        `),
     ]);
 
     const netWorthLastMonth =
@@ -126,6 +142,13 @@ export class DasboardDataQueryHandler {
       }),
     );
 
+    const incomesMonth = resultIncomesMonth.rows.map((income) => {
+      return {
+        ...income,
+        amount: income.amount / 100,
+      };
+    });
+
     const netWorthCurrent =
       netWorthLastMonth +
       summaryFinanceCurrent.incomes -
@@ -154,6 +177,7 @@ export class DasboardDataQueryHandler {
             summaryPerMonth: SummaryPerMonth,
           },
         },
+        incomes: incomesMonth,
       },
     };
   }
