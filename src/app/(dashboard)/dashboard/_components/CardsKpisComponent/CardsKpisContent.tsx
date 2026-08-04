@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { SkeletonCardsKpis } from "./SkeletonCardsKpis";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";

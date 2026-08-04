@@ -21,15 +21,16 @@ export function NavBar() {
       icon: <ArrowUpDown size={22} />,
     },
     {
+      label: "Categorias",
+      link: "/dashboard/categories",
+      icon: <Tags size={20} />,
+    },
+    {
       label: "Carteiras",
       link: "/wallets",
       icon: <Wallet size={20} />,
     },
-    {
-      label: "Categorias",
-      link: "/categories",
-      icon: <Tags size={20} />,
-    },
+
     {
       label: "Investimentos",
       link: "/investments",
