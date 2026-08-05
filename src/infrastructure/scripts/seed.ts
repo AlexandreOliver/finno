@@ -75,6 +75,7 @@ export async function seeding(verbose: boolean = false) {
         target: schemas.movements.id,
         set: {
           executedAt: sql`excluded.executed_at`,
+          categoryId: sql`excluded.category_id`,
         },
       });
 

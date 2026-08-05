@@ -1,8 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartConfig } from "@/components/ui/chart";
-import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
 import { formatCurrency } from "@/lib/utils";
@@ -24,26 +22,11 @@ export function FonteRenda() {
   const date = format(new Date(), "yyyy-MM");
 
   const { data } = useQuery({
-    queryKey: dashboardQuery.owned(user?.id ?? "")._ctx.referenceDate(date)
-      .queryKey,
-    queryFn: async () => {
-      const response = await fetch("/api/dashboard/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          referenceMonth: date,
-        }),
-      });
+    ...dashboardQuery.all({
+      referenceMonth: date,
+      userId: user?.id as string,
+    }),
 
-      if (!response.ok) {
-        throw new Error("Houve um erro na requisição");
-      }
-
-      return response.json() as Promise<DasboardDataQueryOutput>;
-    },
     enabled: !!user?.id,
 
     select: (result) => ({
@@ -97,13 +80,6 @@ export function FonteRenda() {
   //     </CardContent>
   //   </Card>
   // );
-
-  const chartConfig = {
-    incomes: {
-      color: "green",
-      label: "Receitas",
-    },
-  } satisfies ChartConfig;
 
   const RADIAN = Math.PI / 180;
 

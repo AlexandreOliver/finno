@@ -1,8 +1,9 @@
 "use client";
 
-import { SummaryCategoriesQueryOutput } from "@/features/categories/QuerySummaryCategories/summary-categories.query";
-import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
-import { dashboardQuery } from "@/features/Provider/queryKeys";
+import {
+  categoriasQuerys,
+  dashboardQuery,
+} from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -15,25 +16,10 @@ export function SectionCategories() {
   const date = format(new Date(), "yyyy-MM");
 
   const { data, isPending } = useQuery({
-    queryKey: ["categories", { userId: user?.id, referenceMonth: date }],
-    queryFn: async () => {
-      const response = await fetch("/api/dashboard/categories/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          referenceMonth: date,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Houve um erro na requisição");
-      }
-
-      return response.json() as Promise<SummaryCategoriesQueryOutput>;
-    },
+    ...categoriasQuerys.summary({
+      userId: user?.id as string,
+      referenceMonth: date,
+    }),
 
     select: (data) => {
       return {
@@ -64,27 +50,7 @@ export function SectionCategories() {
   });
 
   const { data: financeCurrent } = useQuery({
-    queryKey: dashboardQuery.owned(user?.id as string)._ctx.referenceDate(date)
-      .queryKey,
-
-    queryFn: async () => {
-      const response = await fetch("/api/dashboard/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          referenceMonth: date,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Houve um erro na requisição");
-      }
-
-      return response.json() as Promise<DasboardDataQueryOutput>;
-    },
+    ...dashboardQuery.all({ userId: user?.id as string, referenceMonth: date }),
 
     select: (data) => ({
       totalIncomes: data.data.financeSummary.walletsInQuery.current.incomes,

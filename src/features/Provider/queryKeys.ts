@@ -1,5 +1,7 @@
 import { createQueryKeys } from "@lukemorales/query-key-factory";
 import { StatementOutput } from "../transactions/statement/get-statement/get-statement.handler";
+import { DasboardDataQueryOutput } from "../dashboard/query-dashboard-data/dashboard-data.query";
+import { SummaryCategoriesQueryOutput } from "../categories/QuerySummaryCategories/summary-categories.query";
 
 export const movementsQuerys = createQueryKeys("movements", {
   owned: (walletsId: string[]) => ({
@@ -43,9 +45,28 @@ export const movementsQuerys = createQueryKeys("movements", {
 });
 
 export const categoriasQuerys = createQueryKeys("categorias", {
-  all: {
-    queryKey: null,
-  },
+  all: (userId?: string) => ({
+    queryKey: [userId],
+  }),
+
+  summary: (props: { userId: string; referenceMonth: string }) => ({
+    queryKey: [props],
+    queryFn: async () => {
+      const response = await fetch("/api/dashboard/categories/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(props),
+      });
+
+      if (!response.ok) {
+        throw new Error("Houve um erro na requisição");
+      }
+
+      return response.json() as Promise<SummaryCategoriesQueryOutput>;
+    },
+  }),
 
   withOwned: (userId: string) => ({
     queryKey: [{ userId }],
@@ -59,12 +80,23 @@ export const walletsQuerys = createQueryKeys("wallets", {
 });
 
 export const dashboardQuery = createQueryKeys("dashboard", {
-  owned: (userId: string) => ({
-    queryKey: [userId],
-    contextQueries: {
-      referenceDate: (referenceDate: string) => ({
-        queryKey: [referenceDate],
-      }),
+  all: (props: { referenceMonth: string; userId: string }) => ({
+    queryKey: [props],
+    queryFn: async () => {
+      const response = await fetch("/api/dashboard/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(props),
+      });
+
+      if (!response.ok) {
+        console.log(response.json());
+        throw new Error("Houve um erro na requisição");
+      }
+
+      return response.json() as Promise<DasboardDataQueryOutput>;
     },
   }),
 });

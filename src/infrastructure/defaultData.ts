@@ -672,6 +672,7 @@ const seed_movements = [
     description: "Presente/extra",
     amount: 6000,
     categoryId: seed_categorias[16].id,
+    //
     walletId: seed_wallets[1].id,
     executedAt: new Date(hoje.getFullYear(), hoje.getMonth() - 0, 14, 6, 45),
   },

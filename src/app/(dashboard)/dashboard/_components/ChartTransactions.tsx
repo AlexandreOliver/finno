@@ -19,7 +19,6 @@ import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
-import { DasboardDataQueryOutput } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 import { format } from "date-fns";
 import { DatabaseMinus } from "lucide-react";
 
@@ -54,26 +53,11 @@ export function ChartTransactions() {
   const formatMonth = (value: number) => dayFormatter.format(new Date(value));
 
   const { data: summaryPerMonth } = useQuery({
-    queryKey: dashboardQuery.owned(user?.id ?? "")._ctx.referenceDate(date)
-      .queryKey,
-    queryFn: async () => {
-      const response = await fetch("/api/dashboard/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          referenceMonth: date,
-        }),
-      });
+    ...dashboardQuery.all({
+      referenceMonth: date,
+      userId: user?.id as string,
+    }),
 
-      if (!response.ok) {
-        throw new Error("Houve um erro na requisição");
-      }
-
-      return response.json() as Promise<DasboardDataQueryOutput>;
-    },
     enabled: !!user?.id,
 
     select: (result) => ({

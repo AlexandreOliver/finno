@@ -22,8 +22,11 @@ export async function CardsKpis(props: CardsKpisProps) {
     .toISOString()
     .slice(0, 7); // YYYY-MM
   await queryClient.prefetchQuery({
-    queryKey: dashboardQuery.owned(props.userId)._ctx.referenceDate(date)
-      .queryKey,
+    queryKey: dashboardQuery.all({
+      referenceMonth: date,
+      userId: props.userId,
+    }).queryKey,
+
     queryFn: () =>
       handlerDashboard.execute({
         userId: props.userId,

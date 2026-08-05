@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -44,7 +46,7 @@ export function CardsForCategory({
       className="w-50 h-35 bg-card/40"
     >
       <CardHeader>
-        <CardTitle className="text-xl">{ctg.label}</CardTitle>
+        <CardTitle className="text-xl truncate">{ctg.label}</CardTitle>
         <CardDescription>
           <Badge className={badgeColor}>
             <span className="text-xs">{type}</span>
