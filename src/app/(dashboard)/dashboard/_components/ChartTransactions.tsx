@@ -15,12 +15,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+
 import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
 import { format } from "date-fns";
 import { DatabaseMinus } from "lucide-react";
+import { randomBytes } from "crypto";
 
 // const chartDomain = [weekStart, weekStart + 7 * DAY_MS];
 const formatTooltipCurrency = (value: number | string) =>
@@ -52,7 +54,7 @@ export function ChartTransactions() {
 
   const formatMonth = (value: number) => dayFormatter.format(new Date(value));
 
-  const { data: summaryPerMonth } = useQuery({
+  const { data: summaryPerMonth, isPending } = useQuery({
     ...dashboardQuery.all({
       referenceMonth: date,
       userId: user?.id as string,
@@ -73,8 +75,8 @@ export function ChartTransactions() {
     <Card>
       <CardHeader>
         <CardTitle className="font-medium">Anual </CardTitle>
-        <CardDescription>
-          {summaryPerMonth?.referenceYear ?? ""}
+        <CardDescription key={randomBytes(3).toString("ascii")}>
+          {isPending ? "..." : summaryPerMonth?.referenceYear}
         </CardDescription>
       </CardHeader>
 

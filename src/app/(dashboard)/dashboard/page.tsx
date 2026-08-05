@@ -4,9 +4,7 @@ import { ChartTransactions } from "./_components/ChartTransactions";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Suspense } from "react";
 import { CardsKpis } from "./_components/CardsKpisComponent/CardsKpis";
-import { SkeletonCardsKpis } from "./_components/CardsKpisComponent/SkeletonCardsKpis";
 
 export const metadata = {
   title: "Dashboard",
@@ -28,9 +26,7 @@ export default async function Page() {
       </div>
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 w-full">
-        <Suspense fallback={<SkeletonCardsKpis countCards={4} />}>
-          <CardsKpis userId={auth.isAuth ? auth.user.id : ""} />
-        </Suspense>
+        <CardsKpis userId={auth.isAuth ? auth.user.id : ""} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-3">

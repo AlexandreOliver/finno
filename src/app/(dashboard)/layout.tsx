@@ -16,7 +16,9 @@ const WalletsRepository = WalletsRepositoryDrizzle.create(db);
 const getWallets = GetWalletsHandler.create(WalletsRepository);
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { walletsQuerys } from "@/features/Provider/queryKeys";
+import { dashboardQuery, walletsQuerys } from "@/features/Provider/queryKeys";
+import { DasboardDataQueryHandler } from "@/features/dashboard/query-dashboard-data/dashboard-data.query-handler";
+import { format } from "date-fns";
 
 export default async function DashboardLayout({
   children,
@@ -26,11 +28,28 @@ export default async function DashboardLayout({
   const authUser = await verifySession();
   if (!authUser.isAuth) redirect("/auth/signin");
 
+  const date = format(new Date(), "yyyy-MM");
+
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: walletsQuerys.owned(authUser.user.id).queryKey,
     queryFn: () => getWallets.execute({ ownerId: authUser.user.id }),
+  });
+
+  const handlerDashboard = DasboardDataQueryHandler.create(db);
+
+  await queryClient.prefetchQuery({
+    queryKey: dashboardQuery.all({
+      referenceMonth: date,
+      userId: authUser.user.id,
+    }).queryKey,
+
+    queryFn: () =>
+      handlerDashboard.execute({
+        userId: authUser.user.id,
+        referenceMonth: date,
+      }),
   });
 
   return (
