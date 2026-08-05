@@ -2,6 +2,10 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { SectionCategories } from "./_components/CardsCategories/SectionCategories";
 
+export const metadata = {
+  title: "Categorias",
+};
+
 export default function Page() {
   const date = format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", {
     locale: ptBR,

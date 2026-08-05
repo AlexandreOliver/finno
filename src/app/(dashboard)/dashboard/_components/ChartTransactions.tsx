@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { useSession } from "@/hooks/useSession";
 import { format } from "date-fns";
-import { DatabaseMinus } from "lucide-react";
+import { DatabaseMinus, DatabaseSearch } from "lucide-react";
 import { randomBytes } from "crypto";
 
 // const chartDomain = [weekStart, weekStart + 7 * DAY_MS];
@@ -76,11 +76,11 @@ export function ChartTransactions() {
       <CardHeader>
         <CardTitle className="font-medium">Anual </CardTitle>
         <CardDescription key={randomBytes(3).toString("ascii")}>
-          {isPending ? "..." : summaryPerMonth?.referenceYear}
+          {isPending ? "----" : summaryPerMonth?.referenceYear}
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="max-h-70">
         {summaryPerMonth && summaryPerMonth.summaryPerMonth.length > 1 ? (
           <ChartContainer config={chartConfig} className="max-h-70 w-full">
             <LineChart
@@ -150,8 +150,10 @@ export function ChartTransactions() {
           </ChartContainer>
         ) : (
           <div className="flex justify-center items-center gap-3 h-70">
-            <DatabaseMinus />
-            <span className="text-gray-400">Poucos dados</span>
+            {isPending ? <DatabaseSearch /> : <DatabaseMinus />}
+            <span className="text-gray-400">
+              {isPending ? "Pesquisando..." : "Poucos dados"}
+            </span>
           </div>
         )}
       </CardContent>

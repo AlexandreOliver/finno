@@ -6,7 +6,7 @@ import { useSession } from "@/hooks/useSession";
 import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { DatabaseX } from "lucide-react";
+import { DatabaseSearch, DatabaseX } from "lucide-react";
 import {
   PieChart,
   Pie,
@@ -21,7 +21,7 @@ export function FonteRenda() {
   const { user } = useSession();
   const date = format(new Date(), "yyyy-MM");
 
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     ...dashboardQuery.all({
       referenceMonth: date,
       userId: user?.id as string,
@@ -34,52 +34,6 @@ export function FonteRenda() {
       incomes: result.data.incomes,
     }),
   });
-
-  // return (
-  //   <Card className="h-59">
-  //     <CardHeader>
-  //       <CardTitle>Fontes de Renda</CardTitle>
-  //     </CardHeader>
-  //     <CardContent
-  //       className="h-full gap-0.5 grid"
-  //       style={{
-  //         gridTemplateColumns: `repeat(${data?.incomes.length}, minmax(0, 1fr))`,
-  //       }}
-  //     >
-  //       {/* Haverá um array com todas as fontes e um card para cada */}
-  //       {data?.incomes.map((income) => (
-  //         <section
-  //           key={income.description}
-  //           className="isolate flex gap-[0.5px]"
-  //         >
-  //           <Separator
-  //             orientation="vertical"
-  //             className="mb-1 h-auto self-auto border-muted-foreground/50 border-l border-dashed bg-transparent"
-  //           />
-  //           <div className="pt-2 flex flex-col justify-between w-full">
-  //             <div className="ml-0.5">
-  //               <div>
-  //                 <div className="grid grid-cols-[125px_30px]">
-  //                   <p className="text-muted-foreground truncate">
-  //                     {income.description}
-  //                   </p>
-  //                   <p className="text-muted-foreground">{`${Math.floor((income.amount / data.total) * 100)}%`}</p>
-  //                 </div>
-  //                 <p className="text-xl">
-  //                   {formatCurrency(income.amount, {
-  //                     maximumFractionDigits: 2,
-  //                     currency: "BRL",
-  //                   })}
-  //                 </p>
-  //               </div>
-  //             </div>
-  //             <div className="bg-gray-400 h-4.5 rounded-md -ml-0.5"></div>
-  //           </div>
-  //         </section>
-  //       ))}
-  //     </CardContent>
-  //   </Card>
-  // );
 
   const RADIAN = Math.PI / 180;
 
@@ -155,14 +109,15 @@ export function FonteRenda() {
     );
   };
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Fontes de Renda</CardTitle>
       </CardHeader>
-      <CardContent className="h-75 text-center">
+      <CardContent className="h-70 text-center">
         {data && data.incomes.length > 0 ? (
           <PieChart
             accessibilityLayer
+            className="h-70"
             style={{
               width: "100%",
               height: "100%",
@@ -183,10 +138,11 @@ export function FonteRenda() {
             ></Pie>
           </PieChart>
         ) : (
-          <div className="flex justify-center items-center gap-3 h-full">
-            <DatabaseX />
-
-            <span className="text-gray-400">Sem dados</span>
+          <div className="flex justify-center items-center gap-3 h-70">
+            {isPending ? <DatabaseSearch /> : <DatabaseX />}
+            <span className="text-gray-400">
+              {isPending ? "Pesquisando..." : "Sem dados"}
+            </span>
           </div>
         )}
       </CardContent>

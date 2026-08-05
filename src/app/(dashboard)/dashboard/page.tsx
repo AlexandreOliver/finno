@@ -12,7 +12,7 @@ export const metadata = {
 
 export default async function Page() {
   const auth = await verifySession();
-  const dateFormated = format(new Date(), "MMMM 'de' yyyy", {
+  const dateFormated = format(new Date(), "MMMM',' yyyy", {
     locale: ptBR,
   });
 
