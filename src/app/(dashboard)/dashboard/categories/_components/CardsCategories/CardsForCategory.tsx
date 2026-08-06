@@ -9,9 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { usePercentLabel } from "@/hooks/usePercentlLabel";
 import { cn, formatCurrency } from "@/lib/utils";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { randomBytes } from "node:crypto";
+import { useCallback } from "react";
 
 interface Category {
   diffPerc: number;
@@ -39,6 +41,8 @@ export function CardsForCategory({
     badgeColor =
       "bg-green-500/10 text-green-700 dark:bg-green-700/60 dark:text-green-100 text-xs";
   }
+
+  const diferencaPercentual = usePercentLabel();
 
   return data.map((ctg) => (
     <Card
@@ -84,7 +88,7 @@ export function CardsForCategory({
                 <TrendingDown size={10} />
               )}
               <span className="text-[10px]">
-                {Math.round(Math.abs(ctg.diffPerc))}%
+                {diferencaPercentual(ctg.amountLastMonth, ctg.amount).label}
               </span>
             </Badge>
           )}
