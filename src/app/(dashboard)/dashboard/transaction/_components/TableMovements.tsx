@@ -117,7 +117,7 @@ export function TableMovements() {
         setWallet={setWallet}
       />
       <div className="">
-        <div className="rounded-md overflow-hidden border min-h-176 border-[#3a3f4d] bg-[#2A3040]/20 ">
+        <div className="rounded-md overflow-y-scroll scroll-fade-y scrollbar-none border max-h-100 border-[#3a3f4d] bg-[#2A3040]/20 ">
           <Table className="p-5 rounded-xl">
             <TableHeader className="bg-[#0e1738]">
               <TableRow className="font-bold text-xs md:text-lg">

@@ -65,7 +65,7 @@ export function ControlsTableMovements({
           <ChevronLeft className="size-5 md:size-7" />
         </button>
         <div className="w-full md:w-35 flex justify-center items-center">
-          <p className="text-sm md:text-md text-center">
+          <p className="text-sm md:text-lg text-center">
             {dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1)}
           </p>
         </div>

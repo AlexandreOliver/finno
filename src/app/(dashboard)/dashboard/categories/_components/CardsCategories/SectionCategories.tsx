@@ -62,7 +62,7 @@ export function SectionCategories() {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className="grid grid-cols-3 space-y-3 border border-card rounded-md p-2 pl-3 min-h-80">
+      <div className="grid grid-cols-3 space-y-3 border border-card rounded-md p-2 pl-3 max-h-80 overflow-auto scroll-fade-y scrollbar-thumb-accent">
         {isPending ? (
           <SkeletonCardsCategories countCards={5} />
         ) : (
@@ -73,7 +73,7 @@ export function SectionCategories() {
           />
         )}
       </div>
-      <div className="grid grid-cols-3 space-y-3 border border-card rounded-md p-2 pl-3 min-h-80">
+      <div className="grid grid-cols-3 space-y-3 border border-card rounded-md p-2 pl-3 max-h-80 overflow-auto scroll-fade-y scrollbar-thumb-accent">
         {isPending ? (
           <SkeletonCardsCategories countCards={6} />
         ) : (
