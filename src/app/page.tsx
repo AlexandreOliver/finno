@@ -29,7 +29,7 @@ export default function Home() {
                 <TrendingUp className="w-5 h-5" />
               </Link>
               <Link
-                href="/dashboard"
+                href="/auth/signin?demo=true"
                 className=" border border-[#b9b9f9] text-[#4a30f3] dark:text-white hover:bg-[#9e9ef5] px-6 py-3 rounded-sm font-norma transition-colors inline-flex items-center justify-center"
                 title="Entre em uma conta de teste e visualize a aplicação"
               >

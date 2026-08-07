@@ -11,10 +11,14 @@ import { loginAction } from "../actions/loginAction";
 import { ButtonGroup } from "@/components/ui/button-group";
 
 import { useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("coroa@itaca.ageu");
-  const [senha, setSenha] = useState("rei-de-itaca");
+  const params = useSearchParams();
+  const isDemo = params.get("demo");
+
+  const [email, setEmail] = useState(isDemo ? "coroa@itaca.ageu" : "");
+  const [senha, setSenha] = useState(isDemo ? "rei-de-itaca" : "");
 
   const [view, setView] = useState(false);
   const [errorMessage, sigInAction, isPending] = useActionState(
