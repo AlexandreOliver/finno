@@ -36,10 +36,10 @@ export function CardsForCategory({
 
   if (type === "Saida") {
     badgeColor =
-      "bg-red-500/10 text-red-700 dark:bg-red-600/60 dark:text-red-100 text-xs";
+      "bg-red-500/10 text-red-700 dark:bg-red-600/60 dark:text-red-100";
   } else {
     badgeColor =
-      "bg-green-500/10 text-green-700 dark:bg-green-700/60 dark:text-green-100 text-xs";
+      "bg-green-500/10 text-green-700 dark:bg-green-700/60 dark:text-green-100";
   }
 
   const diferencaPercentual = usePercentLabel();
@@ -47,24 +47,28 @@ export function CardsForCategory({
   return data.map((ctg) => (
     <Card
       key={ctg.label + randomBytes(7).toString("ascii")}
-      className="w-50 h-35 bg-card/40"
+      className="md:w-50 md:h-35 bg-card/40"
     >
       <CardHeader>
-        <CardTitle className="text-xl truncate">{ctg.label}</CardTitle>
+        <CardTitle className="text-md md:text-xl truncate">
+          {ctg.label}
+        </CardTitle>
         <CardDescription>
           <Badge className={badgeColor}>
-            <span className="text-xs">{type}</span>
+            <span className="text-[9px] md:text-sm">{type}</span>
           </Badge>
         </CardDescription>
         <CardAction>
           <Badge>
-            <span>{Math.round((ctg.amount / total) * 100)}%</span>
+            <span className="text-[9px] md:text-sm">
+              {Math.round((ctg.amount / total) * 100)}%
+            </span>
           </Badge>
         </CardAction>
       </CardHeader>
       <CardContent className="flex justify-center items-center">
         <div className="flex gap-2 items-start">
-          <span className="text-2xl">
+          <span className="text-lg md:text-2xl">
             {formatCurrency(ctg.amount, {
               currency: "BRL",
               maximumFractionDigits: 2,

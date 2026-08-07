@@ -61,28 +61,37 @@ export function SectionCategories() {
   });
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="grid grid-cols-3 space-y-3 border border-card rounded-md p-2 pl-3 max-h-80 overflow-auto scroll-fade-y scrollbar-thumb-accent">
-        {isPending ? (
-          <SkeletonCardsCategories countCards={5} />
-        ) : (
-          <CardsForCategory
-            data={data?.incomes.categories ?? []}
-            total={financeCurrent?.totalIncomes ?? 0}
-            type="Entrada"
-          />
-        )}
+    <div className="flex flex-col gap-1 mt-4">
+      <div>
+        <span className="text-xl ml-2">Mês Atual</span>
       </div>
-      <div className="grid grid-cols-3 space-y-3 border border-card rounded-md p-2 pl-3 max-h-80 overflow-auto scroll-fade-y scrollbar-thumb-accent">
-        {isPending ? (
-          <SkeletonCardsCategories countCards={6} />
-        ) : (
-          <CardsForCategory
-            data={data?.expenses.categories ?? []}
-            total={financeCurrent?.totalExpenses ?? 0}
-            type="Saida"
-          />
-        )}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="border border-card rounded-md p-2 pl-3 max-h-80 overflow-auto scroll-fade-y scrollbar-thumb-accent">
+          <div className="flex flex-col md:grid md:grid-cols-3 space-y-3">
+            {isPending ? (
+              <SkeletonCardsCategories countCards={5} />
+            ) : (
+              <CardsForCategory
+                data={data?.incomes.categories ?? []}
+                total={financeCurrent?.totalIncomes ?? 0}
+                type="Entrada"
+              />
+            )}
+          </div>
+        </div>
+        <div className=" border border-card rounded-md p-2 pl-3 max-h-80 overflow-auto scroll-fade-y scrollbar-thumb-accent">
+          <div className="flex flex-col md:grid md:grid-cols-3 space-y-3">
+            {isPending ? (
+              <SkeletonCardsCategories countCards={6} />
+            ) : (
+              <CardsForCategory
+                data={data?.expenses.categories ?? []}
+                total={financeCurrent?.totalExpenses ?? 0}
+                type="Saida"
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

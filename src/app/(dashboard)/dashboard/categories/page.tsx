@@ -12,11 +12,9 @@ export default function Page() {
   });
   return (
     <section className="flex flex-col gap-2 w-full">
-      <header>
+      <header className="mt-2 flex flex-col justify-center items-center md:items-start md:justify-items-start">
         <p className="text-muted-foreground text-md">{date}</p>
-        <p className="text-3xl tracking-tight font-medium text-center md:text-start">
-          Categorias
-        </p>
+        <p className="text-3xl tracking-tight font-medium ">Categorias</p>
       </header>
 
       <div className="grid grid-cols-2 gap-4" hidden>
