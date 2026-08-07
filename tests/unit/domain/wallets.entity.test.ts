@@ -7,7 +7,7 @@ import {
 import { Reccurrent } from "@/domain/entity/reccurrent.entity";
 import { v7 as uuidv7 } from "uuid";
 
-import { addDays, addMonths, set, subMonths } from "date-fns";
+import { addMonths, set } from "date-fns";
 import { ReccurrentProps } from "@/domain/schemas/reccurrent.schema";
 
 describe("Entidade Wallet", () => {

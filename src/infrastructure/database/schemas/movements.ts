@@ -2,7 +2,6 @@ import {
   snakeCase,
   uuid,
   text,
-  decimal,
   timestamp,
   check,
   boolean,

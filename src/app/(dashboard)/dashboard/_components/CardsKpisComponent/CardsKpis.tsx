@@ -12,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { SkeletonCardsKpis } from "./SkeletonCardsKpis";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { useCallback } from "react";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePercentLabel } from "@/hooks/usePercentlLabel";

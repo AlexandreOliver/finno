@@ -13,7 +13,6 @@ import { usePercentLabel } from "@/hooks/usePercentlLabel";
 import { cn, formatCurrency } from "@/lib/utils";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { randomBytes } from "node:crypto";
-import { useCallback } from "react";
 
 interface Category {
   diffPerc: number;

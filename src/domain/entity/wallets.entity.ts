@@ -4,7 +4,6 @@ import { z } from "zod";
 import { MovementErrorsValidation } from "../schemas/movement.schema";
 import { Movement, MovementCreateProps } from "./movements.entity";
 import { Reccurrent } from "./reccurrent.entity";
-import { isEqual, set } from "date-fns";
 
 export type WalletsFromDb = typeof wallets.$inferSelect;
 export type WalletsFromD = typeof wallets.$inferInsert;

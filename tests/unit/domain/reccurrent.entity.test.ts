@@ -5,7 +5,7 @@ import {
 } from "@/domain/entity/reccurrent.entity";
 import { v7 as uuidv7 } from "uuid";
 
-import { addDays, addMonths, addWeeks, set, subMonths } from "date-fns";
+import { addDays, set } from "date-fns";
 import { ReccurrentProps } from "@/domain/schemas/reccurrent.schema";
 import {
   Wallet,
@@ -26,9 +26,6 @@ describe("Entidade Reccurrent", () => {
       }) as resultCreateWallet & { success: true }
     ).data;
   });
-
-  //   afterEach(() => {
-  //   })
 
   const getReccurrent = (props: Partial<ReccurrentProps>): Reccurrent => {
     const dataBase =

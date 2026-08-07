@@ -33,7 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format, isAfter, isBefore } from "date-fns";
+import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { movementsQuerys } from "@/features/Provider/queryKeys";

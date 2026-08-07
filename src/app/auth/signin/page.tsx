@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import LoginForm from "@/app/auth/_components/LoginForm";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function Page() {
   return (
@@ -19,7 +20,9 @@ export default function Page() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <LoginForm />
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </CardContent>
       <CardFooter className="flex flex-col gap-4 justify-center items-center">
         <Link
