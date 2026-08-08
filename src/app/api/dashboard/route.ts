@@ -2,9 +2,10 @@ import { verifySession } from "@/features/authorization/services/verifysession";
 import { DashboardDataQuerySchema } from "@/features/dashboard/query-dashboard-data/dashboard-data.query";
 import { DasboardDataQueryHandler } from "@/features/dashboard/query-dashboard-data/dashboard-data.query-handler";
 import db from "@/infrastructure/database";
+import { NextRequest } from "next/server";
 import zod from "zod";
 
-export async function POST(req: Request) {
+export async function GET(request: NextRequest) {
   const auth = await verifySession();
 
   if (!auth.isAuth) {
@@ -16,14 +17,15 @@ export async function POST(req: Request) {
     );
   }
 
-  const body = await req.json();
-
-  const dataFormated = DashboardDataQuerySchema.safeParse(body);
+  const dataFormated = DashboardDataQuerySchema.safeParse({
+    userId: auth.user.id,
+    referenceMonth: request.nextUrl.searchParams.get("referenceMonth"),
+  });
 
   if (!dataFormated.success) {
     return Response.json(
       {
-        message: "Campos não Fornecidos",
+        message: "Forneça o mês de referência na query",
         fields: zod.flattenError(dataFormated.error).fieldErrors,
       },
       { status: 400 },

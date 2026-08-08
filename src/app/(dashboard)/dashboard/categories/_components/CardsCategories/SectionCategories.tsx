@@ -50,14 +50,12 @@ export function SectionCategories() {
   });
 
   const { data: financeCurrent } = useQuery({
-    ...dashboardQuery.all({ userId: user?.id as string, referenceMonth: date }),
+    ...dashboardQuery.all({ referenceMonth: date }),
 
     select: (data) => ({
       totalIncomes: data.data.financeSummary.walletsInQuery.current.incomes,
       totalExpenses: data.data.financeSummary.walletsInQuery.current.expenses,
     }),
-
-    enabled: !!user?.id,
   });
 
   return (

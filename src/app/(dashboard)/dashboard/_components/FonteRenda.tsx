@@ -2,11 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
-import { useSession } from "@/hooks/useSession";
 import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { DatabaseSearch, DatabaseX } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import {
   PieChart,
   Pie,
@@ -18,16 +17,13 @@ import {
 } from "recharts";
 
 export function FonteRenda() {
-  const { user } = useSession();
-  const date = format(new Date(), "yyyy-MM");
+  const params = useSearchParams();
+  const month = params.get("referenceMonth");
 
   const { data, isPending } = useQuery({
     ...dashboardQuery.all({
-      referenceMonth: date,
-      userId: user?.id as string,
+      referenceMonth: month as string,
     }),
-
-    enabled: !!user?.id,
 
     select: (result) => ({
       total: result.data.financeSummary.walletsInQuery.current.incomes,

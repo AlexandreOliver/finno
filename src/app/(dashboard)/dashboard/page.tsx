@@ -1,18 +1,29 @@
-import { verifySession } from "@/features/authorization/services/verifysession";
 import { FonteRenda } from "./_components/FonteRenda";
 import { ChartTransactions } from "./_components/ChartTransactions";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CardsKpis } from "./_components/CardsKpisComponent/CardsKpis";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Dashboard",
 };
 
-export default async function Page() {
-  const auth = await verifySession();
-  const dateFormated = format(new Date(), "MMMM',' yyyy", {
+export default async function Page(props: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await props.searchParams;
+
+  if (!params.referenceMonth) {
+    const newParams = new URLSearchParams(params);
+
+    newParams.set("referenceMonth", format(new Date(), "yyyy-MM"));
+
+    redirect(`/dashboard?${newParams.toString()}`);
+  }
+
+  const dateFormated = format(new Date(params.referenceMonth), "MMMM',' yyyy", {
     locale: ptBR,
   });
 
@@ -26,7 +37,7 @@ export default async function Page() {
       </div>
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 w-full">
-        <CardsKpis userId={auth.isAuth ? auth.user.id : ""} />
+        <CardsKpis />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-3">

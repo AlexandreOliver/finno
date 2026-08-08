@@ -19,10 +19,9 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
-import { useSession } from "@/hooks/useSession";
-import { format } from "date-fns";
 import { DatabaseMinus, DatabaseSearch } from "lucide-react";
 import { randomBytes } from "crypto";
+import { useSearchParams } from "next/navigation";
 
 // const chartDomain = [weekStart, weekStart + 7 * DAY_MS];
 const formatTooltipCurrency = (value: number | string) =>
@@ -44,8 +43,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartTransactions() {
-  const { user } = useSession();
-  const date = format(new Date(), "yyyy-MM");
+  const params = useSearchParams();
+  const month = params.get("referenceMonth");
 
   const dayFormatter = new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Sao_Paulo",
@@ -56,11 +55,8 @@ export function ChartTransactions() {
 
   const { data: summaryPerMonth, isPending } = useQuery({
     ...dashboardQuery.all({
-      referenceMonth: date,
-      userId: user?.id as string,
+      referenceMonth: month as string,
     }),
-
-    enabled: !!user?.id,
 
     select: (result) => ({
       ...result.data.financeSummary.summaryPerMonth,

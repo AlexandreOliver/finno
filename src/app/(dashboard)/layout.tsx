@@ -39,10 +39,10 @@ export default async function DashboardLayout({
 
   const handlerDashboard = DasboardDataQueryHandler.create(db);
 
+  // eslint-disable-next-line @tanstack/query/exhaustive-deps
   await queryClient.prefetchQuery({
     queryKey: dashboardQuery.all({
       referenceMonth: date,
-      userId: authUser.user.id,
     }).queryKey,
 
     queryFn: () =>

@@ -80,19 +80,14 @@ export const walletsQuerys = createQueryKeys("wallets", {
 });
 
 export const dashboardQuery = createQueryKeys("dashboard", {
-  all: (props: { referenceMonth: string; userId: string }) => ({
+  all: (props: { referenceMonth: string }) => ({
     queryKey: [props],
     queryFn: async () => {
-      const response = await fetch("/api/dashboard/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(props),
-      });
+      const response = await fetch(
+        `/api/dashboard?referenceMonth=${props.referenceMonth}`,
+      );
 
       if (!response.ok) {
-        console.log(response.json());
         throw new Error("Houve um erro na requisição");
       }
 

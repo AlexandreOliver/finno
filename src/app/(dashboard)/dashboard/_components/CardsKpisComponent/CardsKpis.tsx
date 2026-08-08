@@ -12,17 +12,15 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardQuery } from "@/features/Provider/queryKeys";
 import { SkeletonCardsKpis } from "./SkeletonCardsKpis";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePercentLabel } from "@/hooks/usePercentlLabel";
+import { useSearchParams } from "next/navigation";
 
-interface CardsKpisProps {
-  userId?: string;
-}
-
-export function CardsKpis(props: CardsKpisProps) {
-  const date = format(new Date(), "yyyy-MM");
+export function CardsKpis() {
   const isMobile = useIsMobile();
+
+  const params = useSearchParams();
+  const month = params.get("referenceMonth");
 
   const {
     data: summary,
@@ -30,14 +28,12 @@ export function CardsKpis(props: CardsKpisProps) {
     isSuccess,
   } = useQuery({
     ...dashboardQuery.all({
-      referenceMonth: date,
-      userId: props.userId as string,
+      referenceMonth: month as string,
     }),
 
     select: (data) => {
       return data?.data.financeSummary;
     },
-    enabled: !!props.userId,
   });
 
   const diferencaPercentual = usePercentLabel();
