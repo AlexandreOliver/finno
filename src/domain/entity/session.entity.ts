@@ -58,12 +58,18 @@ export class Session {
     return new Session(props);
   }
 
-  public renew() {
-    const newExpires = new Date(
-      this.expiresAt.getTime() + Session.#expirationInMs,
-    );
+  public renew(): boolean {
+    const hoje = new Date();
+    const hourInMs = 1000 * 60 * 60;
+
+    if (this.expiresAt.getTime() - hoje.getTime() > hourInMs) return false;
+
+    const newExpires = new Date(hoje.getTime() + Session.#expirationInMs);
+
     this.expiresAt = newExpires;
-    this.updatedAt = new Date();
+    this.updatedAt = hoje;
+
+    return true;
   }
 
   public invalidate() {

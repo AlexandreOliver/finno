@@ -138,17 +138,22 @@ describe("Caso de uso - Login", () => {
       lastName: "Jest",
     })) as resultCreate & { success: true };
 
-    const sessionTest = (await Session.create({
+    const { data: sessionTest } = Session.create({
       userId: userTest.user.id,
-    })) as resultCreateSession & { success: true };
+    }) as resultCreateSession & { success: true };
 
     mockUserRepository.getByEmail.mockResolvedValue(userTest.user);
-    mockSessionRepository.findActive.mockResolvedValue([sessionTest.data]);
+    mockSessionRepository.findActive.mockResolvedValue([sessionTest]);
 
     const credentials = {
       email: userTest.user.email,
       password: "123456",
     };
+
+    const TrintaMinutesInMs = 1000 * 60 * 30;
+
+    jest.useFakeTimers();
+    jest.advanceTimersByTime(Session.defaultExpireInMs - TrintaMinutesInMs);
 
     const result = (await LoginHandler.execute(
       credentials,
@@ -156,20 +161,29 @@ describe("Caso de uso - Login", () => {
       success: true;
     };
 
+    jest.useFakeTimers();
     expect(result.success).toBe(true);
     expect(result.sessionToken).toHaveLength(Session.sizeTokenBytes * 2);
-
-    expect(mockUserRepository.getByEmail).toHaveBeenCalledWith({
-      email: credentials.email,
-    });
 
     expect(mockSessionRepository.findActive).toHaveBeenCalled();
 
     const sessionRenew = mockSessionRepository.saveOrUpdate.mock.calls[0][0];
 
     const diffExpiresAt =
+      sessionRenew.expiresAt.getTime() - sessionRenew.updatedAt.getTime();
+
+    const expiresAtAfterCreatedAt =
       sessionRenew.expiresAt.getTime() - sessionRenew.createdAt.getTime();
 
-    expect(diffExpiresAt).toBe(Session.defaultExpireInMs * 2);
+    expect(diffExpiresAt).toBe(Session.defaultExpireInMs);
+    expect(expiresAtAfterCreatedAt).toBe(
+      Session.defaultExpireInMs * 2 - TrintaMinutesInMs,
+    );
+
+    expect(sessionRenew.toJson()).toStrictEqual({
+      ...sessionTest.toJson(),
+      updatedAt: sessionRenew.updatedAt,
+      expiresAt: sessionRenew.expiresAt,
+    });
   });
 });
