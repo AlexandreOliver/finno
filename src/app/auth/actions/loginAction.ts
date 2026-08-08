@@ -8,6 +8,8 @@ import { SessionsRepositoryDrizzle } from "@/infrastructure/repositories/drizzle
 import { UserRepositoryDrizzle } from "@/infrastructure/repositories/drizzle/drizzle-users.repository";
 import db from "@/infrastructure/database";
 import { Session } from "@/domain/entity/session.entity";
+import { credentialSchema } from "./credentials";
+import zod from "zod";
 
 const sessionRepository = SessionsRepositoryDrizzle.create(db);
 const userRepository = UserRepositoryDrizzle.create(db);
@@ -28,10 +30,19 @@ export async function loginAction(
 ): Promise<State | null> {
   const cookieJar = await cookies();
 
-  const result = await login.execute({
+  const formated = credentialSchema.safeParse({
     password: formData.get("password") as string,
     email: formData.get("email") as string,
   });
+
+  if (!formated.success) {
+    return {
+      message: "Há campos com erro",
+      errors: zod.flattenError(formated.error).fieldErrors,
+    };
+  }
+
+  const result = await login.execute(formated.data);
 
   if (!result.success) {
     return result;

@@ -1,17 +1,12 @@
 import { User } from "@/domain/entity/user.entity";
 import { ISessionGateway } from "@/domain/repositories/session.gateway";
 import { IUserGateway } from "@/domain/repositories/user.gateway";
-import { credentialSchema, LoginCommand } from "./login.command";
-import z from "zod";
+import { LoginCommand } from "./login.command";
 import { Session } from "@/domain/entity/session.entity";
 
 export type LoginHandlerOutput =
   | {
       success: false;
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
       message?: string | null;
     }
   | {
@@ -33,18 +28,8 @@ export class LoginHandler {
   }
 
   public async execute(props: LoginCommand): Promise<LoginHandlerOutput> {
-    const dataFormated = credentialSchema.safeParse(props);
-
-    if (!dataFormated.success) {
-      return {
-        success: false,
-        errors: z.flattenError(dataFormated.error).fieldErrors,
-        message: "Há compos com erros",
-      };
-    }
-
     const userIndDb = await this.UserRepository.getByEmail({
-      email: dataFormated.data.email,
+      email: props.email,
     });
 
     if (!userIndDb) {
@@ -56,7 +41,7 @@ export class LoginHandler {
 
     const passwordMatch = await User.compareHash(
       userIndDb.password,
-      dataFormated.data.password,
+      props.password,
     );
 
     if (!passwordMatch) {
